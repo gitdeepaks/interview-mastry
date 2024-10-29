@@ -136,3 +136,32 @@ const numFill = [1, 2, 3, 4, 5, 6, 7];
 
 const moreThanTwo = numFill.filter((num, i, arr) => num >= 4);
 console.log(moreThanTwo);
+
+const sum = nums.reduce((acc, currVal, i, arr) => {
+  return acc + currVal;
+}, 0);
+
+console.log(sum);
+
+// polyfills
+
+Array.prototype.myMap = function (cb) {
+  let temp = [];
+
+  for (let i = 0; i < this.length; i++) {
+    temp.push(cb(this[i], i, this));
+  }
+
+  return temp;
+};
+
+const cusnums = [1, 2, 3, 4, 5];
+
+const custommullBtThree = nums.myMap((num, i, arr) => {
+  return num * 4 - i;
+});
+console.log(custommullBtThree);
+
+//filter polyfilll
+
+Array.prototype.myFilter = function () {};
