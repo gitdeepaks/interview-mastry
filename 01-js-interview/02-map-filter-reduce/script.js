@@ -164,4 +164,36 @@ console.log(custommullBtThree);
 
 //filter polyfilll
 
-Array.prototype.myFilter = function () {};
+Array.prototype.myFilter = function (cb) {
+  let temp = [];
+
+  for (let i = 0; i < this.length; i++) {
+    if (cb(this[i], i, this)) {
+      temp.push(this[i]);
+    }
+  }
+  return temp;
+};
+const customnumFill = [1, 2, 3, 4, 5, 6, 7];
+
+const custommoreThanTwo = numFill.myFilter((num, i, arr) => num >= 4);
+
+console.log(custommoreThanTwo);
+
+// Reduce polyfill
+
+Array.prototype.myReduce = function (cb, initialValue) {
+  var accumalator = initialValue;
+
+  for (let i = 0; i < this.length; i++) {
+    accumalator = accumalator ? cb(accumalator, this[i], i, this) : this[i];
+  }
+
+  return accumalator;
+};
+
+const customReducesum = nums.myReduce((acc, currVal, i, arr) => {
+  return acc + currVal;
+}, 0);
+
+console.log(customReducesum);
