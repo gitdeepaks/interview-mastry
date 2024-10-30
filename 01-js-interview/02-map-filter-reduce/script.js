@@ -197,3 +197,41 @@ const customReducesum = nums.myReduce((acc, currVal, i, arr) => {
 }, 0);
 
 console.log(customReducesum);
+
+//Questions
+
+let students = [
+  { name: "Deepak", rollnumber: 21, marks: 81 },
+  { name: "Jenni", rollnumber: 41, marks: 91 },
+  { name: "Kaushal", rollnumber: 51, marks: 71 },
+  { name: "Diljeet", rollnumber: 81, marks: 51 },
+];
+
+const names = students.map((s) => s.name.toUpperCase());
+
+console.log(names);
+
+const details = students.filter((s) => s.marks > 60);
+console.log(details);
+
+const det = students.filter((s) => s.marks > 60 && s.rollnumber > 50);
+console.log(det);
+
+const sumByReduce = students.reduce((acc, currVal) => acc + currVal.marks, 0);
+
+console.log(sumByReduce);
+
+const studentsName = students.filter((s) => s.marks > 60).map((s) => s.name);
+console.log(studentsName);
+
+const totalMarks = students
+  .map((s) => {
+    if (s.marks < 60) {
+      s.marks + 20;
+    }
+
+    return s;
+  })
+  .filter((s) => s.marks > 60)
+  .reduce((acc, currVal) => acc + currVal.marks, 0);
+console.log(totalMarks);
