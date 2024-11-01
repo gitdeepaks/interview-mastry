@@ -76,11 +76,37 @@
 // find(12);
 
 // Blocked scope and settimeout
-for (var i = 0; i < 3; i++) {
-  function inner(i) {
-    setTimeout(function log() {
-      console.log(i);
-    }, 1000);
+// for (var i = 0; i < 3; i++) {
+//   function inner(i) {
+//     setTimeout(function log() {
+//       console.log(i);
+//     }, 1000);
+//   }
+//   inner(i);
+// }
+
+// how can we use a closure to create a private counter.
+
+function counter() {
+  var _counter = 0;
+
+  function add(increment) {
+    _counter += increment;
   }
-  inner(i);
+
+  function retrive() {
+    return `Counter is  = ${_counter}`;
+  }
+
+  return {
+    add,
+    retrive,
+  };
 }
+
+const c = counter();
+
+c.add(5);
+c.add(20);
+
+c.retrive(c.add(20));
