@@ -1,194 +1,244 @@
-// var obj = { name: "Deepak" };
+// CALL, APPLY & BIND Interview Question
 
-// const { errors } = require("undici-types");
+// Question 1 : What is Call?
 
-// function sayHello(age, profession) {
-//   return "Hello " + this.name + "is" + age + "is a" + profession;
-// }
-// const bindFunc = sayHello.bind(obj);
-// console.log(bindFunc(33, "Softwere Developer"));
+function sayHello() {
+  return "Hello " + this.name;
+}
 
-// // Question-4
-// const person = { name: "Deepak" };
+var obj = { name: "Piyush" };
+sayHello.call(obj);
 
-// function sayHI(age) {
-//   return `${this.name} is ${age}`;
-// }
-// // console.log(sayHI.call(person, 33));
-// // console.log(sayHI.bind(person, 33));
+// Question 2 : What is Apply?
 
-// const age = 10;
+function sayHello(day) {
+  return "Hello " + this.name + " today is " + day;
+}
 
-// var person1 = {
-//   name: "Deepak",
-//   age: 20,
-//   getAge: function () {
-//     return this.age;
-//   },
-// };
+var obj = { name: "Piyush" };
+sayHello.apply(obj, day);
 
-// var person2 = { age: 24 };
+// Question 3 : What is Bind?
 
-// // console.log(person1.getAge.call(person2));
+function sayHello() {
+  return "Hello " + this.name;
+}
 
-// // var status = "😎";
+var obj = { name: "Piyush" };
+const helloFn = sayHello.bind(obj);
+console.log(helloFn());
 
-// // setTimeout(() => {
-// //   const status = "😍";
+// Question 4 : Output
 
-// //   const data = {
-// //     status: "🥑",
-// //     getStatus() {
-// //       return this.status;
-// //     },
-// //   };
+const person = { name: "Piyush" };
 
-// //   console.log(data.getStatus());
+function sayHi(age) {
+  return `${this.name} is ${age}`;
+}
 
-// //   console.log(data.getStatus.call(this));
-// // }, 0);
+console.log(sayHi.call(person, 24));
+console.log(sayHi.bind(person, 24));
 
-// const animals = [
-//   { species: "Lion", name: "Heera" },
-//   { species: "Whale", name: "Fishu" },
-// ];
+// Question 5 : Call with function inside object
 
-// function printAnimals(i) {
-//   this.print = function () {
-//     console.log("#" + i + " " + this.species + ": " + this.name);
-//   };
-//   this.print;
-// }
-// for (let i = 0; i < animals.length; i++) {
-//   printAnimals.call(animals[i], i);
-// }
+const age = 10;
+var person = {
+  name: "Piyush",
+  age: 20,
+  getAge: function () {
+    return this.age;
+  },
+};
 
-// // append an Array to another Array
+var person2 = { age: 24 };
+person.getAge.call(person2);
 
-// const arr = ["a", "b"];
+// Question 6 : Output
 
-// const element = [1, 2, 3];
+var status = "😎";
 
-// arr.push.apply(arr, element);
+setTimeout(() => {
+  const status = "😍";
 
-// console.log(arr);
+  const data = {
+    status: "🥑",
+    getStatus() {
+      return this.status;
+    },
+  };
 
-// // using apply usning builtIn finction in JS
+  console.log(data.getStatus());
+  console.log(data.getStatus.call(this));
+}, 0);
 
-// //find min/max number in an Array
+// Question 7 : Call printAnimals such that it prints all animals in object
 
-// const number = [5, 6, 2, 3, 7];
+const animals = [
+  { species: "Lion", name: "King" },
+  { species: "Whale", name: "Queen" },
+];
 
-// console.log(Math.max.apply(null, number));
+function printAnimals(i) {
+  this.print = function () {
+    console.log("#" + i + " " + this.species + ": " + this.name);
+  };
+  this.print();
+}
 
-// // bound function
+for (let i = 0; i < animals.length; i++) {
+  printAnimals.call(animals[i], i);
+}
 
-// function f() {
-//   console.log(this);
-// }
+// Question 8 : apply to append an array to another
 
-// let user = {
-//   g: f.bind(null),
-// };
+const array = ["a", "b"];
+const elements = [0, 1, 2];
+array.push.apply(array, elements);
+console.info(array);
 
-// user.g();
+// Question 9 - Using apply to enhane built-in functions
 
-// //bind chaining
+// Find min/max number in an array
+const numbers = [5, 6, 2, 3, 7];
 
-// function f1() {
-//   console.log(this.name);
-// }
+console.log(Math.max.apply(null, numbers));
 
-// f1 = f1.bind({ name: "John" }).bind({ name: "Hekko" });
+// Question 10 : How will you Create a bound function
 
-// f1();
+function f() {
+  alert(this); // ?
+}
 
-// fix the error
+let user = {
+  g: f.bind(null),
+};
 
-// function checkPassword(success, failed) {
-//   let password = prompt("password", "");
-//   if ((password = "BadCoder")) {
-//     success();
-//   } else failed();
-// }
+user.g();
 
-// let user1 = {
-//   name: "Deepak Sankhyan",
+// Question 11 : Bind Chaining?
 
-//   loginSucess() {
-//     console.log(`${this.name} logged in`);
-//   },
-//   loginFailed() {
-//     console.log(`${this.name} log in failed`);
-//   },
-// };
+function f() {
+  alert(this.name);
+}
 
-// checkPassword(user1.loginSucess.bind(user1), user1.loginFailed.bind(user1));
+f = f.bind({ name: "John" }).bind({ name: "Ann" });
 
-// Explicit binding with Arrow function
+f();
 
-// const age = 10;
+// Question 12 : Fix the code
 
-// var person = {
-//   name: "Piyush",
-//   age: 33,
-//   getAgeArrow: () => console.log(this.age),
-//   getAge: function () {
-//     console.log(this.age);
-//   },
-// };
+function checkPassword(success, failed) {
+  let password = prompt("Password?", "");
+  if (password == "Roadside Coder") success();
+  else failed();
+}
 
-// var person2 = { age: 24 };
+let user = {
+  name: "Piyush Agarwal",
 
-// person.getAgeArrow.call(person2);
-// person.getAge.call(person2);
+  loginSuccessful() {
+    console.log(`${this.name} logged in`);
+  },
 
-// polyfill for call bind and apply
+  loginFailed() {
+    console.log(`${this.name} failed to log in`);
+  },
+};
+
+checkPassword(user.loginSuccessful.bind(user), user.loginFailed.bind(user));
+
+// Question 13 : Partial application for login
+
+function checkPassword(ok, fail) {
+  let password = prompt("Password?", "");
+  if (password == "Roadside Coder") ok();
+  else fail();
+}
+
+let user = {
+  name: "Piyush Agarwal",
+
+  login(result) {
+    console.log(this.name + (result ? " login successful" : " login failed"));
+  },
+};
+
+askPassword(?, ?);
+
+// Question 14 :  Explicit Binding with Arrow Function
+
+const age = 10;
+
+var person = {
+  name: "Piyush",
+  age: 20,
+  getAgeArrow: () => console.log(this.age),
+  getAge: function () {
+    console.log(this.age);
+  },
+};
+
+var person2 = { age: 24 };
+person.getAge.call(person2);
+person.getAge.call(person2);
+
+// Question 15 : Call Method Polyfill
 
 let car1 = {
   color: "Red",
   company: "Ferrari",
 };
 
+let car2 = {
+  color: "Blue",
+  company: "BMW",
+};
+
+let car3 = {
+  color: "White",
+  company: "Mercedes",
+};
+
 function purchaseCar(currency, price) {
   console.log(
-    `I have purchased ${this.color} - ${this.company} car from my money ${currency} ${price}`
+    `I have purchased ${this.color} - ${this.company} car for ${currency}${price} `
   );
 }
 
-// Function.prototype.myCall = function (currentContext = {}, ...arg) {
-//   if (typeof this !== "function") {
-//     throw new Error(this + "it's not callable");
-//   }
-//   currentContext.fn = this;
-//   currentContext.fn(...arg);
-// };
-
-// // purchaseCar.call(car1, "$", 5000000);
-// purchaseCar.myCall(car1, "$", 5000000);
+Function.prototype.myCall = function (currentContext = {}, ...arg) {
+  if (typeof this !== "function") {
+    throw new Error(this + "it's not callable");
+  }
+  currentContext.fn = this;
+  currentContext.fn(...arg);
+};
+purchaseCar.myCall(car3, "₹", "60,00,000");
 
 // Question 16 : Apply Method Polyfill
-// Function.prototype.myApply = function (currentContext = {}, argsArray = []) {
-//   if (typeof this !== "function") {
-//     throw new Error(this + "it's not callable");
-//   }
 
-//   if (Array.isArray(argsArray)) {
-//     throw new TypeError("CreatingListFromArrayLike called");
-//   }
-//   currentContext.fn = this;
-//   currentContext.fn(...argsArray);
-// };
+Function.prototype.myApply = function (currentContext = {}, arg = []) {
+  if (typeof this !== "function") {
+    throw new Error(this + "it's not callable");
+  }
+  if (!Array.isArray(arg)) {
+    throw new TypeError("CreateListFromArrayLike called on non-object");
+  }
+  currentContext.fn = this;
+  currentContext.fn(...arg);
+};
+purchaseCar.myApply(car2, ["₹", "50,00,000"]);
+
+// Question 17 : Bind Method Polyfill
 
 Function.prototype.myBind = function (currentContext = {}, ...arg) {
   if (typeof this !== "function") {
     throw new Error(this + "cannot be bound as it's not callable");
   }
   currentContext.fn = this;
-  return function (...newArgs) {
-    return currentContext.fn(...arg, ...newArgs);
+  return function () {
+    return currentContext.fn(...arg);
   };
 };
 
-const newFunc = purchaseCar.myBind(car1);
-console.log(newFunc("$", 50000000));
+const initPurchaseBmw = purchaseCar.myBind(car1, "₹", "1,00,00,000");
+initPurchaseBmw();
