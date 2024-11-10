@@ -1,208 +1,238 @@
-// // const user = {
-// //   name: "Bad Developer",
-// //   age: 25,
-// // };
+// OBJECT Interview Questions
 
-// const func = (function (a) {
-//   delete a;
-//   return a;
-// })(5);
 
-// // console.log(func);
+// Question 1 : Delete keyword in Object
 
-// const user = {
-//   name: "Bad Developer",
-//   age: 24,
-//   "like to code": true,
-// };
+const func = (function(a){
+  delete a;
+  return a;
+})(5);
 
-// console.log(user["like to code"]);
+console.log(func);
 
-// delete age;
+// Computed Properties
 
-// console.log(user.age);
+let property = "firstName"
+let name = "Piyush Agarwal"
 
-const property = "firstName";
-const name = "Deepak Sankhyan";
-
-const user = {
-  name: "Bad Coder",
-  age: 25,
-  isLikeToCode: true,
+let person = {
+[property]: name,
 };
 
-for (const key in user) {
-  console.log(user[key]);
+// Accessing
+alert( bag.firstName );
+alert( bag[property] );
+
+// Looping in Object
+
+let user = {
+  name: "Piyush",
+  age: 24,
+};
+
+for (let key in user) {
+  alert( key );  // name, age
+  alert( user[key] ); // Piyush, 24
 }
 
-// Outout questions
 
-const obj = {
-  a: "one",
-  b: "two",
-  a: "three",
-};
+// Question 2 : Output
 
+const obj = { a: 'one', b: 'two', a: 'three' };
 console.log(obj);
 
-function mulByTwo(obj) {
-  for (const key in obj) {
-    if (typeof obj[key] === "number") {
+
+// Question 3 : Create a function multiplyByTwo(obj) that multiplies all numeric property values of obj by 2.
+
+let nums = {
+  a: 100,
+  b: 200,
+  title: "My nums"
+};
+
+multiplyNumeric(menu);
+
+function multiplyByTwo(obj) {
+  for (let key in obj) {
+    if (typeof obj[key] == 'number') {
       obj[key] *= 2;
     }
   }
 }
-// console.log(obj[key]);
 
-// Output of the code
+
+// Question 4 : Output (Important)
 
 const a = {};
-
-const b = { key: "b" };
-const c = { key: "c" };
+const b = { key: 'b' };
+const c = { key: 'c' };
 
 a[b] = 123;
 a[c] = 456;
 
 console.log(a[b]);
 
-//what is JSON.stringify & JSON.parse
 
-const jsonUser = {
-  name: "deepak",
-  age: 24,
+// Question 5 : JSON.Stringify and JSON.parse 
+
+const userOne = {
+  name : "piyush",
+  age : 87
 };
 
-console.log(JSON.stringify(jsonUser));
+const strObj = JSON.stringify(userOne);
 
-// console.log(JSON.parse(jsonUser));
+console.log(JSON.parse(strObj));
 
-//what is the output
 
-console.log([..."Lydia"]);
-//[ 'L', 'y', 'd', 'i', 'a' ]
+// Question 6 : Output
 
-// output please
-const userFive = { name: "Lydia", age: 21 };
+console.log([...'Lydia']);
 
-const admin = { admin: true, ...userFive };
+
+// Question 7 : Output
+
+const user = { name: 'Lydia', age: 21 };
+const admin = { admin: true, ...user };
 
 console.log(admin);
 
-//output on JSON.stringify
+
+// Question 8 : Output
 
 const settings = {
-  usename: "Deepak",
-  level: 29,
+  username: 'lydiahallie',
+  level: 19,
   health: 90,
 };
 
-const dataSix = JSON.stringify(settings, ["level", "health"]);
+const data = JSON.stringify(settings, ['level', 'health']);
+console.log(data);
 
-console.log(dataSix);
+
+// Question 9 : Output
 
 const shape = {
-  redius: 10,
+  radius: 10,
   diameter() {
-    return this.redius * 2;
+    return this.radius * 2;
   },
-  perimeter: () => 2 * Math.PI * this.redius,
+  perimeter: () => 2 * Math.PI * this.radius,
 };
 
-// console.log(shape.diameter());
-// console.log(shape.perimeter());
+console.log(shape.diameter());
+console.log(shape.perimeter());
 
-// destructuring in objects
 
-let userSeven = {
-  name: "Deepak",
-  age: 33,
-  fullName: {
-    first: "Deepak",
-    last: "Sankhyan",
-  },
+// Question 10 : Destructuring in object
+
+let user = {
+  name:"Piyush",
+  age:24,
+  fullName : {
+      firstName : "Piyush",
+      lastName : "Agarwal"
+  }
 };
-// const nameTwo = "Bad Coder";
-// const { name":nameTwo } = userSeven;
 
-const {
-  fullName: { first },
-} = userSeven;
+const name = "Roadside Coder"    // to change name or renaming
 
-console.log(first);
+const { fullName : {firstName} } = user;
 
-// outputTen
+console.log(firstName);
 
-function getItems(firstLIst, favourateFruit, ...args) {
-  return [...firstLIst, ...args, favourateFruit, favourateFruit];
+
+// Question 11 : Output
+
+function getItems(fruitList, ...args, favoriteFruit) {
+  return [...fruitList, ...args, favoriteFruit]
 }
 
-const getItemss = getItems(["banana", "apple"], "pear", "orange");
-console.log(getItemss);
+getItems(["banana", "apple"], "pear", "orange");
 
-// [ 'banana', 'apple', 'orange', 'pear', 'pear' ]
 
-// outputEleven
+// Question 12 : Output
 
-let cEleven = { greetings: "Hey!" };
-
+let c = { greeting: 'Hey!' };
 let d;
 
-d = cEleven;
+d = c;
+c.greeting = 'Hello';
+console.log(d.greeting);
 
-c.greetings = "Hello";
 
-console.log(d.greetings); //Hey!
+// Question 13 : Output
 
-//outputTwelve
+console.log({a:1} == {a:1});
+console.log({a:1} === {a:1});
 
-console.log({ a: 1 } == { a: 1 }); //false
-console.log({ a: 1 } === { a: 1 }); //false
 
-let person = { name: "Deepak" };
+// Question 14 : Output
 
-const member = [person];
-
+let person = { name: 'Lydia' };
+const members = [person];
 person = null;
 
-console.log(member);
+console.log(members);
 
-const value = { number: 20 };
+
+// Question 15 : Output
+
+const value = { number: 10 };
 
 const multiply = (x = { ...value }) => {
-  console.log((x.number *= 2));
+console.log((x.number *= 2));
 };
 
-multiply(); //40
+multiply();
 multiply();
 multiply(value);
 multiply(value);
 
+
+// Question 16 : Output
+
+const value = { number: 10 };
+
+const multiply = (x = { ...value }) => {
+console.log((x.number *= 2));
+};
+
+multiply();
+multiply();
+multiply(value);
+multiply(value);
+
+
+// Question 17 : Output 
+
 function changeAgeAndReference(person) {
-  person.age = 33;
+  person.age = 25;
   person = {
-    name: "John",
-    age: 50,
+    name: 'John',
+    age: 50
   };
 
-  return age;
+  return person;
 }
 
 const personObj1 = {
-  name: "Alex",
-  age: 30,
+  name: 'Alex',
+  age: 30
 };
 
-// shllow Copy vs Deep Copy
-let userNine = {
-  name: "Bad Coder",
-  age: 33,
-};
+const personObj2 = changeAgeAndReference(personObj1);
 
-// const objClone = Object.assign({}, userNine);
-const objClone = { ...user };
-// const objCloneString = JSON.parse(JSON.stringify(user));
+console.log(personObj1); // -> ?
+console.log(personObj2); // -> ?
 
-objClone.name = "Deepak";
 
-console.log(user, objClone);
+// Question 18 : Shallow copy VS Deep copy
+
+// Q - How to clone an object without referencing its keys to original object
+
+
+const obj = {a: 1 ,b: 2}
+const objclone = Object.assign({},obj);
+const objclone = JSON.parse(JSON.stringify(employee));
+const objclone = { ...obj };

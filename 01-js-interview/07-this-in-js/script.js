@@ -1,147 +1,154 @@
-// // // this in Javascript
-// // // this.a = 5;
+// THIS KEYWORD
 
-// // // const getPeram = () => {
-// // //   console.log(this.a);
-// // // };
-// // // getPeram();
+// Question 1 : this keyword
 
-// // let user = {
-// //   name: "deepak",
-// //   age: 33,
+let a = 5;
 
-// //   getDetails: () => {
-// //     nestedArraow: () => console.log(this.name);
-// //     nestedArraow();
-// //   },
-// // };
+console.log(this.a);
 
-// // user.getDetails();
+// Question 2 : this inside Method
 
-// // class user {
-// //   constructor(name) {
-// //     this.name = n;
-// //   }
+let user = {
+  name: "Piyush",
+  age: 24,
+  getDetails() {
+    console.log(this.name);
+  },
+};
 
-// //   hetNAme() {
-// //     console.log(this.name);
-// //   }
-// // }
+user.getDetails();
 
-// // const User = new user("Deepak");
+// Question 3 : nested object
 
-// // console.log(User);
+let user = {
+  name: "Piyush",
+  age: 24,
+  childObj: {
+    newName: "Roadside Coder",
+    getDetails() {
+      console.log(this.newName, "and", this.name);
+    },
+  },
+};
 
-// // User.hetNAme();
+user.childObj.getDetails();
 
-// // const user = {
-// //   firstName: "Deepak1",
+// Question 4 : Class & Constructor
 
-// //   getName() {
-// //     const firstName = "Deepak2";
+class user {
+  constructor(n) {
+    this.name = n;
+  }
+  getName() {
+    console.log(this.name);
+  }
+}
 
-// //     return this.firstName;
-// //   },
-// // };
+const User = new user("Piyush");
+User.getName();
 
-// // console.log(user.getName());
+// Question 5 : Output
 
-// function makeUser() {
-//   return {
-//     name: "John",
-//     ref() {
-//       return this;
-//     },
-//   };
-// }
+const user = {
+  firstName: "Piyush!",
+  getName() {
+    const firstName = "Piyush!";
+    return this.firstName;
+  },
+};
 
-// let userw = makeUser();
+console.log(object.getMessage());
 
-// // console.log(userw.ref().name);
+// Question 6 : What is the result of accessing its `ref`? Why?
 
-// const user3 = {
-//   name: "Deepak Sankhyan",
-//   logMessage() {
-//     console.log(this.name);
-//   },
-// };
+function makeUser() {
+  return {
+    name: "John",
+    ref: this,
+  };
+}
 
-// setTimeout(
-//   function () {
-//     user3.logMessage();
-//   },
+let user = makeUser();
 
-//   1000
-// );
+alert(user.ref.name); // What's the result?
 
-// // Questions 4
-// const user4 = {
-//   name: "Deepak",
-//   greet() {
-//     return `Hello ${this.name}`;
-//   },
+// Question 7 : What logs to console the following code snippet:
 
-//   farewell: () => {
-//     return `Good ${this.name}`;
-//   },
-// };
+const user = {
+  name: "Piyush Agarwa;!",
+  logMessage() {
+    console.log(this.name);
+  },
+};
+setTimeout(user.logMessage, 1000);
 
-// console.log(user4.greet());
-// console.log(user4.farewell());
+// Question 8 : Output
 
-// Object Calculator
+const user = {
+  name: "Piyush",
+  greet() {
+    return `Hello, ${this.name}!`;
+  },
+  farewell: () => {
+    return `Goodbye, ${this.name}!`;
+  },
+};
+console.log(user.greet());
+console.log(user.farewell());
 
-// let calculator = {
-//   read() {
-//     this.a = +prompt("a = ", 0);
-//     this.b = +prompt("b = ", 0);
-//   },
+// Question 9 :
 
-//   sum() {
-//     return this.a + this.b;
-//   },
+let calculator = {
+  sum() {
+    return this.a + this.b;
+  },
 
-//   multiply() {
-//     return this.a * this.b;
-//   },
-// };
+  mul() {
+    return this.a * this.b;
+  },
 
-// calculator.read();
-// console.log(calculator.sum());
-// console.log(calculator.multiply());
+  read() {
+    this.a = +prompt("a?", 0);
+    this.b = +prompt("b?", 0);
+  },
+};
 
-// let length = 4;
+calculator.read();
+alert(calculator.sum());
+alert(calculator.mul());
 
-// function callback() {
-//   console.log(this.length);
-// }
+// Question 10 : Output
 
-// const object = {
-//   length: 5,
-//   method() {
-//     //arguments = [callback,2,3]
-//     console.log(arguments);
+var length = 4;
+function callback() {
+  console.log(this.length); // What is logged?
+}
+const object = {
+  length: 5,
+  method(callback) {
+    callback();
+  },
+};
+object.method(callback, 1, 2);
 
-//     arguments[0]();
-//   },
-// };
-// object.method(callback, 2, 3); //3
+// Question 11 : Implement this Code
 
-const calc = {
+const result = calc.add(10).multiply(5).subtract(30).add(10);
+console.log(result.total);
+
+// My Answer
+var calc = {
   total: 0,
   add(a) {
     this.total += a;
+    return this;
+  },
+  subtract(a) {
+    this.total -= a;
     return this;
   },
   multiply(a) {
     this.total *= a;
     return this;
   },
-  substract(a) {
-    this.total *= a;
-    return this;
-  },
 };
-
-const result = calc.add(10).multiply(5).substract(30).add(10);
-console.log(result.total);

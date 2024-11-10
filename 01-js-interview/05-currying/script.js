@@ -1,101 +1,98 @@
-// Currying in JS
-//Example for Currying
+// CURRYING Interview Question
 
-// function f(a) {
-//   return function (b) {
-//     return `${a} X ${b}`;
-//   };
+// Question 1 : Currying
+
+function f(a) {
+  return (b) => {
+    return "Works";
+  };
+}
+console.log(f(1)(2));
+
+// Question 2 : sum(2)(6)(1)
+
+function sum(a) {
+  return (b) => {
+    return (c) => {
+      return a + b + c;
+    };
+  };
+}
+console.log(sum(1)(2)(3)); // 6
+
+// 4 : Write a currying fn
+//       evaluate("sum")(4)(2)
+//       evaluate("multiply")(4)(2)
+//       evaluate("divide")(4)(2)
+//       evaluate("substract")(4)(2);
+
+function evaluate(operation) {
+  return function (a) {
+    return function (b) {
+      if (operation === "sum") return a + b;
+      else if (operation === "multiply") return a * b;
+      else if (operation === "divide") return a / b;
+      else if (operation === "substract") return a - b;
+      else return "Invalid Operation!";
+    };
+  };
+}
+console.log(evaluate("sum")(4)(2));
+console.log(evaluate("multiply")(4)(2));
+console.log(evaluate("divide")(4)(2));
+console.log(evaluate("substract")(4)(2));
+console.log(evaluate("substr")(4)(2));
+
+// Question 5 : Infinite Currying -> sum(1)(2)(3)....(n)
+
+function add(a) {
+  return function (b) {
+    if (b) return add(a + b);
+    return a;
+  };
+}
+console.log(add(5)(2)(4)(8)());
+
+// Question 6 : currying vs partial application
+
+// function sum(a) {
+//     return (b, c) => {
+//         return a * b * c
+//     }
 // }
 
-// console.log(f(5)(6));
+// let x = sum(10);
+// x(3,12);
+// x(20,12);
+// x(20,13);
+// OR
+// sum(10)(3,12);
+// sum(10)(20,12);
+// sum(10)(20,13);
 
-// // implement sum using Currying
+// Question 7 : real world example of currying => Maniplating DOM
 
-// // function currSum(a, b, c) {
-// //   return a + b + c;
-// // }
+const updateElemText = (id) => (content) =>
+  (document.querySelector(`#${id}`).textContent = content);
+const updateHeaderText = updateElemText("header");
+updateHeaderText("Subscribe to RoadsideCoder!");
 
-// // function sum(a) {
-// //   return function (b) {
-// //     return function (c) {
-// //       return a + b + c;
-// //     };
-// //   };
-// // }
-
-// // console.log(sum(6, 6, 6));
-// // // function named as evaluate
-
-// function evaluate(oparation) {
-//   return function (a) {
-//     return function (b) {
-//       if (oparation === "sum") {
-//         return a + b;
-//       } else if (oparation === "multiply") {
-//         return a * b;
-//       } else if (oparation === "divide") {
-//         return a / b;
-//       } else if (oparation === "substract") {
-//         return a - b;
-//       } else {
-//         return "Invalid oparation";
-//       }
-//     };
-//   };
-// }
-
-// console.log(evaluate("sum")(9)(9));
-// // Infinite currying
-// function addInfinite(a) {
-//   return function (b) {
-//     if (b) return addInfinite(a + b);
-//     return a;
-//   };
-// }
-
-// // console.log(addInfinite(2(3)(6)()));
-
-// //Currying vs partial function
-// function sumFour(a) {
-//   return function (b, c) {
-//     return a + b + c;
-//   };
-// }
-
-// console.log(sumFour(20)(5, 6));
-
-//Currying in Manipulation of DOM
-
-// function updateELementText(id) {
-//   return function (content) {
-//     document.querySelector("#" + id).textContent = content;
-//   };
-// }
-
-// const updateHeader = updateELementText("heading");
-
-// updateHeader("Hello-Bekar-Developer");
-
-// curry implmentation
-
-//curry f(a,b,c) into f(a)(b)(c)
+// Question 8 : Curry() implementation
 
 function curry(func) {
-  return function curriedFunction(...args) {
-    console.log(args.length, func.length);
-
+  return function curriedFunc(...args) {
+    // console.log(args.length, func.length);
     if (args.length >= func.length) {
       return func(...args);
     } else {
       return function (...next) {
-        return curriedFunction(...args, ...next);
+        return curriedFunc(...args, ...next);
       };
     }
   };
 }
 
-const sum = (a, b, c, d) => a + b + c + d;
+const sumCurry = (a, b, c) => a + b + c;
 
-const totalSum = curry(sum);
-
-console.log(totalSum(1)(2)(3)(4));
+const totalSum = curry(sumCurry);
+console.log(totalSum(1)(6)(5));

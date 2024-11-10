@@ -1,184 +1,193 @@
-// // Lexical scope
+// CLOSURE Interview Question
 
-// // function local() {
-// //   // local scope
-// //   var user = "Developer";
-// // }
-// // console.log(user);
-// // // local();
+// Question 1 : Lexical Scope
 
-// // function subscribe() {
-// //   var uName = "Developer";
+// global scope
+function local() {
+  // local scope
+  var username = "Roadsidecoder";
+  console.log(username);
+}
+local();
 
-// //   //inner scope 2
+// Question 2 : Closure
 
-// //   function displayName() {
-// //     console.log(uName);
-// //   }
-// //   displayName();
-// // }
-// // subscribe();
+function makeFunc() {
+  var name = "Mozilla";
+  function displayName() {
+    alert(name);
+  }
+  return displayName;
+}
 
-// // var uName = "Deepak";
+var myFunc = makeFunc();
+myFunc();
 
-// // function makeFunc() {
-// //   var uName = "Firefox";
+// Question 3 : Closure scope chain
 
-// //   function displayName(num) {
-// //     console.log(uName, num);
-// //   }
-// //   return displayName;
-// // }
-// // makeFunc()(5);
+const e = 10;
+function sum(a) {
+  return function (b) {
+    return function (c) {
+      // outer functions scope
+      return function (d) {
+        // local scope
+        return a + b + c + d + e;
+      };
+    };
+  };
+}
 
-// // let count = 0;
-// // (function printCount() {
-// //   if (count === 0) {
-// //     let count = 1; //shadowing
+console.log(sum(1)(2)(3)(4)); // log 20
 
-// //     console.log(count); // 1
-// //   }
-// //   // count = 0
-// //   console.log(count);
-// // })();
+// Question 4 : Output
 
-// // function createBase(num) {
-// //   return function (innerNum) {
-// //     return console.log(innerNum + num);
-// //   };
-// // }
+let count = 0;
+(function printCount() {
+  if (count === 0) {
+    let count = 1;
+    console.log(count); //1
+  }
+  console.log(count); // 0
+})();
 
-// // var addSix = createBase(6);
-// // addSix(10);
-// // addSix(21);
+// Question 5 : Write function for this addSix()
 
-// // function find() {
-// //   let a = [];
+function createBase(num) {
+  return function (innerNum) {
+    console.log(innerNum + num);
+  };
+}
+var addSix = createBase(6);
+addSix(10);
+addSix(21);
 
-// //   for (let i = 0; i < 1000000; i++) {
-// //     a[i] = i * i;
-// //   }
+// Question 6 : Time Optimization
 
-// //   return function (index) {
-// //     console.log(a[index]);
-// //   };
-// // }
+function find() {
+  let a = [];
+  for (let i = 0; i < 1000000; i++) {
+    a[i] = i * i;
+  }
+  return function (index) {
+    console.log(a[index]);
+  };
+}
+const closure = find();
+console.time("6");
+closure(6);
+console.timeEnd("6");
+console.time("50");
+closure(50);
+console.timeEnd("50");
 
-// // const closure = find();
+// Question 6 : Block scope and set Time out
 
-// // console.time("6");
+// using let
+function a() {
+  for (let i = 0; i < 3; i++) {
+    setTimeout(function (log) {
+      console.log(i); // 0,1,2
+    }, i * 1000);
+  }
+}
+a(); // using let will give you 0 , 1 ,2
 
-// // find(6);
+// using var
+for (var i = 0; i < 3; i++) {
+  function inner(i) {
+    setTimeout(function (log) {
+      console.log(i); // 3 times  3
+    }, i * 1000);
+  }
+  inner(i);
+}
 
-// // console.timeEnd("6");
-// // closure(6);
-// // console.time("12");
-// // find(12);
+// Question 7 : How would you use a closure to create a private counter?
 
-// // Blocked scope and settimeout
-// // for (var i = 0; i < 3; i++) {
-// //   function inner(i) {
-// //     setTimeout(function log() {
-// //       console.log(i);
-// //     }, 1000);
-// //   }
-// //   inner(i);
-// // }
+function counter() {
+  var _counter = 0;
 
-// // how can we use a closure to create a private counter.
+  function add(increment) {
+    _counter += increment;
+  }
 
-// function counter() {
-//   var _counter = 0;
+  function retrive() {
+    return "Counter = " + _counter;
+  }
 
-//   function add(increment) {
-//     _counter += increment;
-//   }
+  return {
+    add,
+    retrive,
+  };
+}
+const c = counter();
+c.add(5);
+c.add(10);
+console.log(c.retrive());
 
-//   function retrive() {
-//     return `Counter is  = ${_counter}`;
-//   }
+// Question 8 : Module Pattern :
 
-//   return {
-//     add,
-//     retrive,
-//   };
-// }
+var module = (function () {
+  function privateMethod() {
+    console.log("private");
+  }
+  return {
+    publicMethod: function () {
+      console.log("public");
+    },
+  };
+})();
+module.publicMethod();
+module.privateMethod();
 
-// const c = counter();
+// Question 9 : Make this run only once
 
-// c.add(5);
-// c.add(20);
+let view;
+function Like() {
+  let called = 0;
 
-// console.log(c.add(20));
+  return function () {
+    if (called > 0) {
+      console.log("Already");
+    } else {
+      view = "Roadsidecoder";
+      console.log("Subscribe", view);
+      called++;
+    }
+  };
+}
+let isSub = Like();
+isSub();
+isSub();
+isSub();
+isSub();
 
-// //Module Pattern
-// var Module = (function () {
-//   function privateMethode() {
-//     //do something
-//   }
+// Question 10 : once Polyfill
 
-//   return {
-//     publicMethod: function () {
-//       console.log("public");
-//     },
-//   };
-// })();
+function once(func, context) {
+  let ran;
 
-// Module.publicMethod(); //return "public"
-// // Module.privateMethode(); //return error
+  return function () {
+    if (func) {
+      ran = func.apply(context || this, arguments);
+      func = null;
+    }
+    return ran;
+  };
+}
+const hello = once((a, b) => {
+  console.log("Hi", a, b);
+});
+hello(1, 2);
+hello(1, 2);
+hello(1, 2);
+hello(1, 2);
 
-// //Make this run only once
-
-// let view;
-
-// function likeVideo() {
-//   let called = 0;
-
-//   return function () {
-//     if (called > 0) {
-//       console.log("Already Support to Developer");
-//     } else {
-//       view = "Developer";
-//       console.log(`Support to ${view}`);
-//     }
-//   };
-// }
-
-// let isSUpported = likeVideo();
-
-// isSUpported();
-// isSUpported();
-// isSUpported();
-// isSUpported();
-// isSUpported();
-
-// Once Polyfill
-
-// function once(func, context) {
-//   let ran;
-
-//   return function () {
-//     if (func) {
-//       ran = func.apply(context || this, arguments);
-//       func = null;
-//     }
-
-//     return ran;
-//   };
-// }
-
-// const hello = once((a, b) => console.log("hello", a, b));
-// hello(1, 2);
-// hello(3, 4);
-// hello(5, 6);
-// hello(7, 8);
-// hello(9, 10);
-
-// Memoize Polyfill
+// Question 11 : Memoize Polyfill
 
 function myMemoize(fn, context) {
   const res = {};
-
   return function (...args) {
     var argsCache = JSON.stringify(args);
     if (!res[argsCache]) {
@@ -188,17 +197,20 @@ function myMemoize(fn, context) {
   };
 }
 
-const clumsysquare = (num1, num2) => {
-  for (let i = 1; i <= 100000000; i++) {}
-  return num1 * num2;
+const clumsyProduct = (num1, num2) => {
+  for (let i = 1; i <= 100000000; i++) {
+    return num1 * num2;
+  }
 };
 
-const memoizes = myMemoize(clumsysquare);
+const MemoizeClumsyProduct = myMemoize(clumsyProduct);
 
 console.time("First call");
-console.log(memoizes(9467, 7649));
+console.log(MemoizeClumsyProduct(9467, 7649));
 console.timeEnd("First call");
 
-console.time("Second Call");
-console.log(memoizes(9467, 7649));
-console.timeEnd("Second Call");
+console.time("Second call");
+console.log(MemoizeClumsyProduct(9467, 7649));
+console.timeEnd("Second call");
+
+// Question 12: closure VS scope

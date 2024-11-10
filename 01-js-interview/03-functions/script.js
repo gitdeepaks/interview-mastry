@@ -1,119 +1,138 @@
-// // functions in Javascript
-// function square(num) {
-//   return num * num;
-// }
+// FUNCTION Interview Questions
 
-// // function expression
+// Question 1 : Function Code
 
-// const sqr = function (num) {
-//   return num + num;
-// };
+function square(num) {
+  return num * num;
+}
+function displaySquare(fn) {
+  console.log("Square is " + fn(5));
+}
+displaySquare(square);
 
-// // console.log(sqr(7));
+// Question 2 :  What is IIFE?
 
-// function displaySquare(fn) {
-//   console.log("Sqr is" + fn(5));
-// }
+// Eg-1
+(function square(num) {
+  console.log(num * num);
+})(7);
 
-// displaySquare(sqr);
+// Eg-2
+(function (x) {
+  return (function (y) {
+    console.log(x);
+  })(2);
+})(1);
 
-// // IIFFE
+// Question 3 : Closure
 
-// (function add(num) {
-//   return num + num;
-// })(7);
+function init() {
+  var name = "Mozilla"; // name is a local variable created by init
+  function displayName() {
+    // displayName() is the inner function, that forms the closure
+    console.log(name); // use variable declared in the parent function
+  }
+  displayName();
+}
+init();
 
-// (function (x) {
-//   return (function (y) {
-//     console.log(x);
-//   })(3);
-// })(1);
+// Question 4 : Function Scope
 
-// // function Scope  - O/P based Questions
+// Q-1
+var num1 = 20,
+  num2 = 3,
+  name = "Roadsidecoder";
 
-// // for (let i = 0; i < 5; i++) {
-// //   setTimeout(() => {
-// //     console.log(i);
-// //   }, i * 1000);
-// // }
+function mul() {
+  return num1 * num2;
+}
+mul();
+function getScore() {
+  var num1 = 3,
+    num2 = 4;
+  function add() {
+    return name + " scored " + (num1 + num2);
+  }
+  return add();
+}
+getScore();
 
-// // Hoisting
+// Q-2
+for (var i = 0; i < 5; i++) {
+  setTimeout(function () {
+    // 3 times 5
+    console.log(i);
+  }, i * 1000);
+}
 
-// function functionName() {
-//   console.log(x);
-//   console.log("Coder");
-// }
+// Question 5 : Function Hoisting
 
-// // var x = 5;
+// Without Hoisting:
+function functionName() {
+  console.log("work at tech");
+}
 
-// // var fun = function () {
-// //   console.log(x);
-// //   var x = 20;
-// // };
+functionName(); // function is called after declaring it
 
-// // fun();
+// With Hoisting:
+functionName(); // function is called before declaring it
 
-// // param vs arguments
+function functionName() {
+  console.log("work at tech");
+}
 
-// function mul(...num) {
-//   console.log(num[0] * num[1]);
-// }
+// Output
+var x = 21;
+var fun = function () {
+  console.log(x);
+  var x = 20;
+};
+fun();
 
-// var arr = [5, 6];
+// Question 6 :  Params vs arguments
 
-// mul(...arr);
+const fn = (a, x, y, ...numbers) => {
+  console.log(x, y);
+};
+fn(5, 6, 7, 8);
 
-// const fn = (a, x, y, ...nums) => {
-//   console.log(x, y, nums);
-// };
-// fn(2, 6, 9, 87, 7);
+// Question 7 : Spread operator and rest operator
+function multiply(...nums) {
+  // rest operator ,should always be the last one
+  console.log(nums[0] * nums[1]);
+}
+var arr = [5, 7];
+multiply(...arr); // Spread operator
 
-// // Callback functions
+// Question 8 : Callback
 
-// function great(name) {
-//   alert("hello" + name);
-// }
+function greeting(name) {
+  alert("Hello " + name);
+}
 
-// function prcessUserInpur(cb) {
-//   var name = prompt("Please enter the name");
-//   cb(name);
-// }
+function processUserInput(callback) {
+  var name = prompt("Please enter your name.");
+  callback(name);
+}
 
-// prcessUserInpur(names);
+processUserInput(greeting);
 
-// // more example of callback
+// Question 9 : Arrow functions
 
-// document.addEventListener("click", function () {});
-
-// // Arrow functions
-// const add = (fName, sName) => {
-//   return fName + sName;
-// };
-
-// function square(num) {
-//   return num * num;
-// }
-
-// const square = () => {};
-
-// //arguments
-// function fn() {
-//   console.log(arguments);
-// }
-
-// fn();
-
-// this
-
-let user = {
-  username: "Developer",
-  rc1: () => {
-    console.log(`Please support to ${this.username} work`);
-  },
-  rc2: () => {
-    console.log(`Please support to ${this.username} work`);
-  },
+const add = (firstNum, secondNum) => {
+  return firstNum + secondNum;
 };
 
-user.rc1();
-user.rc2();
+const addNum = (firstNum, secondNum) => firstNum + secondNum;
+
+// Question 10 : this
+
+let user = {
+  name: "Roadside Coder",
+  rc1: () => {
+    console.log("Subscribe to " + this.name);
+  },
+  rc2() {
+    console.log("Subscribe to " + this.name);
+  },
+};

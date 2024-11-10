@@ -1,34 +1,45 @@
-// function test() {
-//   var a = "Hello";
-//   let b = "Bye";
+// VAR, LET & CONST Interview Questions
 
-//   if (true) {
-//     let a = "Hi";
-//     var b = "GoodBye";
+// Question 1 : Variable Shadowing
 
-//     console.log(a);
-//     console.log(b);
-//   }
-// }
+function test() {
+  let a = "Hello";
 
-var a;
-var a;
+  if (true) {
+    let a = "Hello"; // New value assigned
+    console.log(a);
+  }
 
-let b;
-
-{
-  let b;
+  console.log(a);
 }
 
-//Declaration without initialization
+test();
 
-const a = 4;
+// Question 2 :  Illegal Shadowing
 
-var a = 6;
+function func() {
+  var a = "Hello";
+  let b = "Namaste";
 
-a = 7;
+  if (true) {
+    let a = "Hi"; // Legal Shadowing
+    var b = "Bye"; // Illegal Shadowing
+    console.log(a); // It will print 'GeeksforGeeks'
+    console.log(b); // It will print error
+  }
+}
+test();
 
-let a = 8;
-a = 9;
+// Question 3 : Hoisting
 
-// Hoisting
+console.log(a);
+
+var a = 10;
+
+// Question 4 : Temporal Dead Zone
+
+console.log(a, b, c);
+
+const c = 30;
+let b = 20;
+var a = 10;
