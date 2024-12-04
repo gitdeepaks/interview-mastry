@@ -2,15 +2,17 @@ import { useCallback, useState } from "react";
 import Notification from "../components/Notification";
 
 export const useNotification = (position = "top-right") => {
-  const [notification, setNotification] = useState(null);
+  const [notifications, setNotifications] = useState([]);
 
-  let timer;
+  // let timer;
 
   const triggerNotification = useCallback((notificationProps) => {
-    clearTimeout(timer);
-    setNotification(notificationProps);
+    // clearTimeout(timer);
+    setNotificatios((preveNotifications) => [...preveNotifications], {
+      id: 1234,
+    });
     timer = setTimeout(() => {
-      setNotification(null);
+      setNotifications(null);
     }, notificationProps.duration);
   }, []);
 

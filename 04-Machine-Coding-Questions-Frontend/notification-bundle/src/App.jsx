@@ -6,7 +6,7 @@ function App() {
   // custom hook useNotification
 
   const { NotificationComponent, triggerNotification } =
-    useNotification("bottom-left");
+    useNotification("top-left");
 
   return (
     <>
