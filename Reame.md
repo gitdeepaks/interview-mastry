@@ -1468,3 +1468,1059 @@ export default Counter;
 ---
 
 This approach works well for scenarios where you have deeply nested state or complex update logic!
+
+---
+
+### Typescript
+
+Here’s a curated set of **interview questions with answers and example code** for a candidate with **3 years of experience in TypeScript**:
+
+---
+
+### **1. Explain TypeScript and its Benefits over JavaScript.**
+
+**Question:**  
+What is TypeScript, and why would you choose it over JavaScript?
+
+**Answer:**  
+TypeScript is a superset of JavaScript that adds static typing, interfaces, and other features to make development more robust and scalable.  
+**Benefits:**
+
+- **Static Typing:** Detect errors during compile time.
+- **Improved Code Quality:** Tools like IntelliSense and autocompletion.
+- **Supports Modern JavaScript:** Works with ES6+ features.
+- **Refactoring:** Safer and easier.
+- **Interoperability:** Can use existing JavaScript libraries.
+
+**Code Example:**
+
+```typescript
+// TypeScript Code
+function add(a: number, b: number): number {
+  return a + b;
+}
+
+// JavaScript Equivalent (No Type Safety)
+function addJS(a, b) {
+  return a + b;
+}
+```
+
+---
+
+### **2. What are TypeScript Interfaces?**
+
+**Question:**  
+Explain interfaces in TypeScript and give an example.
+
+**Answer:**  
+Interfaces in TypeScript define the structure of an object, ensuring type safety during development.
+
+**Code Example:**
+
+```typescript
+interface User {
+  id: number;
+  name: string;
+  isActive: boolean;
+}
+
+const user: User = {
+  id: 1,
+  name: "Deepak",
+  isActive: true,
+};
+
+// Compile-Time Error if `isActive` is omitted or mistyped.
+```
+
+---
+
+### **3. How are Enums Used in TypeScript?**
+
+**Question:**  
+What are enums, and how do they work in TypeScript?
+
+**Answer:**  
+Enums define a set of named constants that can be used as a type.
+
+**Code Example:**
+
+```typescript
+enum Role {
+  Admin = "ADMIN",
+  User = "USER",
+  Guest = "GUEST",
+}
+
+function assignRole(role: Role): void {
+  console.log(`Assigned role is: ${role}`);
+}
+
+assignRole(Role.Admin); // Output: Assigned role is: ADMIN
+```
+
+---
+
+### **4. Explain the Difference Between `interface` and `type`.**
+
+**Question:**  
+What is the difference between `interface` and `type` in TypeScript?
+
+**Answer:**
+
+- **Interfaces** are used to define object structures and can be extended.
+- **Types** can represent other constructs like unions or intersections.
+
+**Code Example:**
+
+```typescript
+// Using Interface
+interface User {
+  id: number;
+  name: string;
+}
+
+// Using Type
+type UserType = {
+  id: number;
+  name: string;
+};
+
+// Key Difference: Type can define a union
+type Response = string | number | boolean;
+```
+
+---
+
+### **5. How Does TypeScript Handle Modules?**
+
+**Question:**  
+How do you import/export modules in TypeScript?
+
+**Answer:**  
+TypeScript uses ES6-style module imports and exports.
+
+**Code Example:**
+
+```typescript
+// file: utils.ts
+export function greet(name: string): string {
+  return `Hello, ${name}`;
+}
+
+// file: main.ts
+import { greet } from "./utils";
+
+console.log(greet("Deepak")); // Output: Hello, Deepak
+```
+
+---
+
+### **6. How Can You Use Generics in TypeScript?**
+
+**Question:**  
+Explain generics in TypeScript with an example.
+
+**Answer:**  
+Generics allow creating reusable, type-safe components.
+
+**Code Example:**
+
+```typescript
+function identity<T>(value: T): T {
+  return value;
+}
+
+console.log(identity<string>("Hello")); // Output: Hello
+console.log(identity<number>(42)); // Output: 42
+```
+
+---
+
+### **7. What is the Purpose of Type Guards?**
+
+**Question:**  
+How can you use type guards in TypeScript?
+
+**Answer:**  
+Type guards allow you to narrow down the type of a variable.
+
+**Code Example:**
+
+```typescript
+function isString(value: unknown): value is string {
+  return typeof value === "string";
+}
+
+function printValue(value: string | number) {
+  if (isString(value)) {
+    console.log(`String: ${value}`);
+  } else {
+    console.log(`Number: ${value}`);
+  }
+}
+
+printValue("Deepak"); // Output: String: Deepak
+printValue(42); // Output: Number: 42
+```
+
+---
+
+### **8. Explain `Partial`, `Readonly`, and `Pick` Utility Types.**
+
+**Question:**  
+How do `Partial`, `Readonly`, and `Pick` utility types work?
+
+**Answer:**
+
+- `Partial<T>`: Makes all properties optional.
+- `Readonly<T>`: Makes all properties readonly.
+- `Pick<T, K>`: Selects specific properties from a type.
+
+**Code Example:**
+
+```typescript
+interface User {
+  id: number;
+  name: string;
+  isActive: boolean;
+}
+
+// Partial
+const updateUser: Partial<User> = { name: "Deepak" };
+
+// Readonly
+const readonlyUser: Readonly<User> = { id: 1, name: "Deepak", isActive: true };
+// readonlyUser.id = 2; // Error: Cannot assign to 'id' because it is a read-only property.
+
+// Pick
+type UserSummary = Pick<User, "id" | "name">;
+const summary: UserSummary = { id: 1, name: "Deepak" };
+```
+
+---
+
+### **9. What is the `never` Type in TypeScript?**
+
+**Question:**  
+What is the `never` type, and where is it used?
+
+**Answer:**  
+The `never` type represents values that never occur, used in functions that never return (e.g., throw exceptions).
+
+**Code Example:**
+
+```typescript
+function throwError(message: string): never {
+  throw new Error(message);
+}
+```
+
+---
+
+### **10. How Do You Use `as const` in TypeScript?**
+
+**Question:**  
+What is `as const`, and how is it useful?
+
+**Answer:**  
+`as const` creates a readonly tuple or object.
+
+**Code Example:**
+
+```typescript
+const roles = ["Admin", "User", "Guest"] as const;
+
+type Role = (typeof roles)[number]; // "Admin" | "User" | "Guest"
+
+function assignRole(role: Role): void {
+  console.log(`Assigned role: ${role}`);
+}
+
+assignRole("Admin"); // Valid
+// assignRole("Unknown"); // Error
+```
+
+---
+
+### **11. What are Decorators in TypeScript?**
+
+**Question:**  
+What are decorators, and how do they work?
+
+**Answer:**  
+Decorators are functions that modify classes or methods, primarily used in frameworks like Angular.
+
+**Code Example:**
+
+```typescript
+function Logger(target: any, propertyName: string) {
+  console.log(`Property Decorated: ${propertyName}`);
+}
+
+class User {
+  @Logger
+  name: string = "Deepak";
+}
+```
+
+---
+
+This set of questions tests the candidate’s understanding of **core TypeScript concepts**, practical application, and best practices.
+
+---
+
+## Machine Coding Round Questions
+
+Below are similar machine coding challenges, but now implemented in **JavaScript** (without TypeScript-specific type annotations). Each exercise is designed to showcase your skills in **JavaScript**, **React**, and related best practices. With about 3 years of experience, these challenges should be familiar, but they’ll still help you prepare for real-world coding rounds.
+
+---
+
+### 1. Filtering and Searching a List of Items
+
+**Task:**  
+Given an array of user objects with `id` and `name`, create a React component that displays a search input. As the user types, filter the displayed list in real-time.
+
+**Key Points:**
+
+- Use React hooks (`useState`) for state management.
+- Filter the list based on the search query, ignoring case.
+- Keep the code clean and modular.
+
+**Example Code (React + JavaScript):**
+
+```jsx
+import React, { useState } from "react";
+
+export function UserSearch({ users }) {
+  const [query, setQuery] = useState("");
+
+  const handleChange = (e) => {
+    setQuery(e.target.value);
+  };
+
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(query.toLowerCase())
+  );
+
+  return (
+    <div>
+      <input
+        type="text"
+        placeholder="Search user by name..."
+        value={query}
+        onChange={handleChange}
+      />
+      <ul>
+        {filteredUsers.map((user) => (
+          <li key={user.id}>{user.name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+// Example usage:
+// const usersData = [{ id:1, name:'Alice' }, { id:2, name:'Bob' }, { id:3, name:'Charlie' }];
+// <UserSearch users={usersData} />
+```
+
+---
+
+### 2. Custom Hook for Data Fetching
+
+**Task:**  
+Create a custom React hook that fetches data from a given URL and returns loading, error, and data states.
+
+**Key Points:**
+
+- Use `useEffect` for fetching data when the component mounts or the URL changes.
+- Manage `loading`, `error`, and `data` states.
+- Keep the solution simple and robust.
+
+**Example Code (React + JavaScript):**
+
+```jsx
+import { useState, useEffect } from "react";
+
+export function useFetch(url) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+    setError(null);
+
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then((json) => {
+        if (isMounted) {
+          setData(json);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (isMounted) {
+          setError(err.message);
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [url]);
+
+  return { data, loading, error };
+}
+
+// Example usage in a component:
+export function PostList() {
+  const {
+    data: posts,
+    loading,
+    error,
+  } = useFetch("https://jsonplaceholder.typicode.com/posts");
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  return (
+    <ul>
+      {posts.map((post) => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+---
+
+### 3. Memoized Component
+
+**Task:**  
+Create a React component that receives props and only re-renders when the props change. Use `React.memo`.
+
+**Key Points:**
+
+- Showcase understanding of `React.memo` to avoid unnecessary re-renders.
+- Validate that the component updates only on prop changes.
+
+**Example Code (React + JavaScript):**
+
+```jsx
+import React, { useState } from "react";
+
+function DisplayCount({ count }) {
+  console.log("DisplayCount render");
+  return <div>Count: {count}</div>;
+}
+
+const MemoizedDisplayCount = React.memo(DisplayCount);
+
+export function Counter() {
+  const [count, setCount] = useState(0);
+  const [text, setText] = useState("");
+
+  return (
+    <div>
+      <button onClick={() => setCount((c) => c + 1)}>Increment</button>
+      <input
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Type something"
+      />
+      <MemoizedDisplayCount count={count} />
+    </div>
+  );
+}
+```
+
+---
+
+### 4. Implement a Simple Data Structure (Stack) in JavaScript
+
+**Task:**  
+Implement a Stack class with `push`, `pop`, and `peek` methods.
+
+**Key Points:**
+
+- Demonstrate the ability to write clean JavaScript classes.
+- Ensure logic is correct and handles edge cases (e.g., popping from an empty stack).
+
+**Example Code (JavaScript):**
+
+```js
+class Stack {
+  constructor() {
+    this.items = [];
+  }
+
+  push(item) {
+    this.items.push(item);
+  }
+
+  pop() {
+    return this.items.pop();
+  }
+
+  peek() {
+    return this.items[this.items.length - 1];
+  }
+
+  get size() {
+    return this.items.length;
+  }
+}
+
+// Example usage:
+const numberStack = new Stack();
+numberStack.push(1);
+numberStack.push(2);
+console.log(numberStack.peek()); // 2
+console.log(numberStack.pop()); // 2
+console.log(numberStack.size); // 1
+```
+
+---
+
+### 5. State Management with `useReducer`
+
+**Task:**  
+Use `useReducer` to manage complex form state. For example, maintain a simple form with `name` and `age` fields and provide a reset button.
+
+**Key Points:**
+
+- Demonstrate familiarity with `useReducer` for state management.
+- Show how to dispatch actions to update and reset state.
+
+**Example Code (React + JavaScript):**
+
+```jsx
+import React, { useReducer } from "react";
+
+function formReducer(state, action) {
+  switch (action.type) {
+    case "CHANGE_FIELD":
+      return { ...state, [action.field]: action.value };
+    case "RESET":
+      return { name: "", age: "" };
+    default:
+      return state;
+  }
+}
+
+export function FormComponent() {
+  const [state, dispatch] = useReducer(formReducer, { name: "", age: "" });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    dispatch({ type: "CHANGE_FIELD", field: name, value });
+  };
+
+  const handleReset = () => {
+    dispatch({ type: "RESET" });
+  };
+
+  return (
+    <div>
+      <input
+        name="name"
+        value={state.name}
+        onChange={handleChange}
+        placeholder="Name"
+      />
+      <input
+        name="age"
+        value={state.age}
+        onChange={handleChange}
+        placeholder="Age"
+      />
+      <button onClick={handleReset}>Reset</button>
+      <div>
+        <p>
+          <strong>Preview:</strong>
+        </p>
+        <p>Name: {state.name}</p>
+        <p>Age: {state.age}</p>
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
+### 6. Conditional Rendering with a Type Check (Without TypeScript)
+
+**Task:**  
+Create a component that takes a prop which can be either a string or an object with a `message` property. Render accordingly.
+
+**Key Points:**
+
+- Demonstrate conditional logic based on runtime checks.
+- Show different rendering paths depending on the nature of the prop.
+
+**Example Code (React + JavaScript):**
+
+```jsx
+import React from "react";
+
+export function MessageRenderer({ content }) {
+  if (typeof content === "string") {
+    return <div>{content}</div>;
+  } else if (content && typeof content === "object" && "message" in content) {
+    return <div>{content.message}</div>;
+  } else {
+    return <div>Invalid content</div>;
+  }
+}
+
+// Example usage:
+// <MessageRenderer content="Hello, World!" />
+// <MessageRenderer content={{ message: "Hi there!" }} />
+```
+
+---
+
+**General Tips for a Machine Coding Round in JavaScript/React:**
+
+- Focus on clarity and maintainability of your code.
+- Show that you understand core hooks (`useState`, `useEffect`, `useReducer`), memoization (`React.memo`), and basic data structures.
+- Keep your solutions organized and readable.
+- Add comments if something might not be obvious.
+- Test your code mentally or by running it if possible.
+
+By practicing these examples, you’ll be better prepared to handle machine coding rounds that emphasize JavaScript and React proficiency.
+
+---
+
+## Machine Coding Round for React Typscript
+
+Below is a curated set of **machine coding round challenges** with sample solutions. These problems blend knowledge of **JavaScript**, **React**, and **TypeScript**, suitable for someone with around 3 years of experience. Each challenge is structured as follows:
+
+1. **Description of the Task**
+2. **Key Points / Requirements**
+3. **Solution Explanation**
+4. **Example Code (TypeScript + React)**
+
+Use these as practice exercises to help you be well-prepared for a variety of coding interviews.
+
+---
+
+### 1. Filtering and Searching a List of Items
+
+**Task:**  
+Given an array of user objects with `id` and `name` fields, create a React component that displays a search input and filters the list in real-time as the user types.
+
+**Key Points:**
+
+- Use React hooks for state management.
+- Implement case-insensitive filtering.
+- Ensure type definitions for props and state are correct.
+
+**Solution Explanation:**
+
+- Maintain a state variable for the search query.
+- Filter the list based on the query.
+- Render the filtered results.
+
+**Code Example:**
+
+```tsx
+import React, { useState, ChangeEvent } from "react";
+
+type User = {
+  id: number;
+  name: string;
+};
+
+interface UserListProps {
+  users: User[];
+}
+
+export const UserSearch: React.FC<UserListProps> = ({ users }) => {
+  const [query, setQuery] = useState<string>("");
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+  };
+
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(query.toLowerCase())
+  );
+
+  return (
+    <div>
+      <input
+        type="text"
+        placeholder="Search user by name..."
+        value={query}
+        onChange={handleChange}
+      />
+      <ul>
+        {filteredUsers.map((user) => (
+          <li key={user.id}>{user.name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+// Example usage
+// const usersData = [
+//   { id: 1, name: "Alice" },
+//   { id: 2, name: "Bob" },
+//   { id: 3, name: "Charlie" }
+// ];
+// <UserSearch users={usersData} />
+```
+
+---
+
+### 2. Custom Hook for Data Fetching
+
+**Task:**  
+Create a custom React hook that fetches data from a given URL and returns the loading state, error (if any), and the fetched data. Use TypeScript for type safety.
+
+**Key Points:**
+
+- Implement `useEffect` to trigger fetch on mount or URL changes.
+- Manage `loading`, `error`, and `data` states.
+- Provide a strong type for the expected data shape if known, or a generic type parameter.
+
+**Solution Explanation:**
+
+- The hook accepts a URL and a data type generic.
+- Returns an object containing `data`, `loading`, and `error`.
+- Ensures proper cleanup and re-fetching if URL changes.
+
+**Code Example:**
+
+```tsx
+import { useState, useEffect } from "react";
+
+interface UseFetchResult<T> {
+  data: T | null;
+  loading: boolean;
+  error: string | null;
+}
+
+export function useFetch<T = unknown>(url: string): UseFetchResult<T> {
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+    setError(null);
+
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+        return response.json() as Promise<T>;
+      })
+      .then((json) => {
+        if (isMounted) {
+          setData(json);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (isMounted) {
+          setError(err.message);
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [url]);
+
+  return { data, loading, error };
+}
+
+// Example usage in a component:
+interface Post {
+  id: number;
+  title: string;
+}
+
+export const PostList: React.FC = () => {
+  const {
+    data: posts,
+    loading,
+    error,
+  } = useFetch<Post[]>("https://jsonplaceholder.typicode.com/posts");
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  return (
+    <ul>
+      {posts?.map((post) => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  );
+};
+```
+
+---
+
+### 3. Implement a Simple Memoized Component
+
+**Task:**  
+Create a React component that receives props and re-renders only when the props change. Use `React.memo` and TypeScript.
+
+**Key Points:**
+
+- Demonstrate understanding of memoization in React.
+- Show correct prop typing.
+- Ensure unnecessary re-renders are avoided.
+
+**Solution Explanation:**
+
+- Use `React.memo` to wrap a functional component.
+- The component only re-renders if the prop value actually changes.
+
+**Code Example:**
+
+```tsx
+import React from "react";
+
+interface DisplayProps {
+  count: number;
+}
+
+const DisplayCount: React.FC<DisplayProps> = ({ count }) => {
+  console.log("DisplayCount render");
+  return <div>Count: {count}</div>;
+};
+
+export const MemoizedDisplayCount = React.memo(DisplayCount);
+
+// Example usage:
+export const Counter: React.FC = () => {
+  const [count, setCount] = React.useState<number>(0);
+  const [text, setText] = React.useState<string>("");
+
+  return (
+    <div>
+      <button onClick={() => setCount((prev) => prev + 1)}>Increment</button>
+      <input
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Type something"
+      />
+      <MemoizedDisplayCount count={count} />
+    </div>
+  );
+};
+```
+
+---
+
+### 4. Implement a Custom Data Structure in TypeScript
+
+**Task:**  
+Implement a generic Stack data structure in TypeScript with `push`, `pop`, and `peek` methods.
+
+**Key Points:**
+
+- Show proficiency in TypeScript generics.
+- Implement a simple data structure logic.
+- Ensure proper error handling (e.g., popping from an empty stack).
+
+**Solution Explanation:**
+
+- The stack is backed by an internal array.
+- Generic allows any type of data.
+- Methods `push`, `pop`, `peek` are strongly typed.
+
+**Code Example:**
+
+```ts
+class Stack<T> {
+  private items: T[] = [];
+
+  push(item: T): void {
+    this.items.push(item);
+  }
+
+  pop(): T | undefined {
+    return this.items.pop();
+  }
+
+  peek(): T | undefined {
+    return this.items[this.items.length - 1];
+  }
+
+  get size(): number {
+    return this.items.length;
+  }
+}
+
+// Example usage:
+const numberStack = new Stack<number>();
+numberStack.push(1);
+numberStack.push(2);
+console.log(numberStack.peek()); // 2
+console.log(numberStack.pop()); // 2
+console.log(numberStack.size); // 1
+```
+
+---
+
+### 5. State Management with `useReducer`
+
+**Task:**  
+Build a small React component using `useReducer` to manage complex state transitions. For example, manage a form’s state (name, age) and handle reset.
+
+**Key Points:**
+
+- Demonstrate understanding of `useReducer` for state management.
+- Type the state and action properly.
+- Implement actions like `CHANGE_FIELD` and `RESET`.
+
+**Solution Explanation:**
+
+- Define a state type and an action type.
+- Implement a reducer that updates fields based on action.
+- Use `useReducer` in a React component and dispatch actions on input changes and reset button.
+
+**Code Example:**
+
+```tsx
+import React, { useReducer, ChangeEvent } from "react";
+
+interface FormState {
+  name: string;
+  age: string;
+}
+
+type FormAction =
+  | { type: "CHANGE_FIELD"; field: keyof FormState; value: string }
+  | { type: "RESET" };
+
+function formReducer(state: FormState, action: FormAction): FormState {
+  switch (action.type) {
+    case "CHANGE_FIELD":
+      return { ...state, [action.field]: action.value };
+    case "RESET":
+      return { name: "", age: "" };
+    default:
+      return state;
+  }
+}
+
+export const FormComponent: React.FC = () => {
+  const [state, dispatch] = useReducer(formReducer, { name: "", age: "" });
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    dispatch({ type: "CHANGE_FIELD", field: name as keyof FormState, value });
+  };
+
+  const handleReset = () => {
+    dispatch({ type: "RESET" });
+  };
+
+  return (
+    <div>
+      <input
+        name="name"
+        value={state.name}
+        onChange={handleChange}
+        placeholder="Name"
+      />
+      <input
+        name="age"
+        value={state.age}
+        onChange={handleChange}
+        placeholder="Age"
+      />
+      <button onClick={handleReset}>Reset</button>
+      <div>
+        <p>
+          <strong>Preview:</strong>
+        </p>
+        <p>Name: {state.name}</p>
+        <p>Age: {state.age}</p>
+      </div>
+    </div>
+  );
+};
+```
+
+---
+
+### 6. Condition Rendering with Type Guards (Optional Additional Task)
+
+**Task:**  
+Create a component that accepts a prop that can be either a string or an object with a `message` property. Render accordingly with type guards.
+
+**Key Points:**
+
+- Demonstrate use of TypeScript type guards.
+- Show different rendering paths depending on type.
+
+**Solution Explanation:**
+
+- Use a custom type guard function to check if prop is `string` or `object`.
+- Render differently based on the result.
+
+**Code Example:**
+
+```tsx
+import React from "react";
+
+type MessageProp = string | { message: string };
+
+function isString(value: MessageProp): value is string {
+  return typeof value === "string";
+}
+
+interface MessageRendererProps {
+  content: MessageProp;
+}
+
+export const MessageRenderer: React.FC<MessageRendererProps> = ({
+  content,
+}) => {
+  if (isString(content)) {
+    return <div>{content}</div>;
+  } else {
+    return <div>{content.message}</div>;
+  }
+};
+
+// Example usage:
+// <MessageRenderer content="Hello, World!" />
+// <MessageRenderer content={{ message: "Hi there!" }} />
+```
+
+---
+
+**General Tips for a Machine Coding Round:**
+
+- Make sure your code is clean, readable, and commented where necessary.
+- Add necessary error handling and edge cases.
+- Type everything properly if using TypeScript.
+- Keep components small and modular.
+- Be prepared to explain your choices and reasoning.
+
+By practicing these challenges, you'll become more confident and better prepared for machine coding rounds that require proficiency in JavaScript, React, and TypeScript.
