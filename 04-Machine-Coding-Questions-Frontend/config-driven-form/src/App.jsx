@@ -1,6 +1,7 @@
 import "./App.css";
 import * as z from "yup";
 import Form from "./components/Form";
+// import Form from "./components/Form";
 
 function App() {
   const schema = [
@@ -14,7 +15,7 @@ function App() {
     },
     {
       component: "TEXT_FIELD",
-      name: "name",
+      name: "email",
       label: "Your Email",
       isRequired: true,
       validate: z.string().email("Invalid Email").required("Email is required"),
@@ -28,7 +29,7 @@ function App() {
       validate: z
         .string()
         .required("Password is required")
-        .min(8, "Password must be atleast 8 characters"),
+        .min(8, "Password must be at least 8 characters"),
       type: "password",
     },
     {
@@ -53,7 +54,7 @@ function App() {
     {
       component: "DATE_PICKER",
       name: "birthdate",
-      labe: "Date of Birth",
+      label: "Date of Birth",
       validate: z.date(),
     },
     {
@@ -63,6 +64,7 @@ function App() {
       minValue: 1,
       maxValue: 5,
       validate: z
+        .number()
         .min(1, "Rating must be at least 1")
         .max(5, "Rating must be not more than 5"),
     },
@@ -72,14 +74,14 @@ function App() {
       isRequired: true,
       label: "I Accept the terms and condition",
       validate: z
-        .bool()
+        .boolean()
         .oneOf([true], "You must accept terms and conditions")
         .required("Please accept terms and condition"),
     },
   ];
 
   const onSubmit = (formData) => {
-    console.log(`FormData is ${formData}`);
+    console.log(formData);
   };
 
   return (
