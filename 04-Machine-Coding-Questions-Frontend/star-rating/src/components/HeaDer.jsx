@@ -22,7 +22,7 @@ const HeaDer = () => {
             payload: e.target.value,
           })
         }
-        className="p-2"
+        className="p-2 rounded-lg border-none"
       />
       <Link to="/cart">
         <button className="px-4 py-2 rounded-md bg-blue-700 text-white">
