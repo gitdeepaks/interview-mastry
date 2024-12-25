@@ -1,23 +1,32 @@
 import "./App.css";
-import { useState } from "react";
-import StarRating from "./components/StarRating";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import AppLayout from "./components/AppLayout";
+import Home from "./pages/Home";
+import Context from "./context/context";
+import Cart from "./pages/Cart";
 
 function App() {
-  const [currentRating, setCurrentRating] = useState(3);
+  const router = createBrowserRouter([
+    {
+      element: <AppLayout />,
 
-  function handleRatingChange(newRating) {
-    setCurrentRating(newRating);
-  }
+      children: [
+        {
+          path: "/",
+          element: <Home />,
+        },
+        {
+          path: "/cart",
+          element: <Cart />,
+        },
+      ],
+    },
+  ]);
+
   return (
-    <div className="">
-      <h2>Star Rating</h2>
-      <StarRating
-        size={5}
-        rating={currentRating}
-        onChange={handleRatingChange}
-      />
-      <p>Current Rating : {currentRating}</p>
-    </div>
+    <Context>
+      <RouterProvider router={router}></RouterProvider>
+    </Context>
   );
 }
 

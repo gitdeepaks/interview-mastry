@@ -1,10 +1,10 @@
 import { useState } from "react";
 
-const StarRating = ({ rating, onChange = () => {}, size = 5 }) => {
+const StarRating = ({ rating, onChange, size = 5 }) => {
   const [hoveredRating, serHoveredRating] = useState(0);
 
   function handleStarHover(hoveredRating) {
-    serHoveredRating(hoveredRating);
+    if (onChange) serHoveredRating(hoveredRating);
   }
   return (
     <div className="star-rating">
@@ -24,8 +24,12 @@ const StarRating = ({ rating, onChange = () => {}, size = 5 }) => {
               className={starClass}
               key={index}
               onClick={() => onChange(starValue)}
-              onMouseEnter={() => handleStarHover(starValue)}
-              onMouseLeave={() => handleStarHover(0)}
+              onMouseEnter={() => {
+                if (onChange) handleStarHover(starValue);
+              }}
+              onMouseLeave={() => {
+                if (onChange) handleStarHover(0);
+              }}
             >
               &#9733;
             </span>
