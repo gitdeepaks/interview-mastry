@@ -3,6 +3,7 @@ import { ShoppingCartState } from "../context/context";
 
 const HeaDer = () => {
   const {
+    state: { cart },
     filterState: { searchQuery },
     filterDispatch,
   } = ShoppingCartState();
@@ -26,7 +27,7 @@ const HeaDer = () => {
       />
       <Link to="/cart">
         <button className="px-4 py-2 rounded-md bg-blue-700 text-white">
-          Cart (0)
+          Cart ({cart.length})
         </button>
       </Link>
     </nav>

@@ -4,7 +4,10 @@ import { filterReducer, shoppingCartReducer } from "./reducer";
 const ShoppingCart = createContext();
 
 const Context = ({ children }) => {
-  const [state, dispatch] = useReducer(shoppingCartReducer, { products: [] });
+  const [state, dispatch] = useReducer(shoppingCartReducer, {
+    products: [],
+    cart: [],
+  });
 
   const [filterState, filterDispatch] = useReducer(filterReducer, {
     byStock: false,

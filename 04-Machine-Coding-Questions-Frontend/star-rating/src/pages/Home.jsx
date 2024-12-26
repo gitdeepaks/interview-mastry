@@ -7,9 +7,12 @@ import Filters from "../components/Filters";
 const Home = () => {
   const [page, setpage] = useState(1);
   const {
-    state: { products }, // Default empty array to avoid undefined
+    state: { products, cart },
+    dispatch,
     filterState: { sort, byStock, byRating, searchQuery },
   } = ShoppingCartState();
+
+  console.log({ cart });
 
   const filteredproduct = useMemo(() => {
     let filtertedProducts = products;
@@ -48,15 +51,34 @@ const Home = () => {
         {/* Products */}
         {filteredproduct.length > 0 ? (
           <div className="products w-full">
-            {filteredproduct?.slice(page * 10 - 10, page * 10).map((prod) => (
-              <span className="products__single" key={prod.id}>
-                <img src={prod.thumbnail} alt={prod.title} />
-                <span>{prod.title}</span>
-                <hr />
-                <span>$ {prod.price}</span>
-                <StarRating rating={prod.rating} />
-              </span>
-            ))}
+            {filteredproduct?.slice(page * 10 - 10, page * 10).map((prod) => {
+              const inCart = cart.some((p) => p.id === prod.id);
+              return (
+                <span className="products__single" key={prod.id}>
+                  <img src={prod.thumbnail} alt={prod.title} />
+                  <span>{prod.title}</span>
+                  <hr />
+                  <span>$ {prod.price}</span>
+                  <StarRating rating={prod.rating} />
+                  <button
+                    disabled={!prod.inStock}
+                    className={`px-2 py-1 mt bg-blue-500 text-white rounded-md`}
+                    onClick={() =>
+                      dispatch({
+                        type: inCart ? "REMOVE_FROM_CART" : "ADD_TO_CART",
+                        payload: prod,
+                      })
+                    }
+                  >
+                    {prod.inStock
+                      ? !inCart
+                        ? "Add to Cart"
+                        : "Remove from cart"
+                      : "Out of Stock"}
+                  </button>
+                </span>
+              );
+            })}
           </div>
         ) : (
           <p>Loading products...</p>
