@@ -27,7 +27,7 @@
 .suggestions-list {
   position: absolute;
   width: 100%;
-  border: 1px solid #252525;
+  border: 1px solid #ffff;
   border-top: none;
   border-radius: 0 0 4px 4px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
