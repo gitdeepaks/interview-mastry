@@ -5,14 +5,14 @@ import "./styles.css";
 
 import debounce from "lodash/debounce";
 import SuggestionsList from "./SuggestionsList";
-// import useCache from "../hooks/use-cache";
+import useCache from "../hooks/UseCache";
 
 const Autocomplete = ({
   staticData,
   fetchSuggestions,
   placeholder = "",
   customloading = "Loading...",
-  // caching = true,
+  caching = true,
   onSelect = () => {},
   onBlur = () => {},
   onFocus = () => {},
@@ -25,7 +25,7 @@ const Autocomplete = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // const {setCache, getCache} = useCache("autocomplete", 3600);
+  const { setCache, getCache } = useCache("autocomplete", 3600);
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
@@ -34,24 +34,28 @@ const Autocomplete = ({
 
   const getSuggestions = async (query) => {
     setError(null);
-
-    setLoading(true);
-    try {
-      let result;
-      if (staticData) {
-        result = staticData.filter((item) => {
-          return item.toLowerCase().includes(query.toLowerCase());
-        });
-      } else if (fetchSuggestions) {
-        result = await fetchSuggestions(query);
+    const cachedSuggesion = getCache(query);
+    if (cachedSuggesion && caching) {
+      setSuggestions(cachedSuggesion);
+    } else {
+      setLoading(true);
+      try {
+        let result;
+        if (staticData) {
+          result = staticData.filter((item) => {
+            return item.toLowerCase().includes(query.toLowerCase());
+          });
+        } else if (fetchSuggestions) {
+          result = await fetchSuggestions(query);
+        }
+        setCache(query, result);
+        setSuggestions(result);
+      } catch (err) {
+        setError("Failed to fetch suggestions", err);
+        setSuggestions([]);
+      } finally {
+        setLoading(false);
       }
-      // setCache(query, result);
-      setSuggestions(result);
-    } catch (err) {
-      setError("Failed to fetch suggestions", err);
-      setSuggestions([]);
-    } finally {
-      setLoading(false);
     }
   };
 
