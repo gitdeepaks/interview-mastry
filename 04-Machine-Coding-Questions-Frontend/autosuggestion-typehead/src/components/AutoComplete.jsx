@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useCallback, useEffect } from "react";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "./styles.css";
 
 import debounce from "lodash/debounce";
@@ -24,8 +23,10 @@ const Autocomplete = ({
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const { setCache, getCache } = useCache("autocomplete", 3600);
+
+  const SuggestionsListRef = useRef(null);
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
@@ -65,6 +66,7 @@ const Autocomplete = ({
   );
 
   useEffect(() => {
+    setSelectedIndex(-1);
     if (inputValue.length > 1) {
       getSuggestionsDebounced(inputValue);
     } else {
@@ -79,6 +81,46 @@ const Autocomplete = ({
     setSuggestions([]);
   };
 
+  const scrollIntoView = (index) => {
+    if (SuggestionsListRef.current) {
+      const suggestionElements =
+        SuggestionsListRef.current.getElementsByTagName("li"); // Corrected method name
+      if (suggestionElements[index]) {
+        suggestionElements[index].scrollIntoView({
+          behavior: "smooth",
+          block: "nearest", // Corrected spelling
+        });
+      }
+    }
+  };
+
+  function hanKeyDown(e) {
+    switch (e.key) {
+      case "ArrowDown":
+        setSelectedIndex((prev) => {
+          const newIndex = (prev + 1) % suggestions.length;
+          scrollIntoView(newIndex);
+          return newIndex;
+        });
+        break;
+      case "ArrowUp":
+        setSelectedIndex((prev) => {
+          const newIndex = (prev - 1 + suggestions.length) % suggestions.length;
+          scrollIntoView(newIndex);
+          return newIndex;
+        });
+        break;
+      case "Enter":
+        if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
+          handleSuggestionClick(suggestions[selectedIndex]);
+        }
+        break;
+
+      default:
+        break;
+    }
+  }
+
   return (
     <div className="container">
       <input
@@ -89,16 +131,25 @@ const Autocomplete = ({
         onBlur={onBlur}
         onFocus={onFocus}
         onChange={handleInputChange}
+        onKeyDown={hanKeyDown}
+        aria-autocomplete="list"
+        aria-controls="SuggestionsList"
+        aria-activedescendant={`suggestion -${selectedIndex}`}
       />
 
       {(suggestions.length > 0 || loading || error) && (
-        <ul className="suggestions-list" role="listbox">
+        <ul
+          ref={SuggestionsListRef}
+          className="suggestions-list"
+          role="listbox"
+        >
           {error && <div className="error">{error}</div>}
           {loading && <div className="loading">{customloading}</div>}
           <SuggestionsList
             dataKey={dataKey}
             highlight={inputValue}
             suggestions={suggestions}
+            selectedIndex={selectedIndex}
             onSuggestionClick={handleSuggestionClick}
           />
         </ul>

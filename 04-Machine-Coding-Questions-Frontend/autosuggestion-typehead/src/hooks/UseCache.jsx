@@ -1,32 +1,30 @@
 import { useRef } from "react";
 
-const getCurrentTimeStamp = () => Math.floor(Date.now() / 1000);
+// Utility function to get the current timestamp
+const getCurrentTimestamp = () => Math.floor(Date.now() / 1000);
 
+// Custom hook for cache management with expiration
 const useCache = (key, expirationInSeconds) => {
   const cache = useRef(JSON.parse(localStorage.getItem(key)) || {});
 
   const setCache = (query, data) => {
-    const timeStamp = getCurrentTimeStamp();
-
-    caches.current[query] = { data, timeStamp };
-
+    const timestamp = getCurrentTimestamp();
+    cache.current[query] = { data, timestamp };
     localStorage.setItem(key, JSON.stringify(cache.current));
   };
 
   const getCache = (query) => {
-    const cacheData = cache.current[query];
-
-    if (cacheData) {
-      const { data, timeStamp } = cacheData;
-
-      if (getCurrentTimeStamp() - timeStamp < expirationInSeconds) {
+    const cachedData = cache.current[query];
+    if (cachedData) {
+      const { data, timestamp } = cachedData;
+      if (getCurrentTimestamp() - timestamp < expirationInSeconds) {
         return data;
       } else {
+        // Cache expired
         delete cache.current[query];
-        localStorage.setItem(key.JSON.stringify(cache.current));
+        localStorage.setItem(key, JSON.stringify(cache.current));
       }
     }
-
     return null;
   };
 
