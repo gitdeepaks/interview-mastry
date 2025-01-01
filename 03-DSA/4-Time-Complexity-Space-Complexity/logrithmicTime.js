@@ -16,11 +16,8 @@ function findPower(base, exponent) {
 
 console.time("Find Power1");
 findPower(2, 100);
-
 console.timeEnd("Find Power1");
 
 console.time("Find Power 2");
-
 findPower(2, 10000000000);
-
 console.timeEnd("Find Power 2");
