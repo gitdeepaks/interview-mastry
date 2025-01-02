@@ -1,5 +1,5 @@
 function maxSubarrayLinear(arr, k) {
-  let currentSum = 0; // Use let instead of const
+  let currentSum = 0;
   let maxSum = 0;
 
   // Initialize the sum of the first k elements
