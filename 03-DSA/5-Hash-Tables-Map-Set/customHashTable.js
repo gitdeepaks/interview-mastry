@@ -44,6 +44,69 @@ class HashTable {
       }
     }
   }
+
+  get(key) {
+    const index = this._hash(key, this.limit);
+
+    if (this.storage === undefined) {
+      return undefined;
+    } else {
+      for (let i = 0; i < this.storage[index].length; i++) {
+        if (this.storage[index][i][0] === key) {
+          return this.storage[index][i][1];
+        }
+      }
+    }
+  }
+
+  has(key) {
+    const index = this._hash(key, this.limit);
+
+    if (this.storage[index]) {
+      for (let i = 0; i < this.storage[index].length; i++) {
+        if (this.storage[index][i][0] === key) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  remove(key) {
+    const index = this._hash(key, this.limit);
+
+    if (this.storage[index]) {
+      if (
+        this.storage[index].length === 1 &&
+        this.storage[index][0][0] === key
+      ) {
+        delete this.storage[index];
+      } else {
+        for (let i = 0; i < this.storage[index].length; i++) {
+          if (this.storage[index][i][0] === key) {
+            delete this.storage[index][i];
+          }
+        }
+      }
+    }
+  }
+
+  clear() {
+    this.storage = [];
+  }
+
+  getValues() {
+    const values = [];
+    for (let i = 0; i < this.storage.length; i++) {
+      if (this.storage[i]) {
+        for (const [key, value] of this.storage) {
+          values.push(value);
+        }
+      }
+    }
+    return values;
+  }
 }
 
 const myHashTable = new HashTable();
@@ -54,6 +117,8 @@ myHashTable.set("Deepak", "533-364-79700");
 myHashTable.set("Sara", "523-564-79900");
 myHashTable.set("Simon", "123-766-89000");
 
-myHashTable.printTable();
+// myHashTable.remove("Simon");
+// myHashTable.printTable();
+console.log(myHashTable.has("Simon"));
 
 // console.log(res);
