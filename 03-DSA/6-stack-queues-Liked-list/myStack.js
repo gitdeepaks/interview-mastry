@@ -24,9 +24,8 @@ class Stack {
       return null;
     }
     const valueToReturn = this.stack[this.top];
-
     this.top--;
-    return this.stack.pop();
+    return valueToReturn;
   }
 
   peek() {
