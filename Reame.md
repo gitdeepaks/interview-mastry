@@ -2,7 +2,7 @@ Here is a curated set of **JavaScript interview questions** along with their **a
 
 ---
 
-### **Core JavaScript Questions**
+#### **Core JavaScript Questions**
 
 #### **1. Explain `this` in JavaScript. How is it determined?**
 
