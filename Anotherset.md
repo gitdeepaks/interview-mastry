@@ -1975,4 +1975,858 @@ Create a custom hook when you find yourself repeating a certain piece of statefu
 
 ---
 
+<<<<<<< HEAD
+Below is a comprehensive list of **React Query (TanStack Query)** interview-style questions **with concise answers**. These should help you solidify your knowledge and **ACE** the interview. Feel free to adapt your answers to your personal experience and the specific role you’re applying for.
+
+---
+
+# 1. Fundamentals of React Query
+
+### 1.1 What is React Query, and why would you use it?
+
+**Answer:**
+
+- **Definition**: React Query (TanStack Query) is a data-fetching and state management library focused on **server state**—data that comes from an external source (like an API) and must be synchronized with the UI.
+- **Why use it**:
+  - Automatic **caching** and **request deduplication**.
+  - Simple handling of **loading**, **error**, and **success** states.
+  - Smart **refetching** (on window focus, network reconnect, etc.).
+  - Provides **Devtools** for easier debugging.
+- **Key difference** from Redux/Context: React Query handles **asynchronous server state**, whereas Redux or Context is often used for **client-side state** management.
+
+---
+
+### 1.2 Explain the core concepts of React Query.
+
+**Answer:**
+
+- **Query**: A request for data (e.g., `useQuery` hook). Identified by a **query key**.
+- **Mutation**: An operation that modifies data on the server (e.g., `useMutation` hook).
+- **Caching**: React Query automatically caches data from completed queries.
+- **Invalidation**: Marking cached data as stale, triggering refetches.
+- **Refetching**: Automatically or manually retrieving fresh data.
+
+---
+
+### 1.3 How does React Query handle caching?
+
+**Answer:**
+
+- React Query **stores** server responses in its internal cache and associates them with **query keys**.
+- You can configure **`staleTime`** (how long data is considered fresh) and **`cacheTime`** (how long unused data stays in cache before garbage-collecting).
+- When a component remounts or re-renders, if the cached data is still **fresh**, React Query returns it instantly without refetching.
+
+---
+
+### 1.4 What is a “query key” in React Query, and why is it important?
+
+**Answer:**
+
+- A query key is an **identifier** (usually an array or string) that uniquely represents a query.
+- Allows React Query to **cache** and **manage** data for each unique request separately.
+- **Example**: `useQuery(['todos', userId], fetchTodos)` ensures data is scoped per user ID.
+
+---
+
+### 1.5 What is the difference between server state and client state, and how does React Query help manage them?
+
+**Answer:**
+
+- **Client state**: Ephemeral data that lives only on the client side (e.g., form inputs, UI toggles).
+- **Server state**: Persisted data from a remote server that needs frequent syncing with the client.
+- **React Query**: Solves complexities of **async** data management (caching, refetching, invalidation) so you can focus on app logic rather than building custom data-fetching flows.
+
+---
+
+### 1.6 How do you set up and configure React Query in a React application?
+
+**Answer:**
+
+1. **Install**: `npm install @tanstack/react-query`.
+2. **Create a Query Client**:
+
+   ```js
+   import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+   const queryClient = new QueryClient();
+
+   function App() {
+     return (
+       <QueryClientProvider client={queryClient}>
+         <MyComponent />
+       </QueryClientProvider>
+     );
+   }
+   ```
+
+3. **Use hooks** in your components:
+
+   ```js
+   import { useQuery } from "@tanstack/react-query";
+
+   const { data, isLoading, isError } = useQuery(["todos"], fetchTodos);
+   ```
+
+---
+
+# 2. Query Lifecycle and States
+
+### 2.1 What are the different states a query can be in, and how do you handle them?
+
+**Answer:**
+
+- **Idle**: The query has not started fetching yet.
+- **Loading**: The query is in the process of fetching data.
+- **Success**: Data has been fetched successfully.
+- **Error**: An error occurred during data fetching.
+- **Fetching**: Indicates a background refetch is happening (can overlap with success state).
+- **Handling**: Usually display a spinner when `isLoading`, show error messages when `isError`, and render data when `isSuccess`.
+
+---
+
+### 2.2 How does React Query handle background refetching and polling?
+
+**Answer:**
+
+- **Refetch on focus**: Automatically refetches if the browser window/tab regains focus.
+- **Refetch on network reconnect**: If the network goes offline and comes back, React Query can refetch data.
+- **Polling**: Use `refetchInterval` option to fetch periodically.
+  ```js
+  useQuery(["todos"], fetchTodos, { refetchInterval: 5000 });
+  ```
+
+---
+
+### 2.3 Explain `staleTime` vs. `cacheTime`, and give examples of when to configure them.
+
+**Answer:**
+
+- **staleTime**: Duration in milliseconds before data is considered stale (e.g., `staleTime: 60_000` means data is fresh for 1 minute). Fresh data won’t be refetched on re-render or focus.
+- **cacheTime**: Duration that unused (inactive) data remains in the cache. After `cacheTime` expires, data is garbage-collected.
+- **Use Case**:
+  - If data doesn’t change frequently (e.g., static config data), set a **long** `staleTime`.
+  - If data updates often (e.g., stocks, live scores), set a **short** `staleTime`.
+
+---
+
+### 2.4 How does React Query decide when to refetch data?
+
+**Answer:**
+
+- When the query becomes **stale** (based on `staleTime`).
+- On **window focus** if `refetchOnWindowFocus` is true (default).
+- On **network reconnect** if `refetchOnReconnect` is true (default).
+- **Manual triggers** via `refetch()` method.
+- **Invalidation** calls like `queryClient.invalidateQueries(...)`.
+
+---
+
+# 3. Mutations
+
+### 3.1 What is a mutation in React Query, and how is it different from a query?
+
+**Answer:**
+
+- **Mutation**: Used for **create**, **update**, or **delete** operations on the server.
+- **Query**: Used for **read** operations (fetching data).
+- React Query provides the `useMutation` hook for executing server updates and managing states like loading or error for these operations.
+
+---
+
+### 3.2 How do you perform optimistic updates with React Query?
+
+**Answer:**
+
+- **Optimistic Update Flow**:
+  1. In `onMutate`, **optimistically update** the UI (e.g., update the cache) before the server responds.
+  2. If the server operation **fails**, use `onError` to **rollback** changes in the cache.
+  3. Use `onSettled` to **invalidate** queries or ensure the UI is refetched to display final server data.
+- **Example**:
+  ```js
+  const mutation = useMutation(updateTodo, {
+    onMutate: async (newTodo) => {
+      await queryClient.cancelQueries(["todos"]);
+      const prevTodos = queryClient.getQueryData(["todos"]);
+      queryClient.setQueryData(["todos"], (old) =>
+        old.map((todo) => (todo.id === newTodo.id ? newTodo : todo))
+      );
+      return { prevTodos };
+    },
+    onError: (err, newTodo, context) => {
+      queryClient.setQueryData(["todos"], context.prevTodos);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(["todos"]);
+    },
+  });
+  ```
+
+---
+
+### 3.3 Explain the typical flow of a mutation, including error handling.
+
+**Answer:**
+
+1. **Call mutate** with the new data.
+2. **React Query** transitions to a loading state (e.g., `isLoading`).
+3. The **request** is sent to the server.
+4. On **success**, optionally invalidate or update relevant queries.
+5. On **error**, set error states or show UI messages. If optimistic updates were used, revert the cache.
+6. On **settled**, perform final housekeeping (e.g., logging, refetch).
+
+---
+
+# 4. Data Invalidation and Syncing
+
+### 4.1 How do you invalidate queries in React Query, and why is it important?
+
+**Answer:**
+
+- **How**: Use `queryClient.invalidateQueries(queryKey)`.
+- **Why**: Invalidation marks relevant cached data as **stale**, prompting a **refetch** the next time the query is accessed. It ensures that the UI stays in **sync** with the server after data mutations.
+
+---
+
+### 4.2 Describe different strategies for refetching or invalidating data after a mutation.
+
+**Answer:**
+
+- **Manual Invalidation**: Call `queryClient.invalidateQueries('someKey')` in the `onSuccess` or `onSettled` callback.
+- **Targeted Invalidation**: Pass a partial query key to invalidate a subset of queries.
+- **Automatic Refetch**: Some data can be configured to refetch based on certain triggers (focus, network reconnect, etc.).
+- **Optimistic Update + Invalidation**: Update the cache optimistically, then invalidate to get the latest server state.
+
+---
+
+### 4.3 How does React Query handle race conditions or out-of-date data?
+
+**Answer:**
+
+- **Request Dedupe**: If multiple components mount with the same query key at once, React Query merges them into a single request.
+- **Cancellation**: Queries can cancel the previous request if a new one supersedes it.
+- **Refetch & Invalidation**: Ensures out-of-date data doesn’t persist too long.
+
+---
+
+# 5. Advanced Features
+
+### 5.1 How do you handle pagination or infinite scrolling in React Query?
+
+**Answer:**
+
+- **Pagination**: Often done with `useQuery` by passing page params in the query key.
+- **Infinite Scrolling**: Use `useInfiniteQuery`. Provides:
+  ```js
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery(["items"], fetchItems, {
+      getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+    });
+  ```
+- This allows you to **append** pages as the user scrolls.
+
+---
+
+### 5.2 Describe how to integrate React Query with server-side rendering (e.g., Next.js).
+
+**Answer:**
+
+- **On the Server**: Use `queryClient.prefetchQuery(...)` or `dehydrate` the state inside `getServerSideProps` / `getStaticProps`.
+- **On the Client**: Use `Hydrate` component to **rehydrate** the prefetched data:
+
+  ```js
+  import { Hydrate } from "@tanstack/react-query";
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Hydrate state={pageProps.dehydratedState}>
+        <Component {...pageProps} />
+      </Hydrate>
+    </QueryClientProvider>
+  );
+  ```
+
+- This ensures **initial** data is already populated and no “loading” flash occurs on first render.
+
+---
+
+### 5.3 How do you handle offline or network fluctuations in React Query?
+
+**Answer:**
+
+- **Refetch on reconnect**: By default, React Query retries fetching when the network is restored.
+- **Retry logic**: Configure `retry` and `retryDelay`.
+- **Offline strategies**: For advanced offline usage, combine React Query with service workers or local databases (though React Query doesn’t fully handle offline persistence out of the box).
+
+---
+
+### 5.4 What is `useQueries`, and when would you use it over multiple `useQuery` hooks?
+
+**Answer:**
+
+- **`useQueries`**: A hook to run **multiple queries in parallel** with a single call.
+- **Use Case**: If you have a list of query configurations at runtime (dynamic queries) or want to handle them collectively. Example:
+  ```js
+  const results = useQueries({
+    queries: [
+      { queryKey: ["user", 1], queryFn: fetchUser },
+      { queryKey: ["posts", 1], queryFn: fetchPosts },
+    ],
+  });
+  ```
+
+---
+
+### 5.5 Explain how query cancellation works in React Query.
+
+**Answer:**
+
+- If a query is **in-flight** and a new fetch is triggered or the component unmounts, React Query can cancel the old request (if the fetch mechanism supports cancellation).
+- Helps **avoid** outdated requests and race conditions.
+- Typically uses **AbortController** under the hood (for fetch-based clients).
+
+---
+
+# 6. Performance and Debugging
+
+### 6.1 What tools or strategies are available for debugging React Query?
+
+**Answer:**
+
+- **React Query Devtools**: A dedicated Devtools panel to inspect query cache, states, etc.
+- **Logging**: Use `onError` and `onSuccess` callbacks to track requests.
+- **Performance**: Keep an eye on unnecessary invalidations and short `staleTime` values that might cause excessive refetching.
+
+---
+
+### 6.2 How do you prevent over-fetching in React Query, and what configurations help optimize performance?
+
+**Answer:**
+
+- **Use `staleTime`**: If data doesn’t change frequently, set a higher `staleTime`.
+- **Conditional Fetching**: Only fetch if necessary (e.g., based on user actions or conditions).
+- **Avoid broad Invalidation**: Invalidate only relevant query keys.
+- **Refetch Intervals**: Turn off or keep them minimal unless your data must be fresh in real-time.
+
+---
+
+### 6.3 Give an example of how to handle large or deeply nested data with React Query efficiently.
+
+**Answer:**
+
+- **Partial Fetching**: Design your API endpoints to return only needed fields.
+- **Normalization**: If data is large or repeated, consider normalizing it before storing in the query cache.
+- **Pagination**: Load data in small chunks (with `useInfiniteQuery` or page-based queries) to avoid loading everything at once.
+
+---
+
+# 7. Comparisons and Alternatives
+
+### 7.1 Compare React Query to alternative libraries like SWR, Apollo, or Redux Toolkit Query.
+
+**Answer:**
+
+- **SWR**: Similar to React Query, also focuses on caching and revalidation but has a smaller API surface.
+- **Apollo**: GraphQL-focused with built-in caching. React Query is agnostic to REST or GraphQL.
+- **Redux Toolkit Query**: Integrates closely with Redux architecture for caching server state; React Query is a standalone solution.
+- **Overall**: React Query is known for its **simplicity**, **performance**, and robust feature set for REST or GraphQL.
+
+---
+
+### 7.2 Why would someone use React Query instead of manually managing fetch calls in `useEffect`?
+
+**Answer:**
+
+- Automatic **caching**, **deduplication**, **refetch** on focus/reconnect, easier **loading/error** states, and out-of-the-box **Devtools**.
+- Minimizes the boilerplate of setting up useEffect, useState, and manual error handling logic.
+- Scales better with more queries and dynamic data flows.
+
+---
+
+### 7.3 Can React Query fully replace something like Redux or MobX in an application?
+
+**Answer:**
+
+- **Server state** (React Query) vs. **client state** (Redux/MobX): They solve different problems.
+- React Query can **replace** the server-data aspects of Redux or MobX, but you might still need a client state solution for local UI state if it’s complex.
+- In smaller apps, React Query + React’s built-in state is often enough.
+
+---
+
+# 8. Scenario-Based Questions
+
+### 8.1 You have a list of items. When one item is updated, how do you ensure the list re-renders with the updated data?
+
+**Answer:**
+
+- **Invalidate** the list’s query key: `queryClient.invalidateQueries(['items'])`.
+- Or **update the cache** manually using the mutation’s `onSuccess` or `onMutate` for immediate UI reflection.
+
+---
+
+### 8.2 You need to display a loading spinner for multiple dependent queries. How would you handle this with React Query?
+
+**Answer:**
+
+- If queries are **dependent**, chain them: Start the second query only when the first has data.
+- Or combine queries with `useQueries` and track their **loading states** collectively:
+
+  ```js
+  const results = useQueries([
+    { queryKey: ["a"], queryFn: fetchA },
+    { queryKey: ["b"], queryFn: fetchB },
+  ]);
+
+  const isLoading = results.some((result) => result.isLoading);
+  ```
+
+- Render a **spinner** if any are still loading.
+
+---
+
+### 8.3 You are fetching data from an API that can be offline sometimes. How would you implement retry logic with React Query?
+
+**Answer:**
+
+- Use **retry** and **retryDelay** options:
+  ```js
+  useQuery(["data"], fetchData, {
+    retry: 3,
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 30000),
+  });
+  ```
+- This setup will **retry** fetch up to 3 times with an exponential backoff.
+
+---
+
+### 8.4 How do you deal with partial updates of server data when you only have to fetch a sub-resource?
+
+**Answer:**
+
+- You can maintain separate queries for different resources or sub-resources.
+- Optionally, **manually update** the relevant part of the cache if the sub-resource is part of a larger cached dataset.
+- Use `queryClient.setQueryData` to merge partial data if you don’t want to invalidate the entire query.
+
+---
+
+## Tips for Interviews
+
+1. **Use Real-World Examples**: Show how you applied React Query to solve typical data fetching challenges.
+2. **Focus on Server State**: Emphasize how React Query simplifies caching and invalidation compared to manually using `useEffect`.
+3. **Demonstrate Advanced Knowledge**: Mention SSR hydration, optimistic updates, and offline strategies if relevant to the role.
+4. **Stay Calm and Organized**: Answer step-by-step, especially for scenario-based questions.
+
+---
+
+### Final Thoughts
+
+By understanding these **core concepts**, **advanced strategies**, and **common scenarios**, you’ll be able to confidently discuss **React Query** in interviews. Best of luck, and happy coding!
+
+---
+
+Below is a **comprehensive set of Redux Toolkit interview questions** along with **concise answers**. These cover foundational concepts through advanced use-cases and scenario-based questions. They are designed to help you **ACE** your interview by demonstrating a solid understanding of how Redux Toolkit simplifies state management in modern React applications.
+
+---
+
+# 1. Fundamentals of Redux Toolkit
+
+### 1.1 What is Redux Toolkit, and why was it created?
+
+**Answer:**
+
+- **Redux Toolkit (RTK)** is the official, opinionated toolset for efficient Redux development.
+- It was created to **reduce boilerplate** (e.g., action types, action creators, switch statements) and to **promote best practices** (e.g., using Immer for immutable updates).
+- It provides a **standardized** approach to writing Redux logic, making state management simpler and more predictable.
+
+---
+
+### 1.2 What are the main features of Redux Toolkit?
+
+**Answer:**
+
+1. **`configureStore`**: Automatically sets up the Redux store with recommended defaults, including middleware like `redux-thunk`.
+2. **`createSlice`**: Generates action creators and action types based on the slice name and reducer functions.
+3. **`createAsyncThunk`**: Simplifies writing async logic, dispatching `pending`, `fulfilled`, and `rejected` actions automatically.
+4. **`createReducer`** and **`createAction`**: Utilities for creating reducers and actions with less boilerplate and built-in Immer for immutable updates.
+5. **RTK Query** (optional package): A data-fetching and caching tool built on top of Redux Toolkit.
+
+---
+
+### 1.3 How does Redux Toolkit reduce boilerplate compared to traditional Redux?
+
+**Answer:**
+
+- It removes the need to manually write **action types** and **action creators** for each scenario; `createSlice` automatically generates them.
+- Built-in **Immer** usage allows you to write “mutating” syntax in reducers while keeping the state immutable under the hood.
+- **`configureStore`** automatically applies middleware (`redux-thunk` by default) and integrates Redux DevTools.
+
+---
+
+### 1.4 How do you set up a store using `configureStore`?
+
+**Answer:**
+
+```js
+import { configureStore } from "@reduxjs/toolkit";
+import userReducer from "./userSlice";
+import postsReducer from "./postsSlice";
+
+const store = configureStore({
+  reducer: {
+    user: userReducer,
+    posts: postsReducer,
+  },
+});
+
+export default store;
+```
+
+- **Explanation**: Pass an object of slice reducers to `configureStore`. It sets up the Redux DevTools integration, thunk middleware, and other recommended settings by default.
+
+---
+
+### 1.5 What is a “slice” in Redux Toolkit?
+
+**Answer:**
+
+- A **slice** represents a section (slice) of the Redux state.
+- **`createSlice`** accepts a name, initial state, and reducer functions.
+- It automatically generates **action creators** and **action types** matching the reducer functions.
+- Encourages **colocation** of actions and reducers that belong to a specific domain (e.g., `userSlice`, `postsSlice`).
+
+---
+
+# 2. createSlice, Reducers, and Actions
+
+### 2.1 How do you create a slice with `createSlice`?
+
+**Answer:**
+
+```js
+import { createSlice } from "@reduxjs/toolkit";
+
+const userSlice = createSlice({
+  name: "user",
+  initialState: { value: null },
+  reducers: {
+    setUser: (state, action) => {
+      state.value = action.payload; // Immer allows direct mutation
+    },
+    clearUser: (state) => {
+      state.value = null;
+    },
+  },
+});
+
+export const { setUser, clearUser } = userSlice.actions;
+export default userSlice.reducer;
+```
+
+- The **generated** action creators (`setUser`, `clearUser`) are tied to these case reducers.
+- The **default export** is the slice reducer that you attach to the store.
+
+---
+
+### 2.2 Why can we write “mutating” syntax in Redux Toolkit reducers?
+
+**Answer:**
+
+- Redux Toolkit uses **Immer** under the hood.
+- Immer **wraps** your reducer function and tracks changes to the draft state. It then produces an **immutable** copy internally, so Redux state is never directly mutated.
+
+---
+
+### 2.3 How do you handle actions from other slices in a slice reducer?
+
+**Answer:**
+
+1. **Extra reducers**: Use `extraReducers` property in `createSlice` to respond to actions defined outside the slice.
+2. **Builder callback**: With Redux Toolkit v1.7+, you can write:
+   ```js
+   extraReducers: (builder) => {
+     builder
+       .addCase(someOtherAction, (state, action) => {...})
+       .addMatcher(...)
+   }
+   ```
+3. This is typically used with **`createAsyncThunk`** or to react to external actions from other slices.
+
+---
+
+# 3. createAsyncThunk and Async Operations
+
+### 3.1 What is `createAsyncThunk` used for?
+
+**Answer:**
+
+- It is a **utility** to create **async** Redux actions.
+- Generates a **thunk** that automatically dispatches **`pending`**, **`fulfilled`**, and **`rejected`** actions based on the promise lifecycle.
+- Simplifies side effects (e.g., API calls) and keeps your slice code more organized.
+
+---
+
+### 3.2 How do you use `createAsyncThunk` in a slice?
+
+**Answer:**
+
+```js
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import api from "path/to/api";
+
+export const fetchUser = createAsyncThunk(
+  "user/fetchUser",
+  async (userId, thunkAPI) => {
+    const response = await api.getUser(userId);
+    return response.data;
+  }
+);
+
+const userSlice = createSlice({
+  name: "user",
+  initialState: { data: null, loading: false, error: null },
+  reducers: {
+    /* ... */
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+      })
+      .addCase(fetchUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+  },
+});
+```
+
+- **Explanation**: `fetchUser` is an async thunk. In the slice, handle each of the 3 action types (`pending`, `fulfilled`, `rejected`) in `extraReducers`.
+
+---
+
+### 3.3 How do you handle errors in `createAsyncThunk`?
+
+**Answer:**
+
+- You can **throw** an error or reject the promise in the async function, which triggers the `rejected` action. For instance:
+  ```js
+  if (!response.ok) {
+    throw new Error("Error fetching user");
+  }
+  ```
+- The `rejected` action’s payload or `action.error.message` can be used to store the error in Redux state or display an error message in the UI.
+
+---
+
+### 3.4 How can you customize the payload for rejected actions in `createAsyncThunk`?
+
+**Answer:**
+
+- By returning `rejectWithValue` in the thunk:
+
+  ```js
+  import { createAsyncThunk } from "@reduxjs/toolkit";
+
+  export const fetchUser = createAsyncThunk(
+    "user/fetchUser",
+    async (userId, { rejectWithValue }) => {
+      try {
+        const response = await api.getUser(userId);
+        return response.data;
+      } catch (error) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  );
+  ```
+
+- This allows you to handle errors more gracefully in your `rejected` reducer, using `action.payload` instead of `action.error`.
+
+---
+
+# 4. RTK Query (Optional Data Fetching Module)
+
+### 4.1 What is RTK Query, and how does it compare to `createAsyncThunk`?
+
+**Answer:**
+
+- **RTK Query** is a data-fetching and caching solution built on top of Redux Toolkit, offering **automatic** caching, invalidation, and refetching out of the box.
+- Instead of manually writing thunks, you define “**services**” with **endpoints** that handle fetching/mutations. RTK Query generates hooks for each endpoint.
+- **`createAsyncThunk`** is more **manual**—you handle loading/error states yourself in slices. RTK Query streamlines that process, similar to libraries like React Query or SWR, but fully integrated with Redux.
+
+---
+
+### 4.2 How do you set up an RTK Query service?
+
+**Answer:**
+
+1. Install `@reduxjs/toolkit` (v1.6+) to have RTK Query capabilities.
+2. Create an **API slice**:
+
+   ```js
+   import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
+   export const api = createApi({
+     reducerPath: "api",
+     baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
+     endpoints: (builder) => ({
+       getUser: builder.query({
+         query: (id) => `user/${id}`,
+       }),
+     }),
+   });
+   ```
+
+3. Add `api.reducer` to your store and `api.middleware` to the store’s middleware array:
+
+   ```js
+   import { configureStore } from "@reduxjs/toolkit";
+   import { api } from "./api";
+
+   const store = configureStore({
+     reducer: {
+       [api.reducerPath]: api.reducer,
+     },
+     middleware: (getDefaultMiddleware) =>
+       getDefaultMiddleware().concat(api.middleware),
+   });
+   export default store;
+   ```
+
+4. Use the auto-generated hook:
+
+   ```js
+   import { useGetUserQuery } from "./api";
+
+   const UserProfile = ({ userId }) => {
+     const { data, error, isLoading } = useGetUserQuery(userId);
+     // ...
+   };
+   ```
+
+---
+
+### 4.3 How does RTK Query handle caching and invalidation?
+
+**Answer:**
+
+- **Caching**: RTK Query automatically stores fetched data in a normalized cache keyed by the query arguments.
+- **Invalidation**: You can **tag** data in an endpoint (e.g., `providesTags`, `invalidatesTags`). When you **invalidate** a tag, any queries providing that tag will refetch.
+- Example:
+  ```js
+  endpoints: (builder) => ({
+    getUser: builder.query({
+      query: (id) => `user/${id}`,
+      providesTags: (result, error, id) => [{ type: "User", id }],
+    }),
+    updateUser: builder.mutation({
+      query: (user) => ({
+        url: `user/${user.id}`,
+        method: "PUT",
+        body: user,
+      }),
+      invalidatesTags: (result, error, user) => [{ type: "User", id: user.id }],
+    }),
+  });
+  ```
+
+---
+
+# 5. Middleware, DevTools, and Best Practices
+
+### 5.1 Which middleware does Redux Toolkit configure by default?
+
+**Answer:**
+
+- **`redux-thunk`**: For handling async logic (thunks).
+- **`serializableCheck`**: Ensures that actions and state remain serializable (warns if you store non-serializable values).
+- **`immutableCheck`**: Helps detect accidental direct mutations of Redux state.
+- Developers can customize or disable these via the `getDefaultMiddleware` callback in `configureStore`.
+
+---
+
+### 5.2 What are some best practices when using Redux Toolkit?
+
+**Answer:**
+
+1. **Keep slices small** and domain-focused (e.g., `userSlice`, `productsSlice`).
+2. Use **Immer** best practices: Don’t mutate external references, only use the “draft state.”
+3. **Normalize** complex data structures if needed for performance (though often RTK Query can help).
+4. Avoid storing **derived data** in Redux; derive it in selectors.
+5. Use **RTK Query** if you frequently fetch or mutate data from a server, as it simplifies caching and invalidation.
+
+---
+
+### 5.3 How do you integrate Redux DevTools with Redux Toolkit?
+
+**Answer:**
+
+- **Redux Toolkit** automatically configures Redux DevTools if they are installed in the browser.
+- No extra steps needed; just use `configureStore`.
+- If you need custom settings, you can pass `devTools: true` or `devTools: { ...options }`.
+
+---
+
+# 6. Advanced Patterns and Scenario-Based Questions
+
+### 6.1 How do you handle “global” error or loading states with Redux Toolkit?
+
+**Answer:**
+
+- **Option 1**: Create a dedicated slice for global UI state that listens to pending/rejected actions in `extraReducers` (e.g., a global `statusSlice`).
+- **Option 2**: Use a middleware that catches all rejected actions. This could dispatch a global error action or show toast notifications automatically.
+
+---
+
+### 6.2 How do you test Redux Toolkit reducers and async thunks?
+
+**Answer:**
+
+1. **Reducers**: Test them like normal Redux reducers, passing a state and an action to see if the state updates correctly.
+2. **Async thunks**: Use frameworks like **Jest** or **React Testing Library**. Mock API calls, dispatch the thunk, and expect the correct actions (`pending`, `fulfilled`, `rejected`) to be dispatched.
+3. **Integration**: For more advanced tests, configure a test store and dispatch the thunk directly, then inspect final store state.
+
+---
+
+### 6.3 How do you implement code splitting or lazy loading for Redux slices?
+
+**Answer:**
+
+1. **Dynamically import** the slice reducer when needed (e.g., route-based code splitting).
+2. Use the store’s `replaceReducer` or a library like **redux-dynamic-modules** to dynamically **inject** slice reducers at runtime.
+3. This helps keep the bundle size smaller and only load the Redux logic for features when they’re actually used.
+
+---
+
+### 6.4 Give an example of how you might optimize performance for large data sets in Redux Toolkit.
+
+**Answer:**
+
+- Use **RTK Query** to fetch partial data sets or do pagination.
+- **Normalize** large or nested data before storing in Redux to reduce re-rendering caused by deeply nested structures.
+- Memoize **selectors** to avoid unnecessary recomputations.
+- Set up **lazy loading** for features with large slices or data sets.
+
+---
+
+# Quick Interview Tips
+
+1. **Know the differences** between “plain Redux” vs. Redux Toolkit—emphasize how RTK reduces boilerplate.
+2. **Explain best practices** (e.g., slices, Immer, code organization).
+3. **Show familiarity** with **async** scenarios (`createAsyncThunk`, RTK Query).
+4. **Give real-world examples** of how you’d structure slices or handle complex data fetching.
+5. **Keep it practical**—highlight how RTK solves common Redux pains (boilerplate, immutability, etc.).
+
+---
+
+## Final Thoughts
+
+By covering these **core concepts**, **best practices**, and **scenario-based questions**, you’ll be in an excellent position to discuss **Redux Toolkit** confidently during interviews. Practice walking through **code examples**, **data flow** explanations, and emphasize how Redux Toolkit helps maintain clean, maintainable state management in React applications.
+
+# **Good luck, and happy coding!**
+
 By understanding these questions and practicing the corresponding code examples, you’ll be well-prepared to discuss and implement custom hooks in a React interview setting. Make sure you can not only explain what custom hooks are, but also demonstrate how to write, test, and apply them effectively in real-world scenarios.
