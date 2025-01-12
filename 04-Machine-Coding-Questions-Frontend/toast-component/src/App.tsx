@@ -1,5 +1,4 @@
 import React from "react";
-
 import "./App.css";
 import { useNotification } from "./ts-hooks/useNotification";
 
