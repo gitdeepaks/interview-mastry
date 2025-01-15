@@ -1975,7 +1975,6 @@ Create a custom hook when you find yourself repeating a certain piece of statefu
 
 ---
 
-<<<<<<< HEAD
 Below is a comprehensive list of **React Query (TanStack Query)** interview-style questions **with concise answers**. These should help you solidify your knowledge and **ACE** the interview. Feel free to adapt your answers to your personal experience and the specific role you’re applying for.
 
 ---
