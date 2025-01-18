@@ -33,3 +33,9 @@ newArr.forEach((name) => {
 });
 
 console.log(updatedArr);
+
+function sum(...nums) {
+  return nums.reduce((acc, currVal) => acc + currVal, 0);
+}
+
+console.log(sum(1, 2, 3, 4, 5));

@@ -2,6 +2,8 @@
 //   private id: number;
 //   public name: string;
 
+import { log } from "console";
+
 //   constructor(id: number, name: string) {
 //     this.id = id;
 //     this.name = name;
@@ -44,3 +46,16 @@ const productPrices: Record<string, number> = {
 const getPrice = (productName: string) => {
   return productPrices[productName];
 };
+
+function mySum(
+  p0: number,
+  p1: number,
+  p2: number,
+  p3: number,
+  p4: number,
+  ...nums: []
+) {
+  return nums.reduce((acc, curVal) => acc + curVal, 0);
+}
+
+console.log(mySum(1, 2, 3, 4, 5));
