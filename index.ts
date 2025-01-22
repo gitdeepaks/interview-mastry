@@ -59,3 +59,9 @@ function mySum(
 }
 
 console.log(mySum(1, 2, 3, 4, 5));
+
+const run = (message: string) => {
+  console.log(message);
+};
+
+run("hello");
