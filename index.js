@@ -45,3 +45,9 @@ const run = (message) => {
 };
 
 run("hello");
+
+function add(counter) {
+  return function anotherSun(nums) {
+    counter++;
+  };
+}
