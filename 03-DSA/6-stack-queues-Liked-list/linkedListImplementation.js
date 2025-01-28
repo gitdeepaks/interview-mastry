@@ -88,6 +88,8 @@ list.add(100);
 list.add(200);
 list.add(300);
 list.add(400);
+list.add(500);
+list.add(600);
 list.insertAt(1, "a");
 list.insertAt(3, "b");
 list.removeFrom(3);
