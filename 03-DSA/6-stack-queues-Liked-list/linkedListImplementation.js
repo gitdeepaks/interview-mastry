@@ -93,5 +93,6 @@ list.add(600);
 list.insertAt(1, "a");
 list.insertAt(3, "b");
 list.removeFrom(3);
+list.removeFrom(4);
 
 list.printAll();
