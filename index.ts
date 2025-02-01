@@ -89,3 +89,13 @@ it("Should handle a form submit", () => {
 
   expect.assertions(1);
 });
+
+function greet(greeting: string, punctuation: string) {
+  console.log(greeting + " " + this.name + punctuation);
+}
+const person = { name: "Alice" };
+
+greet.call(person, "Hello", "!"); // "Hello Alice!"
+greet.apply(person, ["Hi", "?"]); // "Hi Alice?"
+const boundGreet = greet.bind(person, "Hey");
+boundGreet("!!!"); // "Hey Alice!!!"
