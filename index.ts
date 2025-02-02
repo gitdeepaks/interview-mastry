@@ -99,3 +99,12 @@ greet.call(person, "Hello", "!"); // "Hello Alice!"
 greet.apply(person, ["Hi", "?"]); // "Hi Alice?"
 const boundGreet = greet.bind(person, "Hey");
 boundGreet("!!!"); // "Hey Alice!!!"
+
+const func = () => {
+  // Refactor this to be its own function
+  const randomPercentage = getRandonPercentage();
+  console.log(randomPercentage);
+};
+function getRandonPercentage() {
+  return `${(Math.random() * 100).toFixed(2)}%`;
+}
