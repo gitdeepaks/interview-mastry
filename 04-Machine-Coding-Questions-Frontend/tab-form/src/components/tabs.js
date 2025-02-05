@@ -38,7 +38,6 @@ export const tabs = [
     name: "Settings",
     component: Settings,
     validate: (data, setError) => {
-      // No validation for Settings
       return true;
     },
   },

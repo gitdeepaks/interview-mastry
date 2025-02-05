@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { tabs } from "./tabs.js"; // or wherever you defined tabs
+import { tabs } from "./tabs.js";
 
 export const TabForm = () => {
   const [data, setData] = useState({
@@ -7,7 +7,7 @@ export const TabForm = () => {
     age: 33,
     email: "deepak@email.com",
     interest: ["coding", "swimming", "gym"],
-    theme: "dark",
+    theme: "light",
   });
   const [error, setError] = useState({});
   const [activeTab, setActiveTab] = useState(0);
