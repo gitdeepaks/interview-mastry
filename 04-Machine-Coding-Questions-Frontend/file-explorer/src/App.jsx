@@ -1,11 +1,12 @@
-import "./App.css";
+import './App.css';
 
-function App() {
+const App = () => {
   return (
-    <>
-      <div>File Explorer</div>
-    </>
+    <div className="content">
+      <h1>Rsbuild with React</h1>
+      <p>Start building amazing things with Rsbuild.</p>
+    </div>
   );
-}
+};
 
 export default App;
