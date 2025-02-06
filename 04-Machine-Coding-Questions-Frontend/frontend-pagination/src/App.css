@@ -27,7 +27,7 @@ body {
 
 .product-card{
   display: flex;
-  width: 200px;
+  width: 160px;
   flex-wrap: wrap;
   border: 1px solid azure;
   padding: 5px;
@@ -35,11 +35,29 @@ body {
 }
 
 .product-img{
-  width: 200px;
-  height: 200px;
+  width: 150px;
+  height: 150px;
 }
 
 .products-container{
   display: flex;
   flex-wrap: wrap;
+}
+
+.page-number{
+  padding: 7px;
+  margin: 4px;
+  border: 1px solid azure;cursor: pointer;
+
+}
+
+.pagination-container{
+  padding: 20px;
+  margin: 5px;
+}
+.active {
+  padding: 7px;
+  margin: 4px;
+  border: 1px solid aqua;
+  cursor: pointer;
 }
