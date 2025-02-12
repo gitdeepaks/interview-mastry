@@ -732,31 +732,40 @@ function App() {
 - Conditionally render the UI based on these states.
 
 ```jsx
+import React, { useState, useEffect } from "react";
+
 function DataComponent({ url }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(url)
-      .then((r) => {
-        if (!r.ok) throw new Error("Network error");
-        return r.json();
-      })
-      .then((fetchedData) => {
+    // Define an async function inside the effect
+    const fetchData = async () => {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("Network error");
+        }
+        const fetchedData = await response.json();
         setData(fetchedData);
-        setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         setError(err.message);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    // Call the async function
+    fetchData();
   }, [url]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
   return <div>{JSON.stringify(data)}</div>;
 }
+
+export default DataComponent;
 ```
 
 ---
@@ -1280,19 +1289,24 @@ function UserList() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/users")
-      .then((res) => {
-        if (!res.ok) throw new Error("Network response was not ok");
-        return res.json();
-      })
-      .then((data) => {
+    // Define an async function
+    const fetchUsers = async () => {
+      try {
+        const res = await fetch("https://jsonplaceholder.typicode.com/users");
+        if (!res.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await res.json();
         setUsers(data);
-        setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         setError(err.message);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    // Call the async function
+    fetchUsers();
   }, []);
 
   if (loading) return <div>Loading users...</div>;
@@ -1662,7 +1676,6 @@ A custom hook is a function that uses built-in React hooks (like `useState`, `us
 ```jsx
 import { useState, useEffect } from "react";
 
-// A simple custom hook for fetching data from an API
 function useFetch(url) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -1670,26 +1683,31 @@ function useFetch(url) {
 
   useEffect(() => {
     let isMounted = true;
-    fetch(url)
-      .then((response) => {
-        if (!response.ok) throw new Error("Network error");
-        return response.json();
-      })
-      .then((json) => {
+
+    const fetchData = async () => {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("Network error");
+        }
+
+        const json = await response.json();
         if (isMounted) {
           setData(json);
           setLoading(false);
         }
-      })
-      .catch((err) => {
+      } catch (err) {
         if (isMounted) {
           setError(err.message);
           setLoading(false);
         }
-      });
+      }
+    };
+
+    fetchData();
 
     return () => {
-      isMounted = false;
+      isMounted = false; // Prevent state updates if component unmounts
     };
   }, [url]);
 
