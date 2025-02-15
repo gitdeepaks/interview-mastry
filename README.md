@@ -1,1902 +1,1738 @@
-Here is a curated set of **JavaScript interview questions** along with their **answers** and **code examples**, tailored for a candidate with 3 years of experience:
+Below is a comprehensive list of JavaScript interview questions tailored for someone with around 3 years of experience. These cover a range of topics including language fundamentals, advanced concepts, best practices, common patterns, and modern features. For each question, you’ll find an explanation, sample code (where applicable), and insights on what the interviewer might be looking for. Study these thoroughly and practice variations on them to build confidence.
 
 ---
 
-#### **Core JavaScript Questions**
-
-#### **1. Explain `this` in JavaScript. How is it determined?**
+### 1. How does variable scoping work in JavaScript?
 
 **Answer:**
 
-- `this` refers to the context in which a function is executed.
-- It is determined by how the function is called:
-  - **Default**: In the global scope, `this` refers to the `window` object (in browsers) or `global` (in Node.js).
-  - **Object Method**: Refers to the object calling the method.
-  - **Arrow Functions**: Lexically binds `this` (inherits from the surrounding scope).
+- JavaScript uses function-level scope and, from ES6 onward, also block-level scope with `let` and `const`.
+- Variables declared with `var` are either function-scoped (if inside a function) or globally scoped (if outside any function), and they can be accessed before declaration due to hoisting (though they’ll be `undefined` until assigned).
+- Variables declared with `let` and `const` are block-scoped and not accessible before their declaration due to the Temporal Dead Zone.
 
-**Code Example:**
+**Example:**
 
-```javascript
-function regularFunction() {
-  console.log(this); // Depends on how it's called
-}
-
-const obj = {
-  method() {
-    console.log(this); // Refers to `obj`
-  },
-};
-
-const arrowFunction = () => {
-  console.log(this); // Lexical context
-};
-
-// Call examples
-regularFunction(); // window or undefined in strict mode
-obj.method(); // obj
-arrowFunction(); // Refers to the outer scope's `this`
-```
-
----
-
-#### **2. What are Promises? How do they work?**
-
-**Answer:**
-
-- Promises are used to handle asynchronous operations in JavaScript.
-- A `Promise` has three states: `pending`, `fulfilled`, and `rejected`.
-
-**Code Example:**
-
-```javascript
-const promise = new Promise((resolve, reject) => {
-  const success = true;
-  setTimeout(() => {
-    if (success) {
-      resolve("Operation successful!");
-    } else {
-      reject("Operation failed!");
-    }
-  }, 1000);
-});
-
-promise
-  .then((result) => console.log(result)) // Operation successful!
-  .catch((error) => console.error(error));
-```
-
----
-
-#### **3. What is the difference between `let`, `const`, and `var`?**
-
-**Answer:**
-
-- `var`: Function-scoped, hoisted with initialization as `undefined`.
-- `let`: Block-scoped, not hoisted with initialization.
-- `const`: Block-scoped, must be initialized at declaration, value cannot be reassigned.
-
-**Code Example:**
-
-```javascript
-function testScope() {
+```js
+function example() {
+  var x = 1;
   if (true) {
-    var x = 10; // function-scoped
-    let y = 20; // block-scoped
-    const z = 30; // block-scoped
+    let y = 2;
+    const z = 3;
+    console.log(x); // 1 (function scoped)
+    console.log(y); // 2 (block scoped)
   }
-  console.log(x); // 10
-  // console.log(y); // ReferenceError
-  // console.log(z); // ReferenceError
+  console.log(x); // 1 (still accessible)
+  // console.log(y); // ReferenceError: y is not defined
 }
-testScope();
+example();
 ```
+
+**What interviewers look for:**  
+Understanding of scoping rules, hoisting, and differences between `var`, `let`, and `const`.
 
 ---
 
-#### **4. What is the difference between `==` and `===` in JavaScript?**
+### 2. What is the difference between `==` and `===` in JavaScript?
 
 **Answer:**
 
-- `==` checks for equality after type conversion (loose equality).
-- `===` checks for equality without type conversion (strict equality).
+- `==` (abstract equality) compares two values after attempting type coercion.
+- `===` (strict equality) compares two values without type coercion, returning true only if both the type and the value are the same.
+- Generally, `===` is recommended for cleaner, more predictable comparisons.
 
-**Code Example:**
+**Example:**
 
-```javascript
-console.log(5 == "5"); // true (type coercion)
-console.log(5 === "5"); // false (no type coercion)
+```js
+console.log(2 == "2"); // true (type coercion)
+console.log(2 === "2"); // false (different types)
 ```
+
+**What interviewers look for:**  
+Awareness of type coercion pitfalls and best practices for reliable comparisons.
 
 ---
 
-#### **5. What is event delegation?**
+### 3. Can you explain closures and provide an example use case?
 
-**Answer:**
+**Answer:**  
+A **closure** is created when an inner function captures variables from its outer (enclosing) function’s scope. Even after the outer function finishes execution, the inner function retains access to those variables.
 
-- Event delegation allows you to attach a single event listener to a parent element to handle events for its child elements.
+**Example:**
 
-**Code Example:**
-
-```javascript
-document.getElementById("parent").addEventListener("click", function (event) {
-  if (event.target.tagName === "BUTTON") {
-    console.log(`Button ${event.target.textContent} clicked`);
-  }
-});
-
-// HTML:
-// <div id="parent">
-//   <button>1</button>
-//   <button>2</button>
-// </div>
-```
-
----
-
-### **Intermediate JavaScript Questions**
-
-#### **6. Explain closures and give an example.**
-
-**Answer:**
-
-- A closure is created when a function retains access to its lexical scope, even when the function is executed outside that scope.
-
-**Code Example:**
-
-```javascript
-function outer() {
-  let counter = 0;
-  return function inner() {
-    counter++;
-    return counter;
+```js
+function counter() {
+  let count = 0;
+  return function () {
+    count++;
+    return count;
   };
 }
-
-const increment = outer();
+const increment = counter();
 console.log(increment()); // 1
 console.log(increment()); // 2
 ```
 
+**Use Cases:**
+
+- Data privacy and encapsulation
+- Creating function factories
+- Maintaining state in asynchronous operations
+
+**What interviewers look for:**  
+Ability to explain the concept clearly and identify practical uses.
+
 ---
 
-#### **7. Explain the difference between `call()`, `apply()`, and `bind()`.**
+### 4. What are arrow functions, and how do they differ from regular functions?
 
 **Answer:**
 
-- `call()`: Invokes a function with a specified `this` value and arguments passed individually.
-- `apply()`: Invokes a function with a specified `this` value and arguments passed as an array.
-- `bind()`: Returns a new function with a specified `this` value, does not invoke it immediately.
-
-**Code Example:**
-
-```javascript
-function greet(greeting, punctuation) {
-  console.log(`${greeting}, ${this.name}${punctuation}`);
-}
-
-const user = { name: "John" };
-
-greet.call(user, "Hello", "!"); // Hello, John!
-greet.apply(user, ["Hi", "!!"]); // Hi, John!!
-const boundGreet = greet.bind(user, "Hey");
-boundGreet("?"); // Hey, John?
-```
-
----
-
-#### **8. What are higher-order functions?**
-
-**Answer:**
-
-- Functions that take other functions as arguments or return a function as their result.
-
-**Code Example:**
-
-```javascript
-function higherOrder(fn) {
-  return function (x) {
-    return fn(x) * 2;
-  };
-}
-
-const double = higherOrder((x) => x + 2);
-console.log(double(5)); // 14
-```
-
----
-
-#### **9. Explain `async`/`await`.**
-
-**Answer:**
-
-- `async` functions always return a Promise.
-- `await` pauses the execution of the function until the Promise resolves or rejects.
-
-**Code Example:**
-
-```javascript
-async function fetchData() {
-  try {
-    const response = await fetch("https://api.example.com/data");
-    const data = await response.json();
-    console.log(data);
-  } catch (error) {
-    console.error("Error:", error);
-  }
-}
-
-fetchData();
-```
-
----
-
-#### **10. Explain debounce and throttle functions.**
-
-**Answer:**
-
-- **Debounce**: Ensures that a function is executed only after a specified time has passed since the last invocation.
-- **Throttle**: Ensures that a function is executed at most once in a specified time period.
-
-**Code Example (Debounce):**
-
-```javascript
-function debounce(func, delay) {
-  let timeout;
-  return function (...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(this, args), delay);
-  };
-}
-
-const debouncedFunction = debounce(() => console.log("Debounced!"), 500);
-debouncedFunction();
-debouncedFunction(); // Resets the timer
-```
-
-**Code Example (Throttle):**
-
-```javascript
-function throttle(func, limit) {
-  let inThrottle;
-  return function (...args) {
-    if (!inThrottle) {
-      func.apply(this, args);
-      inThrottle = true;
-      setTimeout(() => (inThrottle = false), limit);
-    }
-  };
-}
-
-const throttledFunction = throttle(() => console.log("Throttled!"), 1000);
-throttledFunction();
-throttledFunction(); // Will only run after 1 second
-```
-
----
-
-This question set provides a mix of theoretical concepts and hands-on coding problems to test a candidate’s knowledge and practical expertise in JavaScript.
-
-Here’s the updated set of questions with **Event Loop** and **Map, Filter, Reduce** concepts added:
-
----
-
-### **11. Explain the JavaScript Event Loop.**
-
-**Answer:**
-The Event Loop is responsible for handling asynchronous operations in JavaScript. It works as follows:
-
-1. JavaScript is single-threaded, meaning it executes code line by line in a stack (Call Stack).
-2. When an asynchronous operation (e.g., `setTimeout`, `fetch`) is encountered, it is offloaded to the Web APIs.
-3. Once the asynchronous operation completes, its callback is placed in the **Task Queue**.
-4. The Event Loop continuously checks if the Call Stack is empty, and if so, it pushes tasks from the Task Queue to the Call Stack for execution.
-
-**Code Example:**
-
-```javascript
-console.log("Start");
-
-setTimeout(() => {
-  console.log("Timeout Callback");
-}, 0);
-
-Promise.resolve().then(() => console.log("Promise Resolved"));
-
-console.log("End");
-
-// Output:
-// Start
-// End
-// Promise Resolved
-// Timeout Callback
-```
-
-**Explanation:**
-
-- Synchronous code (`Start`, `End`) is executed first.
-- Promises go to the **Microtask Queue** and are executed before the Task Queue.
-- `setTimeout` callback is executed after the Microtask Queue is empty.
-
----
-
-### **12. What are `map()`, `filter()`, and `reduce()` in JavaScript?**
-
-#### **a. `map()`**
-
-**Answer:**
-
-- `map()` creates a new array by applying a function to each element of the original array.
-- It does not mutate the original array.
-
-**Code Example:**
-
-```javascript
-const numbers = [1, 2, 3, 4];
-const doubled = numbers.map((num) => num * 2);
-console.log(doubled); // [2, 4, 6, 8]
-```
-
----
-
-#### **b. `filter()`**
-
-**Answer:**
-
-- `filter()` creates a new array containing elements that pass a provided condition (return `true` in the callback function).
-- It does not mutate the original array.
-
-**Code Example:**
-
-```javascript
-const numbers = [1, 2, 3, 4];
-const evens = numbers.filter((num) => num % 2 === 0);
-console.log(evens); // [2, 4]
-```
-
----
-
-#### **c. `reduce()`**
-
-**Answer:**
-
-- `reduce()` applies a function to each element in the array to produce a single output (e.g., sum, product).
-- It takes two arguments: a reducer function and an initial value.
-
-**Code Example:**
-
-```javascript
-const numbers = [1, 2, 3, 4];
-const sum = numbers.reduce((accumulator, current) => accumulator + current, 0);
-console.log(sum); // 10
-```
-
-**Step-by-step Explanation:**
-
-1. `accumulator` starts at `0` (initial value).
-2. Iteration 1: `accumulator = 0 + 1 = 1`.
-3. Iteration 2: `accumulator = 1 + 2 = 3`.
-4. Iteration 3: `accumulator = 3 + 3 = 6`.
-5. Iteration 4: `accumulator = 6 + 4 = 10`.
-
----
-
-### Comparison of `map()`, `filter()`, and `reduce()`:
-
-| Method     | Purpose                                | Returns      | Mutates Original Array |
-| ---------- | -------------------------------------- | ------------ | ---------------------- |
-| `map()`    | Transforms each element in the array   | New Array    | No                     |
-| `filter()` | Filters elements based on a condition  | New Array    | No                     |
-| `reduce()` | Reduces all elements to a single value | Single Value | No                     |
-
----
-
-These additions provide in-depth knowledge of essential JavaScript concepts like the Event Loop and functional programming techniques (`map`, `filter`, `reduce`) that are critical for candidates with 3 years of experience.
-
-### **13. Explain Event Propagation in JavaScript**
-
-**Answer:**
-Event propagation is the process by which events flow through the DOM tree. It has three phases:
-
-1. **Capturing Phase**:
-
-   - The event starts from the root of the DOM tree and goes down to the target element.
-   - During this phase, event listeners set with `{capture: true}` are triggered.
-
-2. **Target Phase**:
-
-   - The event reaches the target element.
-   - Event listeners on the target element itself are executed.
-
-3. **Bubbling Phase**:
-   - The event travels back up the DOM tree from the target element to the root.
-   - Event listeners with the default behavior (bubbling) are triggered during this phase.
-
-**Code Example:**
-
-```html
-<div id="grandparent">
-  <div id="parent">
-    <button id="child">Click Me</button>
-  </div>
-</div>
-
-<script>
-  document.getElementById("grandparent").addEventListener(
-    "click",
-    () => {
-      console.log("Grandparent Captured");
-    },
-    true
-  ); // Capturing Phase
-
-  document.getElementById("parent").addEventListener("click", () => {
-    console.log("Parent Bubbled");
-  }); // Bubbling Phase (default)
-
-  document.getElementById("child").addEventListener("click", (event) => {
-    console.log("Child Clicked");
-    // Stop further propagation
-    // event.stopPropagation();
-  });
-</script>
-```
-
-**Output:**
-
-- If you click the button:
-  - During the **Capturing Phase**: `"Grandparent Captured"` is logged first.
-  - During the **Target Phase**: `"Child Clicked"` is logged.
-  - During the **Bubbling Phase**: `"Parent Bubbled"` is logged.
-
----
-
-### **Key Event Propagation Methods**
-
-1. **`event.stopPropagation()`**
-
-   - Stops the event from propagating further in both capturing and bubbling phases.
-
-   **Example:**
-
-   ```javascript
-   document.getElementById("child").addEventListener("click", (event) => {
-     console.log("Child Clicked");
-     event.stopPropagation();
-   });
-   ```
-
-2. **`event.preventDefault()`**
-
-   - Prevents the default action associated with the event (e.g., preventing a link from redirecting).
-
-   **Example:**
-
-   ```javascript
-   document.getElementById("child").addEventListener("click", (event) => {
-     event.preventDefault();
-     console.log("Default action prevented");
-   });
-   ```
-
-3. **`event.stopImmediatePropagation()`**
-
-   - Stops other listeners of the same event from being called.
-
-   **Example:**
-
-   ```javascript
-   const btn = document.getElementById("child");
-   btn.addEventListener("click", () => console.log("Listener 1"));
-   btn.addEventListener("click", (event) => {
-     event.stopImmediatePropagation();
-     console.log("Listener 2");
-   });
-   btn.addEventListener("click", () => console.log("Listener 3"));
-   ```
-
-   **Output:**
-
-   - `"Listener 2"` is logged, but `"Listener 3"` is skipped.
-
----
-
-### **Real-World Example of Event Propagation**
-
-**Scenario:**
-If you want to handle events for dynamically added elements, event delegation using the bubbling phase is useful.
+- Arrow functions are a concise syntax for writing functions.
+- They do not have their own `this`; instead, `this` is lexically bound from the enclosing execution context.
+- They cannot be used as constructors (i.e., no `new` keyword).
+- They do not have `arguments` object; you must use rest parameters if needed.
 
 **Example:**
 
-```html
-<ul id="list">
-  <li>Item 1</li>
-  <li>Item 2</li>
-</ul>
+```js
+const regularFunction = function () {
+  console.log(this); // `this` depends on how the function is called
+};
 
-<script>
-  document.getElementById("list").addEventListener("click", (event) => {
-    if (event.target.tagName === "LI") {
-      console.log(`You clicked: ${event.target.textContent}`);
-    }
-  });
-
-  // Adding a new item dynamically
-  const newItem = document.createElement("li");
-  newItem.textContent = "Item 3";
-  document.getElementById("list").appendChild(newItem);
-</script>
+const arrowFunction = () => {
+  console.log(this); // `this` is taken from the surrounding scope
+};
 ```
 
-**Explanation:**
-
-- The event listener is attached to the parent `<ul>` element.
-- It uses bubbling to detect clicks on child `<li>` elements, even if they are added dynamically.
+**What interviewers look for:**  
+Knowing when and why to use arrow functions and understanding lexical `this`.
 
 ---
 
-By adding **Event Propagation**, the question set now provides comprehensive coverage of fundamental and intermediate JavaScript concepts. This ensures candidates can demonstrate a strong understanding of how events work in the DOM.
+### 5. Explain prototypal inheritance in JavaScript.
 
-# React
+**Answer:**
 
-Here’s a comprehensive revision of **React Hooks** with examples and explanations, specifically tailored for interview preparation:
+- JavaScript’s inheritance system is based on prototypes.
+- Each object has an internal property called `[[Prototype]]` which can point to another object.
+- Properties and methods are first looked up on the object, then on its prototype, and so forth up the chain.
+- Modern syntax uses `class` keyword as syntactic sugar over prototypal inheritance.
 
----
+**Example:**
 
-### 1. **useState**
+```js
+const animal = {
+  speak() {
+    console.log("I am an animal.");
+  },
+};
 
-Used for managing state in a functional component.
-
-```javascript
-import React, { useState } from "react";
-
-function Counter() {
-  const [count, setCount] = useState(0);
-
-  const increment = () => setCount(count + 1);
-
-  return (
-    <div>
-      <p>Count: {count}</p>
-      <button onClick={increment}>Increment</button>
-    </div>
-  );
-}
+const dog = Object.create(animal);
+dog.speak(); // "I am an animal."
+console.log(Object.getPrototypeOf(dog) === animal); // true
 ```
 
-**Key Points:**
-
-- Initial state is passed as an argument.
-- Returns an array `[state, setState]`.
+**What interviewers look for:**  
+Understanding the difference between classical and prototypal inheritance, and how JS objects link to prototypes.
 
 ---
 
-### 2. **useEffect**
+### 6. What is event delegation and why is it useful?
 
-Used for side effects like fetching data, updating the DOM, or setting up subscriptions.
+**Answer:**
 
-```javascript
-import React, { useState, useEffect } from "react";
+- **Event delegation** uses the concept of event bubbling to handle events at a higher-level element rather than attaching handlers to multiple child elements.
+- It improves performance and reduces memory usage by having fewer event listeners, especially in lists or dynamically generated content.
 
-function Timer() {
-  const [seconds, setSeconds] = useState(0);
+**Example:**
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSeconds((prev) => prev + 1);
-    }, 1000);
-
-    return () => clearInterval(interval); // Cleanup
-  }, []); // Dependency array
-
-  return <p>Time: {seconds}s</p>;
-}
+```js
+// Instead of adding click listeners to every button in a list:
+document.querySelector("#list").addEventListener("click", (event) => {
+  if (event.target.matches(".list-item")) {
+    console.log("List item clicked:", event.target);
+  }
+});
 ```
 
-**Key Points:**
-
-- Runs after every render if no dependency array is provided.
-- Dependencies control when the effect runs.
-- Clean up subscriptions in the return function.
+**What interviewers look for:**  
+Knowledge of DOM event flow, performance considerations, and maintainability benefits.
 
 ---
 
-### 3. **useContext**
+### 7. What is the difference between synchronous and asynchronous code in JavaScript?
 
-Used to consume context in functional components.
+**Answer:**
 
-```javascript
-import React, { createContext, useContext } from "react";
+- **Synchronous code** runs in sequence, blocking subsequent code until the current task completes.
+- **Asynchronous code** allows for long-running tasks (like network requests) without blocking the main thread. Instead, callbacks, promises, or async/await are used to handle eventual completions.
 
-const ThemeContext = createContext("light");
+**Example (Async with Promises):**
 
-function ThemeButton() {
-  const theme = useContext(ThemeContext);
-  return (
-    <button style={{ backgroundColor: theme === "dark" ? "black" : "white" }}>
-      Theme
-    </button>
-  );
-}
-
-function App() {
-  return (
-    <ThemeContext.Provider value="dark">
-      <ThemeButton />
-    </ThemeContext.Provider>
-  );
-}
+```js
+fetch("https://api.example.com/data")
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((error) => console.error(error));
 ```
 
-**Key Points:**
-
-- Avoids prop drilling by accessing context directly.
+**What interviewers look for:**  
+Understanding of the single-threaded nature of JS and how asynchronous patterns avoid blocking the UI.
 
 ---
 
-### 4. **useReducer**
+### 8. Can you explain what the `this` keyword refers to in different contexts?
 
-An alternative to `useState` for complex state logic.
+**Answer:**
 
-```javascript
-import React, { useReducer } from "react";
+- In the global context (non-strict mode), `this` refers to the `window` object in the browser.
+- In a method, `this` refers to the object on which the method is called.
+- In a constructor, `this` refers to the newly created instance.
+- Arrow functions do not have their own `this`, and inherit `this` from the enclosing lexical scope.
+- The value of `this` can be set explicitly using `call`, `apply`, or `bind`.
 
-const initialState = { count: 0 };
+**What interviewers look for:**  
+Knowing how `this` is determined by execution context and call site.
 
-function reducer(state, action) {
-  switch (action.type) {
-    case "increment":
-      return { count: state.count + 1 };
-    case "decrement":
-      return { count: state.count - 1 };
-    default:
-      throw new Error();
+---
+
+### 9. What are higher-order functions in JavaScript?
+
+**Answer:**
+
+- A **higher-order function** is a function that can take another function as an argument or return a function as a result.
+- They enable functional programming patterns, code reusability, and abstraction.
+
+**Example:**
+
+```js
+function map(array, fn) {
+  const result = [];
+  for (let item of array) {
+    result.push(fn(item));
+  }
+  return result;
+}
+
+const doubled = map([1, 2, 3], (x) => x * 2);
+console.log(doubled); // [2, 4, 6]
+```
+
+**What interviewers look for:**  
+Understanding of functional programming concepts and the utility of passing functions around.
+
+---
+
+### 10. Explain the concepts of `call`, `apply`, and `bind`.
+
+**Answer:**
+
+- `call` and `apply` invoke a function immediately with a specified `this` value.
+  - `call` passes arguments individually.
+  - `apply` passes arguments as an array.
+- `bind` returns a new function that, when called, has `this` set to the specified value. It does not invoke the function immediately.
+
+**Example:**
+
+```js
+function greet(greeting, punctuation) {
+  console.log(greeting + " " + this.name + punctuation);
+}
+const person = { name: "Alice" };
+
+greet.call(person, "Hello", "!"); // "Hello Alice!"
+greet.apply(person, ["Hi", "?"]); // "Hi Alice?"
+const boundGreet = greet.bind(person, "Hey");
+boundGreet("!!!"); // "Hey Alice!!!"
+```
+
+**What interviewers look for:**  
+Comfort with manually setting `this` and understanding practical usage scenarios.
+
+---
+
+### 11. What is the difference between mutable and immutable objects in JavaScript?
+
+**Answer:**
+
+- **Mutable** objects can be changed after creation (e.g., arrays, plain objects).
+- **Immutable** objects cannot be changed once created (e.g., primitive values like numbers, strings, booleans).
+- With libraries or patterns, immutable data structures can help with predictable state management.
+
+**Example:**
+
+```js
+let arr = [1, 2, 3];
+arr.push(4); // arr is now [1,2,3,4] – mutable
+
+const str = "Hello";
+const newStr = str.toUpperCase();
+// "Hello" remains the same and a new string "HELLO" is created – strings are immutable.
+```
+
+**What interviewers look for:**  
+Awareness of immutability concepts, especially useful in state management and functional programming styles.
+
+---
+
+### 12. Describe the module systems in JavaScript (CommonJS vs ES Modules).
+
+**Answer:**
+
+- **CommonJS (CJS):** Used primarily in Node.js. Uses `require()` and `module.exports`. It loads modules synchronously.
+- **ES Modules (ESM):** Native module system introduced in ES6. Uses `import` and `export`. It can be statically analyzed by the compiler and supports tree-shaking. Modules are loaded asynchronously in the browser.
+
+**Example (ES Modules):**
+
+```js
+// math.js
+export function add(a, b) {
+  return a + b;
+}
+
+// main.js
+import { add } from "./math.js";
+console.log(add(2, 3)); // 5
+```
+
+**What interviewers look for:**  
+Knowledge of modern module systems and differences in usage scenarios.
+
+---
+
+### 13. Explain what a promise is and the states a promise can have.
+
+**Answer:**  
+A **promise** is an object representing an asynchronous operation.  
+A promise can be in one of three states:
+
+- **Pending:** The initial state, not fulfilled or rejected yet.
+- **Fulfilled:** The operation completed successfully, and the promise has a value.
+- **Rejected:** The operation failed, and the promise has a reason for the failure.
+
+**What interviewers look for:**  
+A good conceptual grasp of promises and how they handle asynchronous operations.
+
+---
+
+### 14. How does async/await simplify working with promises?
+
+**Answer:**
+
+- `async/await` allows writing asynchronous code in a synchronous-looking manner.
+- `await` pauses execution until the promise resolves or rejects.
+- It makes error handling simpler with try/catch blocks.
+
+**Example:**
+
+```js
+async function fetchData() {
+  try {
+    const response = await fetch("https://api.example.com/data");
+    const json = await response.json();
+    console.log(json);
+  } catch (error) {
+    console.error("Error fetching data:", error);
   }
 }
-
-function Counter() {
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  return (
-    <div>
-      <p>Count: {state.count}</p>
-      <button onClick={() => dispatch({ type: "increment" })}>+</button>
-      <button onClick={() => dispatch({ type: "decrement" })}>-</button>
-    </div>
-  );
-}
+fetchData();
 ```
 
-**Key Points:**
-
-- Useful for managing complex state logic.
-- `dispatch` triggers actions.
+**What interviewers look for:**  
+Understanding of asynchronous control flow and improved code readability with async/await.
 
 ---
 
-### 5. **useMemo**
+### 15. Explain debouncing and throttling.
 
-Used to optimize performance by memoizing expensive calculations.
+**Answer:**
 
-```javascript
-import React, { useState, useMemo } from "react";
+- **Debouncing:** Ensures a function runs only after a certain amount of time has passed without it being called again. Useful for reducing unnecessary function calls, e.g., on window resize or input change.
+- **Throttling:** Ensures a function runs at most once in a given interval, even if it’s called multiple times. Useful for events that fire at a high frequency, like scroll or mouse move.
 
-function ExpensiveCalculation({ num }) {
-  console.log("Calculating...");
-  return num ** 2;
-}
+**Example (Simple Debounce):**
 
-function App() {
-  const [number, setNumber] = useState(0);
-  const [increment, setIncrement] = useState(0);
-
-  const squaredNumber = useMemo(
-    () => ExpensiveCalculation({ num: number }),
-    [number]
-  );
-
-  return (
-    <div>
-      <input
-        type="number"
-        value={number}
-        onChange={(e) => setNumber(parseInt(e.target.value, 10))}
-      />
-      <p>Squared: {squaredNumber}</p>
-      <button onClick={() => setIncrement(increment + 1)}>Re-render</button>
-    </div>
-  );
-}
-```
-
-**Key Points:**
-
-- Avoids unnecessary re-computation.
-
----
-
-### 6. **useCallback**
-
-Used to memoize functions.
-
-```javascript
-import React, { useState, useCallback } from "react";
-
-function Child({ onClick }) {
-  console.log("Child rendered");
-  return <button onClick={onClick}>Click me</button>;
-}
-
-function Parent() {
-  const [count, setCount] = useState(0);
-
-  const handleClick = useCallback(() => {
-    console.log("Button clicked");
-  }, []);
-
-  return (
-    <div>
-      <p>Count: {count}</p>
-      <button onClick={() => setCount(count + 1)}>Increment</button>
-      <Child onClick={handleClick} />
-    </div>
-  );
-}
-```
-
-**Key Points:**
-
-- Prevents re-creation of functions on re-renders.
-
----
-
-### 7. **useRef**
-
-Used to persist values or access DOM elements.
-
-```javascript
-import React, { useRef } from "react";
-
-function FocusInput() {
-  const inputRef = useRef();
-
-  const focusInput = () => {
-    inputRef.current.focus();
-  };
-
-  return (
-    <div>
-      <input ref={inputRef} />
-      <button onClick={focusInput}>Focus Input</button>
-    </div>
-  );
-}
-```
-
-**Key Points:**
-
-- Does not cause re-renders.
-- Useful for DOM manipulation.
-
----
-
-### 8. **useImperativeHandle**
-
-Used to customize the ref object exposed by `useRef`.
-
-```javascript
-import React, { useRef, forwardRef, useImperativeHandle } from "react";
-
-const CustomInput = forwardRef((props, ref) => {
-  const inputRef = useRef();
-
-  useImperativeHandle(ref, () => ({
-    focus: () => {
-      inputRef.current.focus();
-    },
-  }));
-
-  return <input ref={inputRef} />;
-});
-
-function Parent() {
-  const inputRef = useRef();
-
-  return (
-    <div>
-      <CustomInput ref={inputRef} />
-      <button onClick={() => inputRef.current.focus()}>
-        Focus Custom Input
-      </button>
-    </div>
-  );
-}
-```
-
-**Key Points:**
-
-- Extends `useRef` functionality.
-
----
-
-### 9. **useLayoutEffect**
-
-Similar to `useEffect` but fires synchronously after all DOM mutations.
-
-```javascript
-import React, { useLayoutEffect, useRef } from "react";
-
-function LayoutEffectExample() {
-  const divRef = useRef();
-
-  useLayoutEffect(() => {
-    console.log("Height:", divRef.current.offsetHeight);
-  }, []);
-
-  return <div ref={divRef}>Hello World</div>;
-}
-```
-
-**Key Points:**
-
-- Used when you need to measure the DOM before the browser paints.
-
----
-
-### 10. **useTransition**
-
-Used for managing state transitions.
-
-```javascript
-import React, { useState, useTransition } from "react";
-
-function TransitionExample() {
-  const [isPending, startTransition] = useTransition();
-  const [list, setList] = useState([]);
-
-  const handleClick = () => {
-    startTransition(() => {
-      const newList = Array.from({ length: 20000 }, (_, i) => i + 1);
-      setList(newList);
-    });
-  };
-
-  return (
-    <div>
-      <button onClick={handleClick}>Generate List</button>
-      {isPending ? (
-        <p>Loading...</p>
-      ) : (
-        <ul>
-          {list.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
-```
-
-**Key Points:**
-
-- Improves UI responsiveness.
-
----
-
-### 11. **useDeferredValue**
-
-Used to defer updating a value until after rendering.
-
-```javascript
-import React, { useState, useDeferredValue } from "react";
-
-function DeferredExample() {
-  const [value, setValue] = useState("");
-  const deferredValue = useDeferredValue(value);
-
-  return (
-    <div>
-      <input type="text" onChange={(e) => setValue(e.target.value)} />
-      <p>Deferred Value: {deferredValue}</p>
-    </div>
-  );
-}
-```
-
-**Key Points:**
-
-- Helps avoid blocking renders for low-priority updates.
-
----
-
-Study these thoroughly, and make sure you understand **why**, **how**, and **when** to use each hook!
-
----
-
-Vanilla JavaScript is often used in interviews for senior frontend developer roles to test fundamental concepts and problem-solving skills. Below are common performance optimization scenarios in **Vanilla JavaScript** with code examples and explanations.
-
----
-
-### **1. Optimize DOM Manipulations**
-
-**Scenario:** Minimize DOM updates by batching changes.
-
-```javascript
-// Inefficient
-const list = document.getElementById("list");
-for (let i = 0; i < 1000; i++) {
-  const item = document.createElement("li");
-  item.textContent = `Item ${i}`;
-  list.appendChild(item); // Multiple reflows and repaints
-}
-
-// Optimized
-const list = document.getElementById("list");
-const fragment = document.createDocumentFragment();
-for (let i = 0; i < 1000; i++) {
-  const item = document.createElement("li");
-  item.textContent = `Item ${i}`;
-  fragment.appendChild(item);
-}
-list.appendChild(fragment); // Single reflow and repaint
-```
-
-**Explanation:**
-
-- Direct DOM updates cause multiple reflows/repaints.
-- Use `DocumentFragment` to batch updates and minimize reflows.
-
----
-
-### **2. Debounce User Input**
-
-**Scenario:** Delay execution of a function to optimize input handling.
-
-```javascript
+```js
 function debounce(fn, delay) {
   let timeout;
   return function (...args) {
     clearTimeout(timeout);
-    timeout = setTimeout(() => fn(...args), delay);
+    timeout = setTimeout(() => fn.apply(this, args), delay);
   };
 }
 
-// Usage
-const search = debounce((query) => {
-  console.log("Searching for:", query);
-}, 300);
-
-document.getElementById("searchInput").addEventListener("input", (e) => {
-  search(e.target.value);
-});
+window.addEventListener(
+  "resize",
+  debounce(() => {
+    console.log("Resized!");
+  }, 200)
+);
 ```
 
-**Explanation:**
-
-- Reduces the frequency of function execution during high-frequency events (e.g., `input`, `scroll`).
-- Improves performance by executing the function only after the user stops typing.
+**What interviewers look for:**  
+Performance optimization techniques, understanding of common patterns used in front-end development.
 
 ---
 
-### **3. Throttle Scroll Events**
-
-**Scenario:** Limit the rate of execution for scroll handlers.
-
-```javascript
-function throttle(fn, limit) {
-  let lastCall = 0;
-  return function (...args) {
-    const now = Date.now();
-    if (now - lastCall >= limit) {
-      lastCall = now;
-      fn(...args);
-    }
-  };
-}
-
-// Usage
-const handleScroll = throttle(() => {
-  console.log("Scrolled:", window.scrollY);
-}, 200);
-
-window.addEventListener("scroll", handleScroll);
-```
-
-**Explanation:**
-
-- Limits the execution of a function to once every `limit` milliseconds.
-- Essential for events like `scroll` or `resize` to avoid performance bottlenecks.
-
----
-
-### **4. Lazy Load Images**
-
-**Scenario:** Load images only when they are in the viewport.
-
-```javascript
-const images = document.querySelectorAll("img[data-src]");
-
-function lazyLoad() {
-  images.forEach((img) => {
-    if (img.getBoundingClientRect().top < window.innerHeight) {
-      img.src = img.dataset.src; // Load image
-      img.removeAttribute("data-src"); // Remove attribute to prevent re-check
-    }
-  });
-}
-
-window.addEventListener("scroll", lazyLoad);
-lazyLoad(); // Initial check
-```
-
-**Explanation:**
-
-- Improves performance by deferring the loading of images until they are needed.
-- Use `getBoundingClientRect` to check if the image is in the viewport.
-
----
-
-### **5. Avoid Memory Leaks**
-
-**Scenario:** Clean up event listeners to avoid memory leaks.
-
-```javascript
-function attachEvent() {
-  const button = document.getElementById("button");
-  const handleClick = () => console.log("Button clicked");
-
-  button.addEventListener("click", handleClick);
-
-  // Clean up
-  return () => button.removeEventListener("click", handleClick);
-}
-
-// Usage
-const cleanup = attachEvent();
-// Later, when button is removed
-cleanup();
-```
-
-**Explanation:**
-
-- Always clean up event listeners when elements are removed from the DOM.
-- Prevents memory leaks by avoiding references to detached DOM nodes.
-
----
-
-### **6. Virtualize Large Lists**
-
-**Scenario:** Render only visible items in a large list.
-
-```javascript
-const container = document.getElementById("container");
-const list = Array.from({ length: 10000 }, (_, i) => `Item ${i}`);
-
-let start = 0;
-let end = 20; // Render 20 items at a time
-
-function renderList() {
-  container.innerHTML = ""; // Clear the container
-  for (let i = start; i < end; i++) {
-    const item = document.createElement("div");
-    item.textContent = list[i];
-    container.appendChild(item);
-  }
-}
-
-function handleScroll() {
-  const scrollTop = container.scrollTop;
-  const itemHeight = 20; // Assume each item is 20px tall
-  const visibleItems = Math.floor(container.clientHeight / itemHeight);
-
-  start = Math.floor(scrollTop / itemHeight);
-  end = start + visibleItems;
-  renderList();
-}
-
-container.addEventListener("scroll", handleScroll);
-renderList();
-```
-
-**Explanation:**
-
-- Avoids rendering all items at once by only rendering items in the viewport.
-- Improves performance for large datasets.
-
----
-
-### **7. Efficiently Handle Large Arrays**
-
-**Scenario:** Use efficient array methods for large datasets.
-
-```javascript
-// Inefficient
-const array = Array.from({ length: 1000000 }, (_, i) => i);
-const result = array.filter((num) => num % 2 === 0).map((num) => num * 2);
-
-// Optimized
-const result = [];
-for (let i = 0; i < 1000000; i++) {
-  if (i % 2 === 0) {
-    result.push(i * 2);
-  }
-}
-```
-
-**Explanation:**
-
-- Using chained methods (`filter`, `map`) creates multiple intermediate arrays.
-- A single loop reduces memory usage and improves performance.
-
----
-
-### **8. Minimize Reflows and Repaints**
-
-**Scenario:** Batch style changes to reduce reflows.
-
-```javascript
-const element = document.getElementById("box");
-
-// Inefficient
-element.style.width = "100px";
-element.style.height = "100px";
-element.style.backgroundColor = "blue";
-
-// Optimized
-const styles = `
-  width: 100px;
-  height: 100px;
-  background-color: blue;
-`;
-element.style.cssText = styles;
-```
-
-**Explanation:**
-
-- Direct style changes trigger multiple reflows.
-- Use `cssText` or classes to apply all styles at once.
-
----
-
-### **9. Use Web Workers for Heavy Computations**
-
-**Scenario:** Offload heavy computations to a web worker.
-
-```javascript
-// worker.js
-self.onmessage = function (e) {
-  const result = e.data.reduce((acc, num) => acc + num, 0);
-  postMessage(result);
-};
-
-// main.js
-const worker = new Worker("worker.js");
-worker.postMessage([1, 2, 3, 4, 5]);
-
-worker.onmessage = function (e) {
-  console.log("Sum:", e.data); // Output: Sum: 15
-};
-```
-
-**Explanation:**
-
-- Web Workers run in a separate thread, preventing the main thread from blocking.
-- Use them for tasks like sorting, processing large arrays, or heavy calculations.
-
----
-
-### **10. Measure and Optimize Code Performance**
-
-**Scenario:** Use `console.time` and `console.timeEnd` to measure performance.
-
-```javascript
-console.time("Loop");
-
-for (let i = 0; i < 1000000; i++) {
-  // Simulate heavy computation
-}
-
-console.timeEnd("Loop"); // Output: Loop: 10ms
-```
-
-**Explanation:**
-
-- Use `console.time` and `console.timeEnd` to identify slow sections of code.
-- Optimize these sections based on the profiling results.
-
----
-
-### **11. Optimize with RequestAnimationFrame**
-
-**Scenario:** Smooth animations by aligning updates with the browser’s refresh rate.
-
-```javascript
-let position = 0;
-
-function animate() {
-  position += 2;
-  document.getElementById("box").style.transform = `translateX(${position}px)`;
-
-  if (position < 500) {
-    requestAnimationFrame(animate);
-  }
-}
-
-animate();
-```
-
-**Explanation:**
-
-- `requestAnimationFrame` ensures animations run at optimal frame rates.
-- Prevents performance issues caused by `setInterval` or `setTimeout`.
-
----
-
-By mastering these concepts, you'll demonstrate a solid understanding of performance optimization in Vanilla JavaScript, which is essential for senior frontend developer interviews.
-
----
-
-## Zustand
-
-Zustand is a state management library for React that is lightweight, fast, and flexible. It's gaining popularity as an alternative to more complex libraries like Redux because it provides a simpler API and better performance for managing state in React applications. For interview purposes, it’s important to understand the fundamentals of Zustand, its use cases, and how it compares to other state management solutions.
-
----
-
-### **Key Concepts of Zustand**
-
-1. **Store**:
-
-   - Zustand uses a central store to manage application state.
-   - The store is created using `create()` and contains both state and actions.
-
-2. **Immutable State Management**:
-
-   - Zustand automatically handles state immutability, so you don’t need to write reducers or use tools like `immer`.
-
-3. **No Boilerplate**:
-
-   - Unlike Redux, Zustand requires minimal setup and no boilerplate code for actions or reducers.
-
-4. **Reactivity**:
-
-   - Zustand uses a subscription model, ensuring that only the components that depend on specific state values are re-rendered.
-
-5. **Middleware Support**:
-   - Zustand supports middlewares for debugging, logging, persistence, and more.
-
----
-
-### **Why Use Zustand?**
-
-- **Simplicity**: No need for actions, reducers, or extra boilerplate.
-- **Performance**: Fine-grained reactivity ensures efficient re-renders.
-- **Ease of Adoption**: Integrates seamlessly with existing React projects.
-- **Scalability**: Can manage global state and complex application needs.
-
----
-
-### **Basic Usage Example**
-
-Here’s an example to understand Zustand in action:
-
-#### Create a Store:
-
-```javascript
-import create from "zustand";
-
-const useStore = create((set) => ({
-  count: 0,
-  increment: () => set((state) => ({ count: state.count + 1 })),
-  decrement: () => set((state) => ({ count: state.count - 1 })),
-}));
-```
-
-#### Consume the Store:
-
-```javascript
-import React from "react";
-import { useStore } from "./store";
-
-const Counter = () => {
-  const count = useStore((state) => state.count);
-  const increment = useStore((state) => state.increment);
-  const decrement = useStore((state) => state.decrement);
-
-  return (
-    <div>
-      <h1>Count: {count}</h1>
-      <button onClick={increment}>Increment</button>
-      <button onClick={decrement}>Decrement</button>
-    </div>
-  );
-};
-```
-
----
-
-### **Interview Questions on Zustand**
-
-#### **Basic Questions:**
-
-1. **What is Zustand, and why would you use it over Redux or Context API?**
-
-   - Lightweight, less boilerplate, and better performance for managing state.
-
-2. **How do you create and consume a store in Zustand?**
-
-   - Using the `create()` function and consuming state via hooks.
-
-3. **What is the advantage of Zustand's subscription model?**
-   - Ensures efficient updates by re-rendering only the components using the affected state.
-
-#### **Intermediate Questions:**
-
-4. **How does Zustand handle immutability?**
-
-   - Zustand updates state immutably under the hood, freeing developers from managing immutability manually.
-
-5. **Can you explain how Zustand's middleware works?**
-
-   - Middleware like `reduxDevtools` can enhance Zustand's functionality, e.g., adding logging or persistence.
-
-6. **How does Zustand compare to Context API in terms of performance?**
-   - Zustand is faster because it avoids unnecessary re-renders by not depending on React's Context API subscription mechanism.
-
-#### **Advanced Questions:**
-
-7. **How would you handle a large application with Zustand?**
-
-   - Use slices to modularize the store, dividing it into multiple logical state units.
-
-8. **How do you persist state in Zustand?**
-
-   - Use the `persist` middleware to save state to localStorage or sessionStorage.
-
-9. **Explain the difference between Zustand and Jotai/Recoil.**
-   - Zustand is a general-purpose store, while Jotai/Recoil focuses on atom-based, fine-grained state management.
-
----
-
-### **Comparison with Redux**
-
-| Feature        | Zustand                     | Redux                         |
-| -------------- | --------------------------- | ----------------------------- |
-| Boilerplate    | Minimal                     | High                          |
-| Learning Curve | Easy                        | Moderate                      |
-| Performance    | High                        | Can be optimized              |
-| Middleware     | Supports custom middlewares | Extensive middleware support  |
-| Immutability   | Built-in                    | Requires libraries like immer |
-
----
-
-### **Practice Scenarios**
-
-1. **Implement Global State**: Create a Zustand store for managing global app settings like theme or language.
-2. **Optimize Performance**: Create a store where only parts of the state are selectively consumed.
-3. **Use Middleware**: Add persistence to your store with `zustand/middleware`.
-
-Understanding these fundamentals will prepare you well for discussing Zustand in interviews!
-
-#### Zustand With Immer
-
-To include **Immer** in a Zustand store, you can use it to simplify state updates by handling immutability automatically. Zustand and Immer complement each other well since Zustand already supports functional updates.
-
-Here’s how you can integrate Immer into a Zustand store:
-
----
-
-### **Example with Immer**
-
-```javascript
-import create from "zustand";
-import produce from "immer";
-
-// Create a Zustand store with Immer
-const useStore = create((set) => ({
-  count: 0,
-  increment: () =>
-    set(
-      produce((state) => {
-        state.count += 1;
-      })
-    ),
-  decrement: () =>
-    set(
-      produce((state) => {
-        state.count -= 1;
-      })
-    ),
-  reset: () =>
-    set(
-      produce((state) => {
-        state.count = 0;
-      })
-    ),
-}));
-```
-
----
-
-### **Component Consuming the Store**
-
-```javascript
-import React from "react";
-import { useStore } from "./store";
-
-const Counter = () => {
-  const count = useStore((state) => state.count);
-  const increment = useStore((state) => state.increment);
-  const decrement = useStore((state) => state.decrement);
-  const reset = useStore((state) => state.reset);
-
-  return (
-    <div>
-      <h1>Count: {count}</h1>
-      <button onClick={increment}>Increment</button>
-      <button onClick={decrement}>Decrement</button>
-      <button onClick={reset}>Reset</button>
-    </div>
-  );
-};
-
-export default Counter;
-```
-
----
-
-### **Explanation**
-
-1. **Immer Integration**:
-
-   - Immer's `produce` function wraps the update logic.
-   - Inside `produce`, you can directly mutate the `state`, and Immer ensures the updates are applied immutably.
-
-2. **State Updates**:
-
-   - When `set` is called, the Immer `produce` function handles the underlying immutable state transformations.
-
-3. **Actions**:
-   - Actions like `increment`, `decrement`, and `reset` are simplified by avoiding manual state copying or immutability logic.
-
----
-
-### **Benefits of Using Immer with Zustand**
-
-- Simplifies complex state updates involving nested objects or arrays.
-- Ensures immutability without writing verbose logic.
-- Makes the store easier to read and maintain.
-
----
-
-This approach works well for scenarios where you have deeply nested state or complex update logic!
-
----
-
-### Typescript
-
-Here’s a curated set of **interview questions with answers and example code** for a candidate with **3 years of experience in TypeScript**:
-
----
-
-### **1. Explain TypeScript and its Benefits over JavaScript.**
-
-**Question:**  
-What is TypeScript, and why would you choose it over JavaScript?
-
-**Answer:**  
-TypeScript is a superset of JavaScript that adds static typing, interfaces, and other features to make development more robust and scalable.  
-**Benefits:**
-
-- **Static Typing:** Detect errors during compile time.
-- **Improved Code Quality:** Tools like IntelliSense and autocompletion.
-- **Supports Modern JavaScript:** Works with ES6+ features.
-- **Refactoring:** Safer and easier.
-- **Interoperability:** Can use existing JavaScript libraries.
-
-**Code Example:**
-
-```typescript
-// TypeScript Code
-function add(a: number, b: number): number {
-  return a + b;
-}
-
-// JavaScript Equivalent (No Type Safety)
-function addJS(a, b) {
-  return a + b;
-}
-```
-
----
-
-### **2. What are TypeScript Interfaces?**
-
-**Question:**  
-Explain interfaces in TypeScript and give an example.
-
-**Answer:**  
-Interfaces in TypeScript define the structure of an object, ensuring type safety during development.
-
-**Code Example:**
-
-```typescript
-interface User {
-  id: number;
-  name: string;
-  isActive: boolean;
-}
-
-const user: User = {
-  id: 1,
-  name: "Deepak",
-  isActive: true,
-};
-
-// Compile-Time Error if `isActive` is omitted or mistyped.
-```
-
----
-
-### **3. How are Enums Used in TypeScript?**
-
-**Question:**  
-What are enums, and how do they work in TypeScript?
-
-**Answer:**  
-Enums define a set of named constants that can be used as a type.
-
-**Code Example:**
-
-```typescript
-enum Role {
-  Admin = "ADMIN",
-  User = "USER",
-  Guest = "GUEST",
-}
-
-function assignRole(role: Role): void {
-  console.log(`Assigned role is: ${role}`);
-}
-
-assignRole(Role.Admin); // Output: Assigned role is: ADMIN
-```
-
----
-
-### **4. Explain the Difference Between `interface` and `type`.**
-
-**Question:**  
-What is the difference between `interface` and `type` in TypeScript?
+### 16. What are generators, and how are they different from regular functions?
 
 **Answer:**
 
-- **Interfaces** are used to define object structures and can be extended.
-- **Types** can represent other constructs like unions or intersections.
+- **Generators** are functions that can pause and resume execution.
+- Declared with `function*` syntax and use `yield` to pause execution.
+- They return an iterator object that can produce a sequence of values.
+- Useful for asynchronous flow control, lazy evaluation, and custom iteration.
 
-**Code Example:**
+**Example:**
 
-```typescript
-// Using Interface
-interface User {
-  id: number;
-  name: string;
+```js
+function* generatorFunc() {
+  yield 1;
+  yield 2;
+  return 3;
 }
 
-// Using Type
-type UserType = {
-  id: number;
-  name: string;
-};
-
-// Key Difference: Type can define a union
-type Response = string | number | boolean;
+const gen = generatorFunc();
+console.log(gen.next()); // { value: 1, done: false }
+console.log(gen.next()); // { value: 2, done: false }
+console.log(gen.next()); // { value: 3, done: true }
 ```
+
+**What interviewers look for:**  
+Knowledge of advanced language features and their use cases.
 
 ---
 
-### **5. How Does TypeScript Handle Modules?**
-
-**Question:**  
-How do you import/export modules in TypeScript?
-
-**Answer:**  
-TypeScript uses ES6-style module imports and exports.
-
-**Code Example:**
-
-```typescript
-// file: utils.ts
-export function greet(name: string): string {
-  return `Hello, ${name}`;
-}
-
-// file: main.ts
-import { greet } from "./utils";
-
-console.log(greet("Deepak")); // Output: Hello, Deepak
-```
-
----
-
-### **6. How Can You Use Generics in TypeScript?**
-
-**Question:**  
-Explain generics in TypeScript with an example.
-
-**Answer:**  
-Generics allow creating reusable, type-safe components.
-
-**Code Example:**
-
-```typescript
-function identity<T>(value: T): T {
-  return value;
-}
-
-console.log(identity<string>("Hello")); // Output: Hello
-console.log(identity<number>(42)); // Output: 42
-```
-
----
-
-### **7. What is the Purpose of Type Guards?**
-
-**Question:**  
-How can you use type guards in TypeScript?
-
-**Answer:**  
-Type guards allow you to narrow down the type of a variable.
-
-**Code Example:**
-
-```typescript
-function isString(value: unknown): value is string {
-  return typeof value === "string";
-}
-
-function printValue(value: string | number) {
-  if (isString(value)) {
-    console.log(`String: ${value}`);
-  } else {
-    console.log(`Number: ${value}`);
-  }
-}
-
-printValue("Deepak"); // Output: String: Deepak
-printValue(42); // Output: Number: 42
-```
-
----
-
-### **8. Explain `Partial`, `Readonly`, and `Pick` Utility Types.**
-
-**Question:**  
-How do `Partial`, `Readonly`, and `Pick` utility types work?
+### 17. How do you handle errors in JavaScript?
 
 **Answer:**
 
-- `Partial<T>`: Makes all properties optional.
-- `Readonly<T>`: Makes all properties readonly.
-- `Pick<T, K>`: Selects specific properties from a type.
+- Use `try...catch` blocks to handle exceptions that occur in synchronous code.
+- For promises, use `.catch()` method or `try/catch` within `async/await`.
+- Validate inputs to prevent errors.
+- Use `console.error`, logging tools, or error tracking services for debugging.
 
-**Code Example:**
+**Example:**
 
-```typescript
-interface User {
-  id: number;
-  name: string;
-  isActive: boolean;
-}
-
-// Partial
-const updateUser: Partial<User> = { name: "Deepak" };
-
-// Readonly
-const readonlyUser: Readonly<User> = { id: 1, name: "Deepak", isActive: true };
-// readonlyUser.id = 2; // Error: Cannot assign to 'id' because it is a read-only property.
-
-// Pick
-type UserSummary = Pick<User, "id" | "name">;
-const summary: UserSummary = { id: 1, name: "Deepak" };
-```
-
----
-
-### **9. What is the `never` Type in TypeScript?**
-
-**Question:**  
-What is the `never` type, and where is it used?
-
-**Answer:**  
-The `never` type represents values that never occur, used in functions that never return (e.g., throw exceptions).
-
-**Code Example:**
-
-```typescript
-function throwError(message: string): never {
-  throw new Error(message);
+```js
+try {
+  JSON.parse("{ invalid json }");
+} catch (e) {
+  console.error("JSON parse error:", e.message);
 }
 ```
 
+**What interviewers look for:**  
+Proper error handling practices and understanding of both synchronous and asynchronous error handling.
+
 ---
 
-### **10. How Do You Use `as const` in TypeScript?**
+### 18. What are Web APIs in the context of JavaScript?
 
-**Question:**  
-What is `as const`, and how is it useful?
+**Answer:**
 
-**Answer:**  
-`as const` creates a readonly tuple or object.
+- **Web APIs** are built-in browser functionalities exposed to JavaScript, like `fetch`, `DOM`, `localStorage`, `setTimeout`, etc.
+- They are not part of the JavaScript language itself but are provided by the environment (browser).
 
-**Code Example:**
+**What interviewers look for:**  
+Awareness that JS is often run in environments that provide APIs, and that these are distinct from the language core.
 
-```typescript
-const roles = ["Admin", "User", "Guest"] as const;
+---
 
-type Role = (typeof roles)[number]; // "Admin" | "User" | "Guest"
+### 19. Explain the concept of hoisting in JavaScript.
 
-function assignRole(role: Role): void {
-  console.log(`Assigned role: ${role}`);
-}
+**Answer:**
 
-assignRole("Admin"); // Valid
-// assignRole("Unknown"); // Error
+- **Hoisting** moves declarations (but not initializations) to the top of their scope.
+- `var` variables and function declarations are hoisted.
+- `let` and `const` variables are hoisted but not initialized until their declaration line (Temporal Dead Zone).
+
+**Example:**
+
+```js
+console.log(a); // undefined (due to hoisting of var declaration)
+var a = 10;
+
+console.log(b); // ReferenceError (due to TDZ)
+let b = 20;
 ```
 
----
-
-### **11. What are Decorators in TypeScript?**
-
-**Question:**  
-What are decorators, and how do they work?
-
-**Answer:**  
-Decorators are functions that modify classes or methods, primarily used in frameworks like Angular.
-
-**Code Example:**
-
-```typescript
-function Logger(target: any, propertyName: string) {
-  console.log(`Property Decorated: ${propertyName}`);
-}
-
-class User {
-  @Logger
-  name: string = "Deepak";
-}
-```
+**What interviewers look for:**  
+Understanding the subtle runtime behavior of variable and function declarations.
 
 ---
 
-This set of questions tests the candidate’s understanding of **core TypeScript concepts**, practical application, and best practices.
+### 20. What are some common design patterns used in JavaScript?
+
+**Answer:**
+
+- **Module Pattern:** Encapsulates private and public members.
+- **Revealing Module Pattern:** Similar to module pattern but more explicitly returns an object of methods.
+- **Singleton Pattern:** Restricts object creation to a single instance.
+- **Factory Pattern:** Creates objects without specifying the exact class.
+- **Observer Pattern (Pub/Sub):** Notifies subscribed observers automatically of state changes.
+
+**What interviewers look for:**  
+Familiarity with common patterns and when to apply them for code organization and maintainability.
 
 ---
 
-## Machine Coding Round Questions
+## Final Tips
 
-Below are similar machine coding challenges, but now implemented in **JavaScript** (without TypeScript-specific type annotations). Each exercise is designed to showcase your skills in **JavaScript**, **React**, and related best practices. With about 3 years of experience, these challenges should be familiar, but they’ll still help you prepare for real-world coding rounds.
+- Practice implementing sample functions and small snippets.
+- Emphasize understanding over rote memorization.
+- Familiarize yourself with ES6+ features, as they are commonly used in modern codebases.
+- Be ready to discuss real-world scenarios where you used these concepts.
+- During the interview, explain your thought process and reasoning.
+
+By thoroughly reviewing these questions, answers, and code samples, you’ll be well-prepared to handle technical interviews for a mid-level JavaScript role.
 
 ---
 
-### 1. Filtering and Searching a List of Items
+# React.JS
 
-**Task:**  
-Given an array of user objects with `id` and `name`, create a React component that displays a search input. As the user types, filter the displayed list in real-time.
+Below is a comprehensive set of questions and answers that cover a range of topics you might encounter in an interview for a React developer with about three years of experience. Alongside the Q&A, you’ll find code examples where appropriate. These questions are designed to help solidify your understanding of React fundamentals, as well as some intermediate and advanced concepts that often come up in interviews.
 
-**Key Points:**
+---
 
-- Use React hooks (`useState`) for state management.
-- Filter the list based on the search query, ignoring case.
-- Keep the code clean and modular.
+### Core React Concepts
 
-**Example Code (React + JavaScript):**
+**Q1: What are the main differences between Functional Components and Class Components in React?**  
+**A:**
+
+- **Syntax & Structure:** Class components are ES6 classes that extend `React.Component` and must have a `render()` method, whereas functional components are plain JavaScript functions that return JSX.
+- **State & Lifecycle:** Class components manage state using `this.state` and lifecycle methods (`componentDidMount`, `componentDidUpdate`, etc.), while functional components use the `useState` and `useEffect` hooks for state and side effects.
+- **Performance & Simplicity:** Functional components are generally simpler and can be more performant due to the React team’s optimization work, such as not needing an instance.
+- **Hooks Availability:** Hooks (like `useState`, `useEffect`, `useContext`) are only available in functional components, providing a simpler way to manage state and side effects without complex class lifecycle methods.
+
+**Q2: How do you manage state in a functional component?**  
+**A:**  
+You manage state in a functional component using the `useState` hook, which returns an array with the current state value and a function to update it. For example:
 
 ```jsx
 import React, { useState } from "react";
 
-export function UserSearch({ users }) {
-  const [query, setQuery] = useState("");
-
-  const handleChange = (e) => {
-    setQuery(e.target.value);
-  };
-
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(query.toLowerCase())
-  );
+function Counter() {
+  const [count, setCount] = useState(0);
 
   return (
     <div>
-      <input
-        type="text"
-        placeholder="Search user by name..."
-        value={query}
-        onChange={handleChange}
-      />
-      <ul>
-        {filteredUsers.map((user) => (
-          <li key={user.id}>{user.name}</li>
+      <p>Clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+    </div>
+  );
+}
+```
+
+**Q3: What is the Virtual DOM and how does it improve performance?**  
+**A:**  
+The Virtual DOM is an in-memory representation of the actual DOM. When state changes occur in your component, React updates this Virtual DOM first. It then computes the difference (the “diff”) between the previous and current Virtual DOM states to determine the minimal set of changes required, and finally applies those changes to the real DOM. This minimizes unnecessary DOM manipulations and improves performance.
+
+---
+
+### Hooks and State Management
+
+**Q4: Explain the useEffect Hook. How can you prevent it from running on every render?**  
+**A:**  
+`useEffect` lets you perform side effects in functional components. Side effects can include fetching data, directly manipulating the DOM, or subscribing to external data sources.
+
+- Without dependencies, `useEffect` runs after every render.
+- By providing a dependency array, e.g. `useEffect(() => {...}, [someVar])`, the effect runs only when the values in that array change.
+- To run an effect only once (on mount), use an empty dependency array: `useEffect(() => {...}, [])`.
+
+**Q5: How can you perform data fetching inside a functional component?**  
+**A:**  
+You can use `useEffect` to handle data fetching:
+
+```jsx
+import React, { useState, useEffect } from "react";
+
+function DataFetcher({ url }) {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch(url)
+      .then((response) => response.json())
+      .then((fetchedData) => {
+        if (isMounted) {
+          setData(fetchedData);
+        }
+      });
+    return () => {
+      isMounted = false; // Cleanup if component unmounts
+    };
+  }, [url]);
+
+  if (!data) return <div>Loading...</div>;
+  return <div>{JSON.stringify(data)}</div>;
+}
+```
+
+---
+
+### Props, Context, and Advanced Hooks
+
+**Q6: What is the difference between state and props?**  
+**A:**
+
+- **Props:** Passed down from parent components and are read-only. They are used to configure a component and cannot be changed by the component receiving them.
+- **State:** Internal to a component and mutable. State can be updated by the component itself using `setState` (class components) or state setter functions (functional components with `useState`).
+
+**Q7: When would you use the Context API in React?**  
+**A:**  
+Use the Context API to share global data (e.g. authenticated user info, theme) between multiple components without passing props down the component tree manually. This avoids “prop drilling.” Here is an example of creating and using a context for a theme:
+
+```jsx
+// themeContext.js
+import React from "react";
+export const ThemeContext = React.createContext("light");
+
+// App.jsx
+import React, { useState } from "react";
+import { ThemeContext } from "./themeContext";
+import ChildComponent from "./ChildComponent";
+
+function App() {
+  const [theme, setTheme] = useState("dark");
+
+  return (
+    <ThemeContext.Provider value={theme}>
+      <ChildComponent />
+    </ThemeContext.Provider>
+  );
+}
+
+// ChildComponent.jsx
+import React, { useContext } from "react";
+import { ThemeContext } from "./themeContext";
+
+function ChildComponent() {
+  const theme = useContext(ThemeContext);
+  return (
+    <div style={{ background: theme === "dark" ? "#333" : "#ccc" }}>Hello</div>
+  );
+}
+```
+
+**Q8: Explain the `useMemo` and `useCallback` hooks.**  
+**A:**
+
+- **useMemo:** Memoizes a computed value to avoid recomputing expensive operations on every render.
+  ```jsx
+  const expensiveValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);
+  ```
+- **useCallback:** Returns a memoized callback function so that you don't create a new function instance on every render, useful when passing callbacks down to child components that rely on reference equality.
+  ```jsx
+  const handleClick = useCallback(() => doSomething(prop), [prop]);
+  ```
+
+---
+
+### Lifecycle and Performance
+
+**Q9: How do you mimic `componentDidMount` and `componentWillUnmount` in functional components?**  
+**A:**
+
+- **componentDidMount:** A `useEffect` with an empty dependency array `[]` runs once after the component mounts, similar to `componentDidMount`.
+- **componentWillUnmount:** The cleanup function returned by `useEffect` runs before the component unmounts.
+
+For example:
+
+```jsx
+useEffect(() => {
+  // ComponentDidMount
+  const subscription = someAPI.subscribe();
+
+  return () => {
+    // ComponentWillUnmount
+    subscription.unsubscribe();
+  };
+}, []);
+```
+
+**Q10: How do you optimize the performance of a React application?**  
+**A:**
+
+- Use the `React.memo()` higher-order component or `memo()` for functional components to prevent unnecessary re-renders.
+- Utilize `useMemo` and `useCallback` to memoize expensive calculations or callbacks.
+- Code splitting and lazy loading with `React.lazy()` and `Suspense`.
+- Keep component hierarchies shallow and avoid unnecessary prop drilling (use Context or Redux).
+- Employ memoization libraries or selectors (if using Redux).
+
+---
+
+### Testing
+
+**Q11: How would you test a React component? What tools do you use?**  
+**A:**
+
+- **Tools:** Jest (as a test runner), React Testing Library (for DOM testing), and sometimes Enzyme (legacy) for component-level testing.
+- **Approach:**
+  - Render the component with `@testing-library/react`’s `render` function.
+  - Query the DOM (using `getByText`, `getByRole`, etc.) to find elements.
+  - Assert behavior with Jest’s `expect` function.
+
+**Example Test:**
+
+```jsx
+// Counter.test.js
+import React from "react";
+import { render, fireEvent } from "@testing-library/react";
+import Counter from "./Counter";
+
+test("increments counter", () => {
+  const { getByText } = render(<Counter />);
+  const button = getByText(/Increment/i);
+  fireEvent.click(button);
+  expect(getByText(/Clicked 1 times/i)).toBeInTheDocument();
+});
+```
+
+---
+
+### Routing and APIs
+
+**Q12: How do you implement routing in a React application?**  
+**A:**  
+By using `react-router-dom`:
+
+```jsx
+import React from "react";
+import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+
+function About() {
+  return <h2>About</h2>;
+}
+
+function Home() {
+  return <h2>Home</h2>;
+}
+
+function App() {
+  return (
+    <Router>
+      <div>
+        <Link to="/">Home</Link> | <Link to="/about">About</Link>
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route path="/about" component={About} />
+        </Switch>
+      </div>
+    </Router>
+  );
+}
+```
+
+**Q13: How can you handle data fetching errors and loading states in a React component?**  
+**A:**
+
+- Use local component state to track `loading` and `error` states.
+- Initially, set `loading = true` and `error = null`. When data is fetched successfully, set `loading = false`. On error, set `error` to the error message.
+- Conditionally render the UI based on these states.
+
+```jsx
+import React, { useState, useEffect } from "react";
+
+function DataComponent({ url }) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Define an async function inside the effect
+    const fetchData = async () => {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("Network error");
+        }
+        const fetchedData = await response.json();
+        setData(fetchedData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Call the async function
+    fetchData();
+  }, [url]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  return <div>{JSON.stringify(data)}</div>;
+}
+
+export default DataComponent;
+```
+
+---
+
+### Advanced Topics (State Management, Performance, Patterns)
+
+**Q14: Have you worked with external state management libraries like Redux or Zustand? How do they differ from using the Context API?**  
+**A:**
+
+- **Redux:** Offers a single, centralized store and strict rules about how state can be updated (pure reducers and dispatched actions). Often involves more boilerplate, but results in predictable state management and good tooling (Redux DevTools).
+- **Context API:** Good for simpler global states but can lead to re-renders if not carefully optimized. It’s built into React, so no extra library is needed.
+- **Zustand:** A lightweight state management library that uses hooks for easy global state management. Unlike Redux, it has less boilerplate and doesn’t enforce strict patterns. It can be more ergonomic but may have less structured patterns than Redux.
+
+**Q15: Explain React’s reconciliation algorithm and keys in lists.**  
+**A:**
+
+- **Reconciliation:** React uses a diffing algorithm (reconciliation) to compare new and old Virtual DOM trees and apply minimal changes to the actual DOM.
+- **Keys:** When rendering lists, keys help React identify which items have changed, added, or removed. Using stable, unique keys (often from data) allows React to maintain state correctly and optimize rendering.
+
+**Example of keys in lists:**
+
+```jsx
+function TodoList({ todos }) {
+  return (
+    <ul>
+      {todos.map((todo) => (
+        <li key={todo.id}>{todo.text}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+---
+
+### Miscellaneous
+
+**Q16: What are Controlled and Uncontrolled components in React?**  
+**A:**
+
+- **Controlled Component:** Form data is controlled by React state. The `value` of an input is set by state, and user input triggers state updates.
+- **Uncontrolled Component:** Form data is handled by the DOM itself. You use `ref` to access the input’s value when needed. It’s closer to traditional form handling.
+
+**Controlled Component Example:**
+
+```jsx
+function NameForm() {
+  const [name, setName] = useState("");
+
+  return <input value={name} onChange={(e) => setName(e.target.value)} />;
+}
+```
+
+**Uncontrolled Component Example:**
+
+```jsx
+function UncontrolledForm() {
+  const inputRef = React.useRef();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(inputRef.current.value);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input ref={inputRef} />
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+```
+
+---
+
+By thoroughly understanding these questions and practicing the corresponding code examples, you’ll be well-prepared for a React interview at the 3-year experience level. Make sure you can not only recite these answers but also explain the reasoning behind them and adapt them to on-the-spot coding challenges.
+
+---
+
+# Typescript
+
+Below is a comprehensive set of questions, answers, and code examples that cover a range of TypeScript topics for a developer with about three years of experience. These will help you solidify your understanding of TypeScript and excel in interviews.
+
+---
+
+### Core TypeScript Concepts
+
+**Q1: What advantages does TypeScript offer over JavaScript?**  
+**A:**
+
+- **Static Typing:** Ensures variables, function parameters, and return values have defined types at compile time, reducing runtime errors.
+- **Better Tooling:** Enhanced autocompletion, refactoring, and error detection in editors, leading to improved developer productivity.
+- **Maintainability:** Enforces clearer contracts between parts of the code, making large codebases more manageable.
+- **Integration with Existing JS:** TypeScript is a superset of JavaScript, so any JavaScript code is valid TypeScript.
+
+**Q2: How do you define interfaces in TypeScript, and when would you use them?**  
+**A:**  
+Interfaces define the shape of objects. They are useful when you want to enforce a particular structure (like a contract) for classes, function parameters, or object literals.
+
+```ts
+interface User {
+  id: number;
+  name: string;
+  isActive?: boolean; // optional property
+}
+
+const user: User = {
+  id: 1,
+  name: "Alice",
+};
+```
+
+---
+
+### Types & Generics
+
+**Q3: What is the difference between `type` aliases and `interface` in TypeScript?**  
+**A:**
+
+- Both can define object shapes, but `interface` is specifically for describing object-like structures and can be extended or merged.
+- `type` aliases are more general and can represent union types, primitive types, tuples, and more. They cannot be merged once defined.
+- For object shapes, both `interface` and `type` work similarly, but `interface` is often preferred for public APIs due to its extension/merging capabilities.
+
+**Q4: Explain Generics and why they are useful.**  
+**A:**  
+Generics provide a way to create reusable components that can work with a variety of types rather than a single one. They help maintain type safety while reducing the need for duplicating code.
+
+```ts
+function identity<T>(arg: T): T {
+  return arg;
+}
+
+const num = identity<number>(42); // T = number
+const str = identity("Hello"); // T inferred as string
+```
+
+---
+
+### Advanced Types
+
+**Q5: What are Union and Intersection types in TypeScript?**  
+**A:**
+
+- **Union Types:** Allow a variable to have one of several types.
+  ```ts
+  let input: string | number;
+  input = "test"; // OK
+  input = 5; // OK
+  ```
+- **Intersection Types:** Combine multiple types into one. The resulting type must satisfy all constituent types.
+  ```ts
+  interface A {
+    a: string;
+  }
+  interface B {
+    b: number;
+  }
+  type C = A & B; // must have both a string and b number
+  const obj: C = { a: "Hello", b: 42 };
+  ```
+
+**Q6: What is a `type predicate` and how is it used for type guards?**  
+**A:**  
+A type predicate is a function return type of the form `arg is Type`. It helps TypeScript narrow down the type within conditional checks.
+
+```ts
+interface Cat {
+  meow: () => void;
+}
+interface Dog {
+  bark: () => void;
+}
+
+function isCat(animal: Cat | Dog): animal is Cat {
+  return (animal as Cat).meow !== undefined;
+}
+
+function handleAnimal(animal: Cat | Dog) {
+  if (isCat(animal)) {
+    animal.meow(); // TypeScript knows animal is a Cat here
+  } else {
+    animal.bark(); // animal is a Dog here
+  }
+}
+```
+
+---
+
+### Classes, Decorators, and Modules
+
+**Q7: How do you define classes in TypeScript?**  
+**A:**  
+Classes in TypeScript are similar to those in ES6 but with additional type annotations, access modifiers (public, private, protected), and optional fields.
+
+```ts
+class Person {
+  private id: number;
+  public name: string;
+
+  constructor(id: number, name: string) {
+    this.id = id;
+    this.name = name;
+  }
+
+  getId(): number {
+    return this.id;
+  }
+}
+
+const person = new Person(1, "Alice");
+console.log(person.getId()); // 1
+```
+
+**Q8: Explain how decorators work in TypeScript.**  
+**A:**  
+Decorators are experimental features that let you attach custom behaviors to classes, class methods, properties, and parameters at design time. They are essentially functions that receive the decorated target and can modify its behavior or metadata.
+
+```ts
+function Component(constructor: Function) {
+  console.log("Component decorator called on:", constructor.name);
+}
+
+@Component
+class MyComponent {
+  // ...
+}
+
+// When MyComponent is declared, "Component decorator called on: MyComponent" will be logged.
+```
+
+You must enable `"experimentalDecorators": true` in your `tsconfig.json` for decorators to work.
+
+---
+
+### Enums and Advanced Configurations
+
+**Q9: What are Enums in TypeScript and when would you use them?**  
+**A:**  
+Enums define a set of named constants, making code more readable and maintainable when dealing with fixed sets of related constants.
+
+```ts
+enum Direction {
+  North,
+  East,
+  South,
+  West,
+}
+
+const move = (dir: Direction) => {
+  // ...
+};
+
+move(Direction.North); // Clearer than passing a raw number
+```
+
+---
+
+### Working with Libraries and Third-Party Code
+
+**Q10: How do you add type definitions for third-party JavaScript libraries that don’t have built-in TypeScript definitions?**  
+**A:**
+
+- Install type definitions from `@types` using npm, e.g. `npm install --save @types/lodash`.
+- If no official type definitions exist, create your own `.d.ts` declaration files.
+- Use the `declare` keyword to write custom type definitions that describe the library’s API.
+
+**Q11: What is `declare` keyword used for in TypeScript?**  
+**A:**  
+`declare` is used to define types for external code (e.g., global variables, functions from a non-TS source) without implementing them. It’s a way of telling TypeScript the shape and type of something that is implemented elsewhere.
+
+```ts
+// global.d.ts
+declare global {
+  interface Window {
+    myGlobalVar: string;
+  }
+}
+export {};
+```
+
+---
+
+### Type Inference and Utility Types
+
+**Q12: How does TypeScript’s type inference work?**  
+**A:**  
+TypeScript can infer types from usage patterns and initialization. For example, if you initialize a variable with a string, TypeScript knows its type is `string` without explicit annotation.
+
+```ts
+let message = "Hello, World!"; // message: string inferred
+```
+
+**Q13: What are some useful built-in utility types?**  
+**A:**
+
+- **Partial<T>:** Makes all properties in `T` optional.
+- **Required<T>:** Makes all properties in `T` required.
+- **Pick<T, K>:** Creates a type by picking a set of properties `K` from `T`.
+- **Omit<T, K>:** Creates a type by omitting a set of properties `K` from `T`.
+- **Readonly<T>:** Makes all properties in `T` read-only.
+- **Record<K, T>:** Constructs a type with keys of type `K` and values of type `T`.
+
+```ts
+interface User {
+  id: number;
+  name: string;
+  age?: number;
+}
+
+type PartialUser = Partial<User>; // { id?: number; name?: string; age?: number; }
+type RequiredUser = Required<User>; // { id: number; name: string; age: number; }
+type UserIdName = Pick<User, "id" | "name">; // { id: number; name: string; }
+```
+
+---
+
+### Strictness and Configuration
+
+**Q14: What does `strictNullChecks` do?**  
+**A:**  
+When `strictNullChecks` is enabled, TypeScript does not allow `null` or `undefined` as valid values unless explicitly specified. This prevents many common runtime errors by ensuring you handle `null` and `undefined` cases explicitly.
+
+```ts
+let name: string = "Alice";
+// name = null; // Error if strictNullChecks is true
+let nullableName: string | null = null; // Must explicitly allow null
+```
+
+**Q15: What is `noImplicitAny` and why is it helpful?**  
+**A:**  
+`noImplicitAny` prevents TypeScript from defaulting to the `any` type when it cannot infer a variable’s type. Instead, it requires you to explicitly specify the type. This leads to better type safety and clearer code.
+
+---
+
+### Testing and Tooling
+
+**Q16: How do you test TypeScript code?**  
+**A:**
+
+- Use frameworks like Jest or Mocha + Chai.
+- Add `ts-jest` or other TypeScript integration so that tests can run TypeScript files directly.
+- Ensure type definitions for testing libraries are installed (`@types/jest`, etc.).
+- A typical configuration involves `jest.config.js` with `transform: { '^.+\\.tsx?$': 'ts-jest' }`.
+
+**Example:**
+
+```ts
+// sum.ts
+export function sum(a: number, b: number): number {
+  return a + b;
+}
+
+// sum.test.ts
+import { sum } from "./sum";
+
+test("sum of two numbers", () => {
+  expect(sum(1, 2)).toBe(3);
+});
+```
+
+Run tests with `npx jest`.
+
+---
+
+### Miscellaneous
+
+**Q17: What is `never` type and when is it used?**  
+**A:**  
+`never` represents a type that never occurs (e.g., a function that never returns or always throws an error). This is useful for exhaustive checks in switch statements and ensuring all code paths are covered.
+
+```ts
+function fail(message: string): never {
+  throw new Error(message);
+}
+```
+
+**Q18: What is Type Assertion and when to use it?**  
+**A:**  
+Type assertion is a way to tell the compiler that you know more about the type than it does. Use it judiciously when you are certain of the type but TypeScript cannot infer it.
+
+```ts
+let someValue: unknown = "Hello";
+let strLength: number = (someValue as string).length;
+```
+
+---
+
+By studying these questions and answers, as well as the code examples, you’ll be better prepared to demonstrate your TypeScript knowledge at a 3-year experience level. Understanding the rationale and being able to adapt these concepts to on-the-fly coding tasks will help you succeed in the interview.
+
+---
+
+Machine Coding Round
+
+Below are some machine coding round-style questions tailored for a React developer with around 3 years of experience. These questions focus on practical implementation, handling state, side effects, data fetching, and common patterns. Each question is followed by an outlined solution approach and example code. Keep in mind that in an actual interview setting, you won’t always have complete solutions upfront, but practicing these will help you quickly produce quality code under time constraints.
+
+---
+
+### 1. Build a Simple Todo List Application
+
+**Question:**  
+Implement a todo list application where a user can:
+
+- Add a new todo item (with a text input and a button).
+- View a list of existing todo items.
+- Mark a todo item as completed.
+- Delete a todo item.
+
+The app state should be managed using React hooks, and the UI should update accordingly.
+
+**Key Points:**
+
+- Use `useState` for managing todo list state.
+- Each todo item should have an `id`, `text`, and `completed` boolean.
+- Provide basic styling or minimal markup.
+- Ensure immutability when updating state.
+
+**Solution Outline:**
+
+1. Initialize state with an empty array of todos.
+2. Provide a form input and button to add new todos.
+3. Display todos in a list with a checkbox to mark completion and a button to delete.
+4. Implement event handlers to update state for adding, toggling completion, and deleting.
+
+**Example Code:**
+
+```jsx
+import React, { useState } from "react";
+
+function TodoApp() {
+  const [todos, setTodos] = useState([]);
+  const [inputValue, setInputValue] = useState("");
+
+  const addTodo = (e) => {
+    e.preventDefault();
+    if (!inputValue.trim()) return;
+    const newTodo = { id: Date.now(), text: inputValue, completed: false };
+    setTodos([...todos, newTodo]);
+    setInputValue("");
+  };
+
+  const toggleTodo = (id) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  };
+
+  const deleteTodo = (id) => {
+    setTodos(todos.filter((todo) => todo.id !== id));
+  };
+
+  return (
+    <div style={{ padding: "20px", maxWidth: "400px", margin: "auto" }}>
+      <h2>Todo List</h2>
+      <form onSubmit={addTodo}>
+        <input
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          placeholder="Add new todo"
+        />
+        <button type="submit">Add</button>
+      </form>
+
+      <ul style={{ listStyle: "none", paddingLeft: 0 }}>
+        {todos.map((todo) => (
+          <li
+            key={todo.id}
+            style={{ textDecoration: todo.completed ? "line-through" : "none" }}
+          >
+            <input
+              type="checkbox"
+              checked={todo.completed}
+              onChange={() => toggleTodo(todo.id)}
+            />
+            {todo.text}
+            <button
+              onClick={() => deleteTodo(todo.id)}
+              style={{ marginLeft: "10px" }}
+            >
+              Delete
+            </button>
+          </li>
         ))}
       </ul>
     </div>
   );
 }
 
-// Example usage:
-// const usersData = [{ id:1, name:'Alice' }, { id:2, name:'Bob' }, { id:3, name:'Charlie' }];
-// <UserSearch users={usersData} />
+export default TodoApp;
 ```
 
 ---
 
-### 2. Custom Hook for Data Fetching
+### 2. Fetching and Displaying Data from an API
 
-**Task:**  
-Create a custom React hook that fetches data from a given URL and returns loading, error, and data states.
+**Question:**  
+Create a component that fetches a list of users from a public API (e.g., `https://jsonplaceholder.typicode.com/users`) and displays them. Show a loading indicator while fetching, and handle error states gracefully.
 
 **Key Points:**
 
-- Use `useEffect` for fetching data when the component mounts or the URL changes.
-- Manage `loading`, `error`, and `data` states.
-- Keep the solution simple and robust.
+- Use `useEffect` to fetch data once on component mount.
+- Use `useState` to store the fetched data, loading state, and error state.
+- Conditionally render loading, error, or data states.
 
-**Example Code (React + JavaScript):**
+**Solution Outline:**
+
+1. Use `useState` for `users`, `loading`, and `error`.
+2. Use `useEffect` to fetch data from the API when the component mounts.
+3. Update the states accordingly.
+4. Render states conditionally.
+
+**Example Code:**
+
+```jsx
+import React, { useState, useEffect } from "react";
+
+function UserList() {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Define an async function
+    const fetchUsers = async () => {
+      try {
+        const res = await fetch("https://jsonplaceholder.typicode.com/users");
+        if (!res.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await res.json();
+        setUsers(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Call the async function
+    fetchUsers();
+  }, []);
+
+  if (loading) return <div>Loading users...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h2>User List</h2>
+      <ul style={{ listStyle: "none", paddingLeft: 0 }}>
+        {users.map((user) => (
+          <li key={user.id} style={{ marginBottom: "10px" }}>
+            <strong>{user.name}</strong> - {user.email}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default UserList;
+```
+
+---
+
+### 3. Implement a Search Filter
+
+**Question:**  
+Given a list of items, implement a search bar that allows the user to filter the displayed items in real-time as they type.
+
+**Key Points:**
+
+- Use `useState` to store the search query.
+- Filter the displayed items based on the search query.
+- The filter should be case-insensitive and update instantly as the user types.
+
+**Solution Outline:**
+
+1. Have a parent component that stores an array of items.
+2. Use an input field for search query.
+3. Filter items before rendering based on the query.
+4. If query is empty, show all items. Otherwise, show only matching items.
+
+**Example Code:**
+
+```jsx
+import React, { useState } from "react";
+
+function SearchableList() {
+  const items = [
+    "React",
+    "Redux",
+    "TypeScript",
+    "JavaScript",
+    "Node",
+    "Express",
+    "GraphQL",
+  ];
+  const [query, setQuery] = useState("");
+
+  const filteredItems = items.filter((item) =>
+    item.toLowerCase().includes(query.toLowerCase())
+  );
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h2>Searchable List</h2>
+      <input
+        placeholder="Search..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      <ul style={{ listStyle: "none", paddingLeft: 0, marginTop: "10px" }}>
+        {filteredItems.map((item, idx) => (
+          <li key={idx}>{item}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default SearchableList;
+```
+
+---
+
+### 4. Create a Paginated List
+
+**Question:**  
+Implement a component that displays a large list of items with pagination. Each page should show a fixed number of items and allow navigation between pages.
+
+**Key Points:**
+
+- Have a large dataset (e.g., 50 items).
+- Show only `n` items per page (e.g., 5 items per page).
+- Display pagination controls (Previous, Next, and Page Numbers).
+- Handle edge cases when on the first or last page.
+
+**Solution Outline:**
+
+1. Store `currentPage` in state.
+2. Calculate `startIndex` and `endIndex` for the current page.
+3. Render a slice of the array based on these indices.
+4. Add event handlers to increment/decrement `currentPage`.
+5. Display pagination UI at the bottom.
+
+**Example Code:**
+
+```jsx
+import React, { useState } from "react";
+
+function PaginatedList() {
+  const data = Array.from({ length: 50 }, (_, i) => `Item ${i + 1}`);
+  const itemsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const visibleItems = data.slice(startIndex, endIndex);
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+  };
+
+  return (
+    <div style={{ padding: "20px", maxWidth: "300px", margin: "auto" }}>
+      <h2>Paginated List</h2>
+      <ul style={{ listStyle: "none", paddingLeft: 0 }}>
+        {visibleItems.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+      <div style={{ marginTop: "10px" }}>
+        <button
+          disabled={currentPage === 1}
+          onClick={() => goToPage(currentPage - 1)}
+        >
+          Previous
+        </button>
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <button
+            key={page}
+            style={{ fontWeight: page === currentPage ? "bold" : "normal" }}
+            onClick={() => goToPage(page)}
+          >
+            {page}
+          </button>
+        ))}
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => goToPage(currentPage + 1)}
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default PaginatedList;
+```
+
+---
+
+### 5. Controlled Form with Validation
+
+**Question:**  
+Build a registration form with the following fields: Name, Email, and Password. Implement basic validation:
+
+- Name should not be empty.
+- Email should contain an "@".
+- Password should be at least 6 characters long.
+
+On submitting the form, if validation passes, display a success message. If not, display appropriate error messages.
+
+**Key Points:**
+
+- Use `useState` to store form values and error messages.
+- Validate on form submit.
+- If validation fails, show errors without submitting.
+
+**Solution Outline:**
+
+1. Store `name`, `email`, and `password` states.
+2. On submit, validate each field.
+3. If valid, show success message. Otherwise, display errors under each field.
+
+**Example Code:**
+
+```jsx
+import React, { useState } from "react";
+
+function RegistrationForm() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newErrors = {};
+
+    if (!name.trim()) {
+      newErrors.name = "Name is required.";
+    }
+    if (!email.includes("@")) {
+      newErrors.email = 'Email must contain an "@".';
+    }
+    if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters.";
+    }
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
+      setSuccess(true);
+    } else {
+      setSuccess(false);
+    }
+  };
+
+  return (
+    <div style={{ padding: "20px", maxWidth: "400px", margin: "auto" }}>
+      <h2>Registration Form</h2>
+      {success && (
+        <div style={{ color: "green" }}>Form submitted successfully!</div>
+      )}
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Name:</label>
+          <br />
+          <input value={name} onChange={(e) => setName(e.target.value)} />
+          {errors.name && <div style={{ color: "red" }}>{errors.name}</div>}
+        </div>
+        <div style={{ marginTop: "10px" }}>
+          <label>Email:</label>
+          <br />
+          <input value={email} onChange={(e) => setEmail(e.target.value)} />
+          {errors.email && <div style={{ color: "red" }}>{errors.email}</div>}
+        </div>
+        <div style={{ marginTop: "10px" }}>
+          <label>Password:</label>
+          <br />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          {errors.password && (
+            <div style={{ color: "red" }}>{errors.password}</div>
+          )}
+        </div>
+        <button type="submit" style={{ marginTop: "10px" }}>
+          Submit
+        </button>
+      </form>
+    </div>
+  );
+}
+
+export default RegistrationForm;
+```
+
+---
+
+### 6. React Context Usage
+
+**Question:**  
+Create a simple theme toggler using React’s Context API. The user can switch between "light" and "dark" themes, and the chosen theme should affect the background color of a displayed content area.
+
+**Key Points:**
+
+- Use `React.createContext` and `Context.Provider`.
+- Store `theme` (either "light" or "dark") in the provider’s state.
+- A button to toggle the theme.
+- Consume the theme in a child component to style accordingly.
+
+**Solution Outline:**
+
+1. Create a ThemeContext with a default value.
+2. Create a ThemeProvider component that holds `theme` state and provides it to descendants.
+3. Create a child component that consumes the theme and applies styles.
+4. Add a button to toggle the theme inside the provider.
+
+**Example Code:**
+
+```jsx
+import React, { useState, useContext, createContext } from "react";
+
+const ThemeContext = createContext();
+
+function ThemeProvider({ children }) {
+  const [theme, setTheme] = useState("light");
+  const toggleTheme = () => setTheme(theme === "light" ? "dark" : "light");
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+
+function ThemedBox() {
+  const { theme } = useContext(ThemeContext);
+  const styles = {
+    background: theme === "light" ? "#eee" : "#333",
+    color: theme === "light" ? "#000" : "#fff",
+    padding: "20px",
+    marginTop: "20px",
+  };
+
+  return <div style={styles}>This box is {theme} themed!</div>;
+}
+
+function ThemeSwitcherApp() {
+  const { toggleTheme } = useContext(ThemeContext);
+  return (
+    <div style={{ padding: "20px" }}>
+      <button onClick={toggleTheme}>Toggle Theme</button>
+      <ThemedBox />
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <ThemeSwitcherApp />
+    </ThemeProvider>
+  );
+}
+
+export default App;
+```
+
+---
+
+**Using these example questions and solutions:**
+
+- Practice coding these components without looking at the provided solutions.
+- Add enhancements (like form validation rules, more complex filtering, unit tests).
+- Understand the reasoning and patterns (managing state, side effects, conditional rendering, etc.).
+
+By confidently handling these machine coding tasks and clearly explaining your solutions, you’ll be prepared to excel in a React machine coding round at a 3-year experience level.
+
+---
+
+# React Custom Hooks
+
+Below is a set of questions, answers, and code examples focusing on **React Custom Hooks**, suitable for a candidate with about 3 years of React experience. Understanding these concepts will help you excel in interviews that specifically test your knowledge of hooks, code reusability, and best practices.
+
+---
+
+### 1. What is a custom hook and why do we create one?
+
+**Answer:**  
+A custom hook is a function that uses built-in React hooks (like `useState`, `useEffect`, `useContext`) to encapsulate and reuse logic across multiple components. They are a way to extract component logic into reusable functions, improving code organization and reducing duplication.
+
+**Key Points:**
+
+- Custom hooks follow the naming convention `useSomething` to let React’s linter rules apply.
+- They help avoid "wrapper hell" or deeply nested components that happen when using render props or Higher-Order Components.
+
+**Example:**
 
 ```jsx
 import { useState, useEffect } from "react";
 
-export function useFetch(url) {
+function useFetch(url) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
-    setLoading(true);
-    setError(null);
 
-    fetch(url)
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(url);
         if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
+          throw new Error("Network error");
         }
-        return response.json();
-      })
-      .then((json) => {
+
+        const json = await response.json();
         if (isMounted) {
           setData(json);
           setLoading(false);
         }
-      })
-      .catch((err) => {
+      } catch (err) {
         if (isMounted) {
           setError(err.message);
           setLoading(false);
         }
-      });
+      }
+    };
+
+    fetchData();
 
     return () => {
-      isMounted = false;
+      isMounted = false; // Prevent state updates if component unmounts
     };
   }, [url]);
 
   return { data, loading, error };
 }
 
-// Example usage in a component:
-export function PostList() {
+export default useFetch;
+```
+
+_Usage in a component:_
+
+```jsx
+function UserList() {
   const {
-    data: posts,
+    data: users,
     loading,
     error,
-  } = useFetch("https://jsonplaceholder.typicode.com/posts");
+  } = useFetch("https://jsonplaceholder.typicode.com/users");
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
-
   return (
     <ul>
-      {posts.map((post) => (
-        <li key={post.id}>{post.title}</li>
+      {users.map((u) => (
+        <li key={u.id}>{u.name}</li>
       ))}
     </ul>
   );
@@ -1905,622 +1741,1109 @@ export function PostList() {
 
 ---
 
-### 3. Memoized Component
+### 2. What are the rules of hooks and how do they apply to custom hooks?
 
-**Task:**  
-Create a React component that receives props and only re-renders when the props change. Use `React.memo`.
+**Answer:**  
+The rules of hooks are:
 
-**Key Points:**
+1. **Only call hooks at the top level**: Don’t call hooks inside loops, conditions, or nested functions.
+2. **Only call hooks from React functions**: This means you can call them inside React functional components or other custom hooks.
 
-- Showcase understanding of `React.memo` to avoid unnecessary re-renders.
-- Validate that the component updates only on prop changes.
+When creating a custom hook, these same rules apply. You must call built-in hooks at the top level of your custom hook, and the custom hook itself must be called from a React component or another custom hook.
 
-**Example Code (React + JavaScript):**
-
-```jsx
-import React, { useState } from "react";
-
-function DisplayCount({ count }) {
-  console.log("DisplayCount render");
-  return <div>Count: {count}</div>;
-}
-
-const MemoizedDisplayCount = React.memo(DisplayCount);
-
-export function Counter() {
-  const [count, setCount] = useState(0);
-  const [text, setText] = useState("");
-
-  return (
-    <div>
-      <button onClick={() => setCount((c) => c + 1)}>Increment</button>
-      <input
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Type something"
-      />
-      <MemoizedDisplayCount count={count} />
-    </div>
-  );
-}
-```
-
----
-
-### 4. Implement a Simple Data Structure (Stack) in JavaScript
-
-**Task:**  
-Implement a Stack class with `push`, `pop`, and `peek` methods.
-
-**Key Points:**
-
-- Demonstrate the ability to write clean JavaScript classes.
-- Ensure logic is correct and handles edge cases (e.g., popping from an empty stack).
-
-**Example Code (JavaScript):**
-
-```js
-class Stack {
-  constructor() {
-    this.items = [];
-  }
-
-  push(item) {
-    this.items.push(item);
-  }
-
-  pop() {
-    return this.items.pop();
-  }
-
-  peek() {
-    return this.items[this.items.length - 1];
-  }
-
-  get size() {
-    return this.items.length;
-  }
-}
-
-// Example usage:
-const numberStack = new Stack();
-numberStack.push(1);
-numberStack.push(2);
-console.log(numberStack.peek()); // 2
-console.log(numberStack.pop()); // 2
-console.log(numberStack.size); // 1
-```
-
----
-
-### 5. State Management with `useReducer`
-
-**Task:**  
-Use `useReducer` to manage complex form state. For example, maintain a simple form with `name` and `age` fields and provide a reset button.
-
-**Key Points:**
-
-- Demonstrate familiarity with `useReducer` for state management.
-- Show how to dispatch actions to update and reset state.
-
-**Example Code (React + JavaScript):**
+**Example:**
 
 ```jsx
-import React, { useReducer } from "react";
-
-function formReducer(state, action) {
-  switch (action.type) {
-    case "CHANGE_FIELD":
-      return { ...state, [action.field]: action.value };
-    case "RESET":
-      return { name: "", age: "" };
-    default:
-      return state;
-  }
-}
-
-export function FormComponent() {
-  const [state, dispatch] = useReducer(formReducer, { name: "", age: "" });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    dispatch({ type: "CHANGE_FIELD", field: name, value });
-  };
-
-  const handleReset = () => {
-    dispatch({ type: "RESET" });
-  };
-
-  return (
-    <div>
-      <input
-        name="name"
-        value={state.name}
-        onChange={handleChange}
-        placeholder="Name"
-      />
-      <input
-        name="age"
-        value={state.age}
-        onChange={handleChange}
-        placeholder="Age"
-      />
-      <button onClick={handleReset}>Reset</button>
-      <div>
-        <p>
-          <strong>Preview:</strong>
-        </p>
-        <p>Name: {state.name}</p>
-        <p>Age: {state.age}</p>
-      </div>
-    </div>
-  );
-}
-```
-
----
-
-### 6. Conditional Rendering with a Type Check (Without TypeScript)
-
-**Task:**  
-Create a component that takes a prop which can be either a string or an object with a `message` property. Render accordingly.
-
-**Key Points:**
-
-- Demonstrate conditional logic based on runtime checks.
-- Show different rendering paths depending on the nature of the prop.
-
-**Example Code (React + JavaScript):**
-
-```jsx
-import React from "react";
-
-export function MessageRenderer({ content }) {
-  if (typeof content === "string") {
-    return <div>{content}</div>;
-  } else if (content && typeof content === "object" && "message" in content) {
-    return <div>{content.message}</div>;
-  } else {
-    return <div>Invalid content</div>;
-  }
-}
-
-// Example usage:
-// <MessageRenderer content="Hello, World!" />
-// <MessageRenderer content={{ message: "Hi there!" }} />
-```
-
----
-
-**General Tips for a Machine Coding Round in JavaScript/React:**
-
-- Focus on clarity and maintainability of your code.
-- Show that you understand core hooks (`useState`, `useEffect`, `useReducer`), memoization (`React.memo`), and basic data structures.
-- Keep your solutions organized and readable.
-- Add comments if something might not be obvious.
-- Test your code mentally or by running it if possible.
-
-By practicing these examples, you’ll be better prepared to handle machine coding rounds that emphasize JavaScript and React proficiency.
-
----
-
-## Machine Coding Round for React Typscript
-
-Below is a curated set of **machine coding round challenges** with sample solutions. These problems blend knowledge of **JavaScript**, **React**, and **TypeScript**, suitable for someone with around 3 years of experience. Each challenge is structured as follows:
-
-1. **Description of the Task**
-2. **Key Points / Requirements**
-3. **Solution Explanation**
-4. **Example Code (TypeScript + React)**
-
-Use these as practice exercises to help you be well-prepared for a variety of coding interviews.
-
----
-
-### 1. Filtering and Searching a List of Items
-
-**Task:**  
-Given an array of user objects with `id` and `name` fields, create a React component that displays a search input and filters the list in real-time as the user types.
-
-**Key Points:**
-
-- Use React hooks for state management.
-- Implement case-insensitive filtering.
-- Ensure type definitions for props and state are correct.
-
-**Solution Explanation:**
-
-- Maintain a state variable for the search query.
-- Filter the list based on the query.
-- Render the filtered results.
-
-**Code Example:**
-
-```tsx
-import React, { useState, ChangeEvent } from "react";
-
-type User = {
-  id: number;
-  name: string;
-};
-
-interface UserListProps {
-  users: User[];
-}
-
-export const UserSearch: React.FC<UserListProps> = ({ users }) => {
-  const [query, setQuery] = useState<string>("");
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value);
-  };
-
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(query.toLowerCase())
-  );
-
-  return (
-    <div>
-      <input
-        type="text"
-        placeholder="Search user by name..."
-        value={query}
-        onChange={handleChange}
-      />
-      <ul>
-        {filteredUsers.map((user) => (
-          <li key={user.id}>{user.name}</li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-// Example usage
-// const usersData = [
-//   { id: 1, name: "Alice" },
-//   { id: 2, name: "Bob" },
-//   { id: 3, name: "Charlie" }
-// ];
-// <UserSearch users={usersData} />
-```
-
----
-
-### 2. Custom Hook for Data Fetching
-
-**Task:**  
-Create a custom React hook that fetches data from a given URL and returns the loading state, error (if any), and the fetched data. Use TypeScript for type safety.
-
-**Key Points:**
-
-- Implement `useEffect` to trigger fetch on mount or URL changes.
-- Manage `loading`, `error`, and `data` states.
-- Provide a strong type for the expected data shape if known, or a generic type parameter.
-
-**Solution Explanation:**
-
-- The hook accepts a URL and a data type generic.
-- Returns an object containing `data`, `loading`, and `error`.
-- Ensures proper cleanup and re-fetching if URL changes.
-
-**Code Example:**
-
-```tsx
-import { useState, useEffect } from "react";
-
-interface UseFetchResult<T> {
-  data: T | null;
-  loading: boolean;
-  error: string | null;
-}
-
-export function useFetch<T = unknown>(url: string): UseFetchResult<T> {
-  const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+// Good: Top-level hook call within a custom hook
+function useWindowWidth() {
+  const [width, setWidth] = useState(window.innerWidth);
 
   useEffect(() => {
-    let isMounted = true;
-    setLoading(true);
-    setError(null);
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-    fetch(url)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
-        }
-        return response.json() as Promise<T>;
-      })
-      .then((json) => {
-        if (isMounted) {
-          setData(json);
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (isMounted) {
-          setError(err.message);
-          setLoading(false);
-        }
-      });
+  return width;
+}
+```
 
-    return () => {
-      isMounted = false;
-    };
-  }, [url]);
+---
 
-  return { data, loading, error };
+### 3. How do custom hooks compare to Higher-Order Components (HOCs) or Render Props?
+
+**Answer:**
+
+- **HOCs** and **render props** are older patterns to reuse stateful logic before hooks were introduced.
+- Custom hooks achieve similar functionality without changing the component hierarchy, which helps avoid "wrapper hell."
+- They’re simpler and more intuitive than HOCs or render props because they let you share logic between components without manipulating the component tree structure.
+- With custom hooks, you can call them directly in components to reuse logic.
+
+**Example:** Instead of an HOC that injects window size props:
+
+```jsx
+function WindowWidthHOC(Component) {
+  return function WrappedComponent(props) {
+    const width = useWindowWidth();
+    return <Component {...props} width={width} />;
+  };
+}
+```
+
+Now with a custom hook, you just use `const width = useWindowWidth();` inside your component without an extra wrapper.
+
+---
+
+### 4. How can you ensure a custom hook is reusable and flexible?
+
+**Answer:**
+
+- Keep the custom hook’s API small and focused.
+- Accept parameters that allow configuration (like a URL in a fetch hook, or a delay in a debounce hook).
+- Return only what’s necessary from the hook so consumers can choose how to use that data.
+- Avoid hard-coding logic that can’t be overridden, making the hook too specific.
+
+**Example:**
+
+```jsx
+function useDebounce(value, delay = 500) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(id);
+  }, [value, delay]);
+
+  return debouncedValue;
 }
 
-// Example usage in a component:
-interface Post {
-  id: number;
-  title: string;
+// Reusable: You can debounce any value, and control the delay
+```
+
+---
+
+### 5. Provide an example of a custom hook that uses context internally.
+
+**Answer:**  
+Custom hooks can encapsulate context consumption, allowing components to read context values without directly referencing the context object. This improves reusability and makes components simpler.
+
+**Example:**
+
+```jsx
+import React, { createContext, useContext, useState } from "react";
+
+const AuthContext = createContext(null);
+
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+
+  const login = (newUser) => setUser(newUser);
+  const logout = () => setUser(null);
+
+  return (
+    <AuthContext.Provider value={{ user, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
-export const PostList: React.FC = () => {
-  const {
-    data: posts,
-    loading,
-    error,
-  } = useFetch<Post[]>("https://jsonplaceholder.typicode.com/posts");
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+}
+```
 
+_Usage in a component:_
+
+```jsx
+function Profile() {
+  const { user, logout } = useAuth();
+
+  if (!user) return <div>Please log in</div>;
+  return (
+    <div>
+      <p>Welcome, {user.name}!</p>
+      <button onClick={logout}>Log out</button>
+    </div>
+  );
+}
+```
+
+---
+
+### 6. How do you handle side effects in custom hooks?
+
+**Answer:**  
+You use the same hooks that manage side effects in components, namely `useEffect` and `useLayoutEffect`, inside the custom hook. Side effects within a custom hook follow the same rules as in components:
+
+- Keep them at the top level of the custom hook.
+- Clean up after them if necessary.
+- Control when they run using dependency arrays.
+
+**Example:**
+
+```jsx
+function useDocumentTitle(title) {
+  useEffect(() => {
+    document.title = title;
+    // No cleanup needed here unless you want to reset on unmount
+  }, [title]);
+}
+
+// Usage in component
+function HomePage() {
+  useDocumentTitle("Home Page");
+  return <div>Home</div>;
+}
+```
+
+---
+
+### 7. How do you test custom hooks?
+
+**Answer:**  
+You can test custom hooks by:
+
+- Using the `@testing-library/react-hooks` (deprecated) or `@testing-library/react` with a test component.
+- Creating a simple test component that uses the hook, then asserting on the rendered output or the hook’s returned values.
+- Mocking dependencies (like fetch calls) if the hook does network requests.
+
+**Example (using React Testing Library with a test component):**
+
+```jsx
+import { render, screen } from "@testing-library/react";
+import React from "react";
+
+function TestComponent({ url }) {
+  const { data, loading, error } = useFetch(url);
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
+  return <div>{data?.length} users loaded</div>;
+}
 
-  return (
-    <ul>
-      {posts?.map((post) => (
-        <li key={post.id}>{post.title}</li>
-      ))}
-    </ul>
+test("useFetch works correctly", async () => {
+  global.fetch = jest.fn(() =>
+    Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve([{ id: 1, name: "John" }]),
+    })
   );
-};
+
+  render(<TestComponent url="/fake-api" />);
+
+  // Initially shows loading
+  expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
+
+  // Wait for the users to load (using findBy)
+  const loadedElement = await screen.findByText(/1 users loaded/i);
+  expect(loadedElement).toBeInTheDocument();
+});
 ```
 
 ---
 
-### 3. Implement a Simple Memoized Component
+### 8. Can custom hooks use other custom hooks?
 
-**Task:**  
-Create a React component that receives props and re-renders only when the props change. Use `React.memo` and TypeScript.
+**Answer:**  
+Yes, custom hooks can call other custom hooks. This is one of the main benefits of custom hooks—they provide a way to build complex logic by composing simpler custom hooks. Just follow the rules of hooks, and ensure the custom hook usage is at the top level, not inside loops or conditions.
 
-**Key Points:**
+**Example:**
 
-- Demonstrate understanding of memoization in React.
-- Show correct prop typing.
-- Ensure unnecessary re-renders are avoided.
-
-**Solution Explanation:**
-
-- Use `React.memo` to wrap a functional component.
-- The component only re-renders if the prop value actually changes.
-
-**Code Example:**
-
-```tsx
-import React from "react";
-
-interface DisplayProps {
-  count: number;
+```jsx
+function useUserData(userId) {
+  return useFetch(`https://api.example.com/users/${userId}`);
 }
 
-const DisplayCount: React.FC<DisplayProps> = ({ count }) => {
-  console.log("DisplayCount render");
-  return <div>Count: {count}</div>;
-};
-
-export const MemoizedDisplayCount = React.memo(DisplayCount);
-
-// Example usage:
-export const Counter: React.FC = () => {
-  const [count, setCount] = React.useState<number>(0);
-  const [text, setText] = React.useState<string>("");
-
-  return (
-    <div>
-      <button onClick={() => setCount((prev) => prev + 1)}>Increment</button>
-      <input
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Type something"
-      />
-      <MemoizedDisplayCount count={count} />
-    </div>
-  );
-};
-```
-
----
-
-### 4. Implement a Custom Data Structure in TypeScript
-
-**Task:**  
-Implement a generic Stack data structure in TypeScript with `push`, `pop`, and `peek` methods.
-
-**Key Points:**
-
-- Show proficiency in TypeScript generics.
-- Implement a simple data structure logic.
-- Ensure proper error handling (e.g., popping from an empty stack).
-
-**Solution Explanation:**
-
-- The stack is backed by an internal array.
-- Generic allows any type of data.
-- Methods `push`, `pop`, `peek` are strongly typed.
-
-**Code Example:**
-
-```ts
-class Stack<T> {
-  private items: T[] = [];
-
-  push(item: T): void {
-    this.items.push(item);
-  }
-
-  pop(): T | undefined {
-    return this.items.pop();
-  }
-
-  peek(): T | undefined {
-    return this.items[this.items.length - 1];
-  }
-
-  get size(): number {
-    return this.items.length;
-  }
+function useUserPosts(userId) {
+  return useFetch(`https://api.example.com/users/${userId}/posts`);
 }
 
-// Example usage:
-const numberStack = new Stack<number>();
-numberStack.push(1);
-numberStack.push(2);
-console.log(numberStack.peek()); // 2
-console.log(numberStack.pop()); // 2
-console.log(numberStack.size); // 1
-```
+function useUserProfile(userId) {
+  const { data: user, loading: userLoading } = useUserData(userId);
+  const { data: posts, loading: postsLoading } = useUserPosts(userId);
 
----
-
-### 5. State Management with `useReducer`
-
-**Task:**  
-Build a small React component using `useReducer` to manage complex state transitions. For example, manage a form’s state (name, age) and handle reset.
-
-**Key Points:**
-
-- Demonstrate understanding of `useReducer` for state management.
-- Type the state and action properly.
-- Implement actions like `CHANGE_FIELD` and `RESET`.
-
-**Solution Explanation:**
-
-- Define a state type and an action type.
-- Implement a reducer that updates fields based on action.
-- Use `useReducer` in a React component and dispatch actions on input changes and reset button.
-
-**Code Example:**
-
-```tsx
-import React, { useReducer, ChangeEvent } from "react";
-
-interface FormState {
-  name: string;
-  age: string;
-}
-
-type FormAction =
-  | { type: "CHANGE_FIELD"; field: keyof FormState; value: string }
-  | { type: "RESET" };
-
-function formReducer(state: FormState, action: FormAction): FormState {
-  switch (action.type) {
-    case "CHANGE_FIELD":
-      return { ...state, [action.field]: action.value };
-    case "RESET":
-      return { name: "", age: "" };
-    default:
-      return state;
-  }
-}
-
-export const FormComponent: React.FC = () => {
-  const [state, dispatch] = useReducer(formReducer, { name: "", age: "" });
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    dispatch({ type: "CHANGE_FIELD", field: name as keyof FormState, value });
+  return {
+    user,
+    posts,
+    loading: userLoading || postsLoading,
   };
+}
+```
 
-  const handleReset = () => {
-    dispatch({ type: "RESET" });
-  };
+---
+
+### 9. How do you debug custom hooks?
+
+**Answer:**
+
+- **Logging:** Add console logs inside the custom hook to track execution flow and state changes during development.
+- **React DevTools:** Although it doesn’t show hooks directly, you can inspect the component using the custom hook and see its state.
+- **Custom Hook Testing:** Write tests to isolate and confirm the hook’s behavior.
+- **Refactor Complex Logic:** Break complex hooks into smaller hooks for easier testing and understanding.
+
+---
+
+### 10. When should you create a custom hook?
+
+**Answer:**  
+Create a custom hook when you find yourself repeating a certain piece of stateful logic across multiple components. If this logic involves managing state, side effects, or subscribing to external data sources, and you need it in different places, that’s a perfect scenario for a custom hook.
+
+---
+
+Below is a comprehensive list of **React Query (TanStack Query)** interview-style questions **with concise answers**. These should help you solidify your knowledge and **ACE** the interview. Feel free to adapt your answers to your personal experience and the specific role you’re applying for.
+
+---
+
+# 1. Fundamentals of React Query
+
+### 1.1 What is React Query, and why would you use it?
+
+**Answer:**
+
+- **Definition**: React Query (TanStack Query) is a data-fetching and state management library focused on **server state**—data that comes from an external source (like an API) and must be synchronized with the UI.
+- **Why use it**:
+  - Automatic **caching** and **request deduplication**.
+  - Simple handling of **loading**, **error**, and **success** states.
+  - Smart **refetching** (on window focus, network reconnect, etc.).
+  - Provides **Devtools** for easier debugging.
+- **Key difference** from Redux/Context: React Query handles **asynchronous server state**, whereas Redux or Context is often used for **client-side state** management.
+
+---
+
+### 1.2 Explain the core concepts of React Query.
+
+**Answer:**
+
+- **Query**: A request for data (e.g., `useQuery` hook). Identified by a **query key**.
+- **Mutation**: An operation that modifies data on the server (e.g., `useMutation` hook).
+- **Caching**: React Query automatically caches data from completed queries.
+- **Invalidation**: Marking cached data as stale, triggering refetches.
+- **Refetching**: Automatically or manually retrieving fresh data.
+
+---
+
+### 1.3 How does React Query handle caching?
+
+**Answer:**
+
+- React Query **stores** server responses in its internal cache and associates them with **query keys**.
+- You can configure **`staleTime`** (how long data is considered fresh) and **`cacheTime`** (how long unused data stays in cache before garbage-collecting).
+- When a component remounts or re-renders, if the cached data is still **fresh**, React Query returns it instantly without refetching.
+
+---
+
+### 1.4 What is a “query key” in React Query, and why is it important?
+
+**Answer:**
+
+- A query key is an **identifier** (usually an array or string) that uniquely represents a query.
+- Allows React Query to **cache** and **manage** data for each unique request separately.
+- **Example**: `useQuery(['todos', userId], fetchTodos)` ensures data is scoped per user ID.
+
+---
+
+### 1.5 What is the difference between server state and client state, and how does React Query help manage them?
+
+**Answer:**
+
+- **Client state**: Ephemeral data that lives only on the client side (e.g., form inputs, UI toggles).
+- **Server state**: Persisted data from a remote server that needs frequent syncing with the client.
+- **React Query**: Solves complexities of **async** data management (caching, refetching, invalidation) so you can focus on app logic rather than building custom data-fetching flows.
+
+---
+
+### 1.6 How do you set up and configure React Query in a React application?
+
+**Answer:**
+
+1. **Install**: `npm install @tanstack/react-query`.
+2. **Create a Query Client**:
+
+   ```js
+   import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+   const queryClient = new QueryClient();
+
+   function App() {
+     return (
+       <QueryClientProvider client={queryClient}>
+         <MyComponent />
+       </QueryClientProvider>
+     );
+   }
+   ```
+
+3. **Use hooks** in your components:
+
+   ```js
+   import { useQuery } from "@tanstack/react-query";
+
+   const { data, isLoading, isError } = useQuery(["todos"], fetchTodos);
+   ```
+
+---
+
+# 2. Query Lifecycle and States
+
+### 2.1 What are the different states a query can be in, and how do you handle them?
+
+**Answer:**
+
+- **Idle**: The query has not started fetching yet.
+- **Loading**: The query is in the process of fetching data.
+- **Success**: Data has been fetched successfully.
+- **Error**: An error occurred during data fetching.
+- **Fetching**: Indicates a background refetch is happening (can overlap with success state).
+- **Handling**: Usually display a spinner when `isLoading`, show error messages when `isError`, and render data when `isSuccess`.
+
+---
+
+### 2.2 How does React Query handle background refetching and polling?
+
+**Answer:**
+
+- **Refetch on focus**: Automatically refetches if the browser window/tab regains focus.
+- **Refetch on network reconnect**: If the network goes offline and comes back, React Query can refetch data.
+- **Polling**: Use `refetchInterval` option to fetch periodically.
+  ```js
+  useQuery(["todos"], fetchTodos, { refetchInterval: 5000 });
+  ```
+
+---
+
+### 2.3 Explain `staleTime` vs. `cacheTime`, and give examples of when to configure them.
+
+**Answer:**
+
+- **staleTime**: Duration in milliseconds before data is considered stale (e.g., `staleTime: 60_000` means data is fresh for 1 minute). Fresh data won’t be refetched on re-render or focus.
+- **cacheTime**: Duration that unused (inactive) data remains in the cache. After `cacheTime` expires, data is garbage-collected.
+- **Use Case**:
+  - If data doesn’t change frequently (e.g., static config data), set a **long** `staleTime`.
+  - If data updates often (e.g., stocks, live scores), set a **short** `staleTime`.
+
+---
+
+### 2.4 How does React Query decide when to refetch data?
+
+**Answer:**
+
+- When the query becomes **stale** (based on `staleTime`).
+- On **window focus** if `refetchOnWindowFocus` is true (default).
+- On **network reconnect** if `refetchOnReconnect` is true (default).
+- **Manual triggers** via `refetch()` method.
+- **Invalidation** calls like `queryClient.invalidateQueries(...)`.
+
+---
+
+# 3. Mutations
+
+### 3.1 What is a mutation in React Query, and how is it different from a query?
+
+**Answer:**
+
+- **Mutation**: Used for **create**, **update**, or **delete** operations on the server.
+- **Query**: Used for **read** operations (fetching data).
+- React Query provides the `useMutation` hook for executing server updates and managing states like loading or error for these operations.
+
+---
+
+### 3.2 How do you perform optimistic updates with React Query?
+
+**Answer:**
+
+- **Optimistic Update Flow**:
+  1. In `onMutate`, **optimistically update** the UI (e.g., update the cache) before the server responds.
+  2. If the server operation **fails**, use `onError` to **rollback** changes in the cache.
+  3. Use `onSettled` to **invalidate** queries or ensure the UI is refetched to display final server data.
+- **Example**:
+  ```js
+  const mutation = useMutation(updateTodo, {
+    onMutate: async (newTodo) => {
+      await queryClient.cancelQueries(["todos"]);
+      const prevTodos = queryClient.getQueryData(["todos"]);
+      queryClient.setQueryData(["todos"], (old) =>
+        old.map((todo) => (todo.id === newTodo.id ? newTodo : todo))
+      );
+      return { prevTodos };
+    },
+    onError: (err, newTodo, context) => {
+      queryClient.setQueryData(["todos"], context.prevTodos);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(["todos"]);
+    },
+  });
+  ```
+
+---
+
+### 3.3 Explain the typical flow of a mutation, including error handling.
+
+**Answer:**
+
+1. **Call mutate** with the new data.
+2. **React Query** transitions to a loading state (e.g., `isLoading`).
+3. The **request** is sent to the server.
+4. On **success**, optionally invalidate or update relevant queries.
+5. On **error**, set error states or show UI messages. If optimistic updates were used, revert the cache.
+6. On **settled**, perform final housekeeping (e.g., logging, refetch).
+
+---
+
+# 4. Data Invalidation and Syncing
+
+### 4.1 How do you invalidate queries in React Query, and why is it important?
+
+**Answer:**
+
+- **How**: Use `queryClient.invalidateQueries(queryKey)`.
+- **Why**: Invalidation marks relevant cached data as **stale**, prompting a **refetch** the next time the query is accessed. It ensures that the UI stays in **sync** with the server after data mutations.
+
+---
+
+### 4.2 Describe different strategies for refetching or invalidating data after a mutation.
+
+**Answer:**
+
+- **Manual Invalidation**: Call `queryClient.invalidateQueries('someKey')` in the `onSuccess` or `onSettled` callback.
+- **Targeted Invalidation**: Pass a partial query key to invalidate a subset of queries.
+- **Automatic Refetch**: Some data can be configured to refetch based on certain triggers (focus, network reconnect, etc.).
+- **Optimistic Update + Invalidation**: Update the cache optimistically, then invalidate to get the latest server state.
+
+---
+
+### 4.3 How does React Query handle race conditions or out-of-date data?
+
+**Answer:**
+
+- **Request Dedupe**: If multiple components mount with the same query key at once, React Query merges them into a single request.
+- **Cancellation**: Queries can cancel the previous request if a new one supersedes it.
+- **Refetch & Invalidation**: Ensures out-of-date data doesn’t persist too long.
+
+---
+
+# 5. Advanced Features
+
+### 5.1 How do you handle pagination or infinite scrolling in React Query?
+
+**Answer:**
+
+- **Pagination**: Often done with `useQuery` by passing page params in the query key.
+- **Infinite Scrolling**: Use `useInfiniteQuery`. Provides:
+  ```js
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery(["items"], fetchItems, {
+      getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+    });
+  ```
+- This allows you to **append** pages as the user scrolls.
+
+---
+
+### 5.2 Describe how to integrate React Query with server-side rendering (e.g., Next.js).
+
+**Answer:**
+
+- **On the Server**: Use `queryClient.prefetchQuery(...)` or `dehydrate` the state inside `getServerSideProps` / `getStaticProps`.
+- **On the Client**: Use `Hydrate` component to **rehydrate** the prefetched data:
+
+  ```js
+  import { Hydrate } from "@tanstack/react-query";
 
   return (
-    <div>
-      <input
-        name="name"
-        value={state.name}
-        onChange={handleChange}
-        placeholder="Name"
-      />
-      <input
-        name="age"
-        value={state.age}
-        onChange={handleChange}
-        placeholder="Age"
-      />
-      <button onClick={handleReset}>Reset</button>
-      <div>
-        <p>
-          <strong>Preview:</strong>
-        </p>
-        <p>Name: {state.name}</p>
-        <p>Age: {state.age}</p>
-      </div>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <Hydrate state={pageProps.dehydratedState}>
+        <Component {...pageProps} />
+      </Hydrate>
+    </QueryClientProvider>
   );
-};
-```
+  ```
+
+- This ensures **initial** data is already populated and no “loading” flash occurs on first render.
 
 ---
 
-### 6. Condition Rendering with Type Guards (Optional Additional Task)
+### 5.3 How do you handle offline or network fluctuations in React Query?
 
-**Task:**  
-Create a component that accepts a prop that can be either a string or an object with a `message` property. Render accordingly with type guards.
+**Answer:**
 
-**Key Points:**
+- **Refetch on reconnect**: By default, React Query retries fetching when the network is restored.
+- **Retry logic**: Configure `retry` and `retryDelay`.
+- **Offline strategies**: For advanced offline usage, combine React Query with service workers or local databases (though React Query doesn’t fully handle offline persistence out of the box).
 
-- Demonstrate use of TypeScript type guards.
-- Show different rendering paths depending on type.
+---
 
-**Solution Explanation:**
+### 5.4 What is `useQueries`, and when would you use it over multiple `useQuery` hooks?
 
-- Use a custom type guard function to check if prop is `string` or `object`.
-- Render differently based on the result.
+**Answer:**
 
-**Code Example:**
+- **`useQueries`**: A hook to run **multiple queries in parallel** with a single call.
+- **Use Case**: If you have a list of query configurations at runtime (dynamic queries) or want to handle them collectively. Example:
+  ```js
+  const results = useQueries({
+    queries: [
+      { queryKey: ["user", 1], queryFn: fetchUser },
+      { queryKey: ["posts", 1], queryFn: fetchPosts },
+    ],
+  });
+  ```
 
-```tsx
-import React from "react";
+---
 
-type MessageProp = string | { message: string };
+### 5.5 Explain how query cancellation works in React Query.
 
-function isString(value: MessageProp): value is string {
-  return typeof value === "string";
-}
+**Answer:**
 
-interface MessageRendererProps {
-  content: MessageProp;
-}
+- If a query is **in-flight** and a new fetch is triggered or the component unmounts, React Query can cancel the old request (if the fetch mechanism supports cancellation).
+- Helps **avoid** outdated requests and race conditions.
+- Typically uses **AbortController** under the hood (for fetch-based clients).
 
-export const MessageRenderer: React.FC<MessageRendererProps> = ({
-  content,
-}) => {
-  if (isString(content)) {
-    return <div>{content}</div>;
-  } else {
-    return <div>{content.message}</div>;
+---
+
+# 6. Performance and Debugging
+
+### 6.1 What tools or strategies are available for debugging React Query?
+
+**Answer:**
+
+- **React Query Devtools**: A dedicated Devtools panel to inspect query cache, states, etc.
+- **Logging**: Use `onError` and `onSuccess` callbacks to track requests.
+- **Performance**: Keep an eye on unnecessary invalidations and short `staleTime` values that might cause excessive refetching.
+
+---
+
+### 6.2 How do you prevent over-fetching in React Query, and what configurations help optimize performance?
+
+**Answer:**
+
+- **Use `staleTime`**: If data doesn’t change frequently, set a higher `staleTime`.
+- **Conditional Fetching**: Only fetch if necessary (e.g., based on user actions or conditions).
+- **Avoid broad Invalidation**: Invalidate only relevant query keys.
+- **Refetch Intervals**: Turn off or keep them minimal unless your data must be fresh in real-time.
+
+---
+
+### 6.3 Give an example of how to handle large or deeply nested data with React Query efficiently.
+
+**Answer:**
+
+- **Partial Fetching**: Design your API endpoints to return only needed fields.
+- **Normalization**: If data is large or repeated, consider normalizing it before storing in the query cache.
+- **Pagination**: Load data in small chunks (with `useInfiniteQuery` or page-based queries) to avoid loading everything at once.
+
+---
+
+# 7. Comparisons and Alternatives
+
+### 7.1 Compare React Query to alternative libraries like SWR, Apollo, or Redux Toolkit Query.
+
+**Answer:**
+
+- **SWR**: Similar to React Query, also focuses on caching and revalidation but has a smaller API surface.
+- **Apollo**: GraphQL-focused with built-in caching. React Query is agnostic to REST or GraphQL.
+- **Redux Toolkit Query**: Integrates closely with Redux architecture for caching server state; React Query is a standalone solution.
+- **Overall**: React Query is known for its **simplicity**, **performance**, and robust feature set for REST or GraphQL.
+
+---
+
+### 7.2 Why would someone use React Query instead of manually managing fetch calls in `useEffect`?
+
+**Answer:**
+
+- Automatic **caching**, **deduplication**, **refetch** on focus/reconnect, easier **loading/error** states, and out-of-the-box **Devtools**.
+- Minimizes the boilerplate of setting up useEffect, useState, and manual error handling logic.
+- Scales better with more queries and dynamic data flows.
+
+---
+
+### 7.3 Can React Query fully replace something like Redux or MobX in an application?
+
+**Answer:**
+
+- **Server state** (React Query) vs. **client state** (Redux/MobX): They solve different problems.
+- React Query can **replace** the server-data aspects of Redux or MobX, but you might still need a client state solution for local UI state if it’s complex.
+- In smaller apps, React Query + React’s built-in state is often enough.
+
+---
+
+# 8. Scenario-Based Questions
+
+### 8.1 You have a list of items. When one item is updated, how do you ensure the list re-renders with the updated data?
+
+**Answer:**
+
+- **Invalidate** the list’s query key: `queryClient.invalidateQueries(['items'])`.
+- Or **update the cache** manually using the mutation’s `onSuccess` or `onMutate` for immediate UI reflection.
+
+---
+
+### 8.2 You need to display a loading spinner for multiple dependent queries. How would you handle this with React Query?
+
+**Answer:**
+
+- If queries are **dependent**, chain them: Start the second query only when the first has data.
+- Or combine queries with `useQueries` and track their **loading states** collectively:
+
+  ```js
+  const results = useQueries([
+    { queryKey: ["a"], queryFn: fetchA },
+    { queryKey: ["b"], queryFn: fetchB },
+  ]);
+
+  const isLoading = results.some((result) => result.isLoading);
+  ```
+
+- Render a **spinner** if any are still loading.
+
+---
+
+### 8.3 You are fetching data from an API that can be offline sometimes. How would you implement retry logic with React Query?
+
+**Answer:**
+
+- Use **retry** and **retryDelay** options:
+  ```js
+  useQuery(["data"], fetchData, {
+    retry: 3,
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 30000),
+  });
+  ```
+- This setup will **retry** fetch up to 3 times with an exponential backoff.
+
+---
+
+### 8.4 How do you deal with partial updates of server data when you only have to fetch a sub-resource?
+
+**Answer:**
+
+- You can maintain separate queries for different resources or sub-resources.
+- Optionally, **manually update** the relevant part of the cache if the sub-resource is part of a larger cached dataset.
+- Use `queryClient.setQueryData` to merge partial data if you don’t want to invalidate the entire query.
+
+---
+
+## Tips for Interviews
+
+1. **Use Real-World Examples**: Show how you applied React Query to solve typical data fetching challenges.
+2. **Focus on Server State**: Emphasize how React Query simplifies caching and invalidation compared to manually using `useEffect`.
+3. **Demonstrate Advanced Knowledge**: Mention SSR hydration, optimistic updates, and offline strategies if relevant to the role.
+4. **Stay Calm and Organized**: Answer step-by-step, especially for scenario-based questions.
+
+---
+
+### Final Thoughts
+
+By understanding these **core concepts**, **advanced strategies**, and **common scenarios**, you’ll be able to confidently discuss **React Query** in interviews. Best of luck, and happy coding!
+
+---
+
+Below is a **comprehensive set of Redux Toolkit interview questions** along with **concise answers**. These cover foundational concepts through advanced use-cases and scenario-based questions. They are designed to help you **ACE** your interview by demonstrating a solid understanding of how Redux Toolkit simplifies state management in modern React applications.
+
+---
+
+# 1. Fundamentals of Redux Toolkit
+
+### 1.1 What is Redux Toolkit, and why was it created?
+
+**Answer:**
+
+- **Redux Toolkit (RTK)** is the official, opinionated toolset for efficient Redux development.
+- It was created to **reduce boilerplate** (e.g., action types, action creators, switch statements) and to **promote best practices** (e.g., using Immer for immutable updates).
+- It provides a **standardized** approach to writing Redux logic, making state management simpler and more predictable.
+
+---
+
+### 1.2 What are the main features of Redux Toolkit?
+
+**Answer:**
+
+1. **`configureStore`**: Automatically sets up the Redux store with recommended defaults, including middleware like `redux-thunk`.
+2. **`createSlice`**: Generates action creators and action types based on the slice name and reducer functions.
+3. **`createAsyncThunk`**: Simplifies writing async logic, dispatching `pending`, `fulfilled`, and `rejected` actions automatically.
+4. **`createReducer`** and **`createAction`**: Utilities for creating reducers and actions with less boilerplate and built-in Immer for immutable updates.
+5. **RTK Query** (optional package): A data-fetching and caching tool built on top of Redux Toolkit.
+
+---
+
+### 1.3 How does Redux Toolkit reduce boilerplate compared to traditional Redux?
+
+**Answer:**
+
+- It removes the need to manually write **action types** and **action creators** for each scenario; `createSlice` automatically generates them.
+- Built-in **Immer** usage allows you to write “mutating” syntax in reducers while keeping the state immutable under the hood.
+- **`configureStore`** automatically applies middleware (`redux-thunk` by default) and integrates Redux DevTools.
+
+---
+
+### 1.4 How do you set up a store using `configureStore`?
+
+**Answer:**
+
+```js
+import { configureStore } from "@reduxjs/toolkit";
+import userReducer from "./userSlice";
+import postsReducer from "./postsSlice";
+
+const store = configureStore({
+  reducer: {
+    user: userReducer,
+    posts: postsReducer,
+  },
+});
+
+export default store;
+```
+
+- **Explanation**: Pass an object of slice reducers to `configureStore`. It sets up the Redux DevTools integration, thunk middleware, and other recommended settings by default.
+
+---
+
+### 1.5 What is a “slice” in Redux Toolkit?
+
+**Answer:**
+
+- A **slice** represents a section (slice) of the Redux state.
+- **`createSlice`** accepts a name, initial state, and reducer functions.
+- It automatically generates **action creators** and **action types** matching the reducer functions.
+- Encourages **colocation** of actions and reducers that belong to a specific domain (e.g., `userSlice`, `postsSlice`).
+
+---
+
+# 2. createSlice, Reducers, and Actions
+
+### 2.1 How do you create a slice with `createSlice`?
+
+**Answer:**
+
+```js
+import { createSlice } from "@reduxjs/toolkit";
+
+const userSlice = createSlice({
+  name: "user",
+  initialState: { value: null },
+  reducers: {
+    setUser: (state, action) => {
+      state.value = action.payload; // Immer allows direct mutation
+    },
+    clearUser: (state) => {
+      state.value = null;
+    },
+  },
+});
+
+export const { setUser, clearUser } = userSlice.actions;
+export default userSlice.reducer;
+```
+
+- The **generated** action creators (`setUser`, `clearUser`) are tied to these case reducers.
+- The **default export** is the slice reducer that you attach to the store.
+
+---
+
+### 2.2 Why can we write “mutating” syntax in Redux Toolkit reducers?
+
+**Answer:**
+
+- Redux Toolkit uses **Immer** under the hood.
+- Immer **wraps** your reducer function and tracks changes to the draft state. It then produces an **immutable** copy internally, so Redux state is never directly mutated.
+
+---
+
+### 2.3 How do you handle actions from other slices in a slice reducer?
+
+**Answer:**
+
+1. **Extra reducers**: Use `extraReducers` property in `createSlice` to respond to actions defined outside the slice.
+2. **Builder callback**: With Redux Toolkit v1.7+, you can write:
+   ```js
+   extraReducers: (builder) => {
+     builder
+       .addCase(someOtherAction, (state, action) => {...})
+       .addMatcher(...)
+   }
+   ```
+3. This is typically used with **`createAsyncThunk`** or to react to external actions from other slices.
+
+---
+
+# 3. createAsyncThunk and Async Operations
+
+### 3.1 What is `createAsyncThunk` used for?
+
+**Answer:**
+
+- It is a **utility** to create **async** Redux actions.
+- Generates a **thunk** that automatically dispatches **`pending`**, **`fulfilled`**, and **`rejected`** actions based on the promise lifecycle.
+- Simplifies side effects (e.g., API calls) and keeps your slice code more organized.
+
+---
+
+### 3.2 How do you use `createAsyncThunk` in a slice?
+
+**Answer:**
+
+```js
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import api from "path/to/api";
+
+export const fetchUser = createAsyncThunk(
+  "user/fetchUser",
+  async (userId, thunkAPI) => {
+    const response = await api.getUser(userId);
+    return response.data;
   }
-};
+);
 
-// Example usage:
-// <MessageRenderer content="Hello, World!" />
-// <MessageRenderer content={{ message: "Hi there!" }} />
+const userSlice = createSlice({
+  name: "user",
+  initialState: { data: null, loading: false, error: null },
+  reducers: {
+    /* ... */
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+      })
+      .addCase(fetchUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+  },
+});
 ```
+
+- **Explanation**: `fetchUser` is an async thunk. In the slice, handle each of the 3 action types (`pending`, `fulfilled`, `rejected`) in `extraReducers`.
 
 ---
 
-**General Tips for a Machine Coding Round:**
+### 3.3 How do you handle errors in `createAsyncThunk`?
 
-- Make sure your code is clean, readable, and commented where necessary.
-- Add necessary error handling and edge cases.
-- Type everything properly if using TypeScript.
-- Keep components small and modular.
-- Be prepared to explain your choices and reasoning.
+**Answer:**
 
-By practicing these challenges, you'll become more confident and better prepared for machine coding rounds that require proficiency in JavaScript, React, and TypeScript.
+- You can **throw** an error or reject the promise in the async function, which triggers the `rejected` action. For instance:
+  ```js
+  if (!response.ok) {
+    throw new Error("Error fetching user");
+  }
+  ```
+- The `rejected` action’s payload or `action.error.message` can be used to store the error in Redux state or display an error message in the UI.
+
+---
+
+### 3.4 How can you customize the payload for rejected actions in `createAsyncThunk`?
+
+**Answer:**
+
+- By returning `rejectWithValue` in the thunk:
+
+  ```js
+  import { createAsyncThunk } from "@reduxjs/toolkit";
+
+  export const fetchUser = createAsyncThunk(
+    "user/fetchUser",
+    async (userId, { rejectWithValue }) => {
+      try {
+        const response = await api.getUser(userId);
+        return response.data;
+      } catch (error) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  );
+  ```
+
+- This allows you to handle errors more gracefully in your `rejected` reducer, using `action.payload` instead of `action.error`.
+
+---
+
+# 4. RTK Query (Optional Data Fetching Module)
+
+### 4.1 What is RTK Query, and how does it compare to `createAsyncThunk`?
+
+**Answer:**
+
+- **RTK Query** is a data-fetching and caching solution built on top of Redux Toolkit, offering **automatic** caching, invalidation, and refetching out of the box.
+- Instead of manually writing thunks, you define “**services**” with **endpoints** that handle fetching/mutations. RTK Query generates hooks for each endpoint.
+- **`createAsyncThunk`** is more **manual**—you handle loading/error states yourself in slices. RTK Query streamlines that process, similar to libraries like React Query or SWR, but fully integrated with Redux.
+
+---
+
+### 4.2 How do you set up an RTK Query service?
+
+**Answer:**
+
+1. Install `@reduxjs/toolkit` (v1.6+) to have RTK Query capabilities.
+2. Create an **API slice**:
+
+   ```js
+   import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
+   export const api = createApi({
+     reducerPath: "api",
+     baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
+     endpoints: (builder) => ({
+       getUser: builder.query({
+         query: (id) => `user/${id}`,
+       }),
+     }),
+   });
+   ```
+
+3. Add `api.reducer` to your store and `api.middleware` to the store’s middleware array:
+
+   ```js
+   import { configureStore } from "@reduxjs/toolkit";
+   import { api } from "./api";
+
+   const store = configureStore({
+     reducer: {
+       [api.reducerPath]: api.reducer,
+     },
+     middleware: (getDefaultMiddleware) =>
+       getDefaultMiddleware().concat(api.middleware),
+   });
+   export default store;
+   ```
+
+4. Use the auto-generated hook:
+
+   ```js
+   import { useGetUserQuery } from "./api";
+
+   const UserProfile = ({ userId }) => {
+     const { data, error, isLoading } = useGetUserQuery(userId);
+     // ...
+   };
+   ```
+
+---
+
+### 4.3 How does RTK Query handle caching and invalidation?
+
+**Answer:**
+
+- **Caching**: RTK Query automatically stores fetched data in a normalized cache keyed by the query arguments.
+- **Invalidation**: You can **tag** data in an endpoint (e.g., `providesTags`, `invalidatesTags`). When you **invalidate** a tag, any queries providing that tag will refetch.
+- Example:
+  ```js
+  endpoints: (builder) => ({
+    getUser: builder.query({
+      query: (id) => `user/${id}`,
+      providesTags: (result, error, id) => [{ type: "User", id }],
+    }),
+    updateUser: builder.mutation({
+      query: (user) => ({
+        url: `user/${user.id}`,
+        method: "PUT",
+        body: user,
+      }),
+      invalidatesTags: (result, error, user) => [{ type: "User", id: user.id }],
+    }),
+  });
+  ```
+
+---
+
+# 5. Middleware, DevTools, and Best Practices
+
+### 5.1 Which middleware does Redux Toolkit configure by default?
+
+**Answer:**
+
+- **`redux-thunk`**: For handling async logic (thunks).
+- **`serializableCheck`**: Ensures that actions and state remain serializable (warns if you store non-serializable values).
+- **`immutableCheck`**: Helps detect accidental direct mutations of Redux state.
+- Developers can customize or disable these via the `getDefaultMiddleware` callback in `configureStore`.
+
+---
+
+### 5.2 What are some best practices when using Redux Toolkit?
+
+**Answer:**
+
+1. **Keep slices small** and domain-focused (e.g., `userSlice`, `productsSlice`).
+2. Use **Immer** best practices: Don’t mutate external references, only use the “draft state.”
+3. **Normalize** complex data structures if needed for performance (though often RTK Query can help).
+4. Avoid storing **derived data** in Redux; derive it in selectors.
+5. Use **RTK Query** if you frequently fetch or mutate data from a server, as it simplifies caching and invalidation.
+
+---
+
+### 5.3 How do you integrate Redux DevTools with Redux Toolkit?
+
+**Answer:**
+
+- **Redux Toolkit** automatically configures Redux DevTools if they are installed in the browser.
+- No extra steps needed; just use `configureStore`.
+- If you need custom settings, you can pass `devTools: true` or `devTools: { ...options }`.
+
+---
+
+# 6. Advanced Patterns and Scenario-Based Questions
+
+### 6.1 How do you handle “global” error or loading states with Redux Toolkit?
+
+**Answer:**
+
+- **Option 1**: Create a dedicated slice for global UI state that listens to pending/rejected actions in `extraReducers` (e.g., a global `statusSlice`).
+- **Option 2**: Use a middleware that catches all rejected actions. This could dispatch a global error action or show toast notifications automatically.
+
+---
+
+### 6.2 How do you test Redux Toolkit reducers and async thunks?
+
+**Answer:**
+
+1. **Reducers**: Test them like normal Redux reducers, passing a state and an action to see if the state updates correctly.
+2. **Async thunks**: Use frameworks like **Jest** or **React Testing Library**. Mock API calls, dispatch the thunk, and expect the correct actions (`pending`, `fulfilled`, `rejected`) to be dispatched.
+3. **Integration**: For more advanced tests, configure a test store and dispatch the thunk directly, then inspect final store state.
+
+---
+
+### 6.3 How do you implement code splitting or lazy loading for Redux slices?
+
+**Answer:**
+
+1. **Dynamically import** the slice reducer when needed (e.g., route-based code splitting).
+2. Use the store’s `replaceReducer` or a library like **redux-dynamic-modules** to dynamically **inject** slice reducers at runtime.
+3. This helps keep the bundle size smaller and only load the Redux logic for features when they’re actually used.
+
+---
+
+### 6.4 Give an example of how you might optimize performance for large data sets in Redux Toolkit.
+
+**Answer:**
+
+- Use **RTK Query** to fetch partial data sets or do pagination.
+- **Normalize** large or nested data before storing in Redux to reduce re-rendering caused by deeply nested structures.
+- Memoize **selectors** to avoid unnecessary recomputations.
+- Set up **lazy loading** for features with large slices or data sets.
+
+---
+
+# Quick Interview Tips
+
+1. **Know the differences** between “plain Redux” vs. Redux Toolkit—emphasize how RTK reduces boilerplate.
+2. **Explain best practices** (e.g., slices, Immer, code organization).
+3. **Show familiarity** with **async** scenarios (`createAsyncThunk`, RTK Query).
+4. **Give real-world examples** of how you’d structure slices or handle complex data fetching.
+5. **Keep it practical**—highlight how RTK solves common Redux pains (boilerplate, immutability, etc.).
+
+---
+
+## Final Thoughts
+
+By covering these **core concepts**, **best practices**, and **scenario-based questions**, you’ll be in an excellent position to discuss **Redux Toolkit** confidently during interviews. Practice walking through **code examples**, **data flow** explanations, and emphasize how Redux Toolkit helps maintain clean, maintainable state management in React applications.
+
+# **Good luck, and happy coding!**
+
+By understanding these questions and practicing the corresponding code examples, you’ll be well-prepared to discuss and implement custom hooks in a React interview setting. Make sure you can not only explain what custom hooks are, but also demonstrate how to write, test, and apply them effectively in real-world scenarios.
