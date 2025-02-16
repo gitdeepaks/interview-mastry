@@ -1,0 +1,12 @@
+.container {
+  text-align: left;
+  padding-right: 50px;
+  padding-left: 20px;
+  max-width: 200px;
+  cursor: pointer;
+}
+
+.icon {
+  width: 20px;
+  margin-left: 20px;
+}
