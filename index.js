@@ -6,6 +6,8 @@
 // // //   },
 // // // };
 
+const { isRunningInExpoGo } = require("expo");
+
 // // // console.log(object.getMessage());
 
 // // const set = new Set([3, 2, 1, 1, 2]);
@@ -87,4 +89,14 @@ function createCounter() {
     count++;
     return count;
   };
+}
+
+function checkNumber(num) {
+  if (num > 0) {
+    return "positive";
+  } else if (num < 0) {
+    return "negative";
+  } else {
+    return "zero";
+  }
 }
