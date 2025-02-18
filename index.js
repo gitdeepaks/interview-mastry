@@ -100,3 +100,14 @@ function checkNumber(num) {
     return "zero";
   }
 }
+
+// function to implement debouncing
+function debounce(func, delay) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func(...args);
+    }, delay);
+  };
+}
