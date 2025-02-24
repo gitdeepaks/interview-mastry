@@ -199,7 +199,13 @@
 //   >
 // ];
 
-let expenses: { description: string; amount: number; category: string }[] = [
+type Expenses = {
+  description: string;
+  amount: number;
+  category: string;
+};
+
+let expenses: Expenses[] = [
   { description: "Groceries", amount: 500, category: "Food" },
   { description: "Electricity Bill", amount: 100, category: "Unitility" },
   { description: "Dinner", amount: 30, category: "Food" },
