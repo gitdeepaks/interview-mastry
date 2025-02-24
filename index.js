@@ -1,113 +1,140 @@
-// // // const user = {
-// // //   firstName: "Piyush!",
-// // //   getName() {
-// // //     const firstName = "Piyush!";
-// // //     return this.firstName;
-// // //   },
-// // // };
+// // // // const user = {
+// // // //   firstName: "Piyush!",
+// // // //   getName() {
+// // // //     const firstName = "Piyush!";
+// // // //     return this.firstName;
+// // // //   },
+// // // // };
 
-const { isRunningInExpoGo } = require("expo");
+// const { isRunningInExpoGo } = require("expo");
 
-// // // console.log(object.getMessage());
+// // // // console.log(object.getMessage());
 
-// // const set = new Set([3, 2, 1, 1, 2]);
-// // console.log(set);
+// // // const set = new Set([3, 2, 1, 1, 2]);
+// // // console.log(set);
 
-// // set.add(1);
-// // set.add(2);
-// // set.add(1);
+// // // set.add(1);
+// // // set.add(2);
+// // // set.add(1);
 
-// const newArr = ["deepak", "vignesh", "saif"];
+// // const newArr = ["deepak", "vignesh", "saif"];
 
-// for (const arr of newArr) {
-//   console.log(arr + "-surname");
+// // for (const arr of newArr) {
+// //   console.log(arr + "-surname");
+// // }
+
+// // const mySurName = newArr.map((arr) => arr + "-mapsurname");
+
+// // console.log(mySurName);
+
+// // const surname = "SurnameForEach";
+
+// // let updatedArr = [];
+// // newArr.forEach((name) => {
+// //   updatedArr.push(`${name} ${surname}`);
+// // });
+
+// // console.log(updatedArr);
+
+// function sum(...nums) {
+//   return nums.reduce((acc, currVal) => acc + currVal, 0);
 // }
 
-// const mySurName = newArr.map((arr) => arr + "-mapsurname");
+// console.log(sum(1, 2, 3, 4, 5));
 
-// console.log(mySurName);
+// const run = (message) => {
+//   console.log(message);
+// };
 
-// const surname = "SurnameForEach";
+// run("hello");
 
-// let updatedArr = [];
-// newArr.forEach((name) => {
-//   updatedArr.push(`${name} ${surname}`);
-// });
+// function add(counter) {
+//   return function anotherSun(nums) {
+//     counter++;
+//   };
+// }
 
-// console.log(updatedArr);
+// Function.prototype.des = function () {
+//   console.log(`description ${this.name}`);
+// };
 
-function sum(...nums) {
-  return nums.reduce((acc, currVal) => acc + currVal, 0);
-}
+// function greet() {
+//   return `Hello, ${this.name}!`;
+// }
 
-console.log(sum(1, 2, 3, 4, 5));
+// greet.des();
 
-const run = (message) => {
-  console.log(message);
-};
+// greet.des("deepak");
 
-run("hello");
+// function add(a, b) {
+//   return a + b;
+// }
 
-function add(counter) {
-  return function anotherSun(nums) {
-    counter++;
-  };
-}
+// const subs = function (a, b) {
+//   return a - b;
+// };
 
-Function.prototype.des = function () {
-  console.log(`description ${this.name}`);
-};
+// const multiply = (a, b) => a * b;
 
-function greet() {
-  return `Hello, ${this.name}!`;
-}
+// function applyOne(a, b, operation) {
+//   return operation(a, b);
+// }
 
-greet.des();
+// const res = applyOne(2, 3, (a, b) => a + b);
 
-greet.des("deepak");
+// function createCounter() {
+//   let count = 0;
 
-function add(a, b) {
-  return a + b;
-}
+//   return function () {
+//     count++;
+//     return count;
+//   };
+// }
 
-const subs = function (a, b) {
-  return a - b;
-};
+// function checkNumber(num) {
+//   if (num > 0) {
+//     return "positive";
+//   } else if (num < 0) {
+//     return "negative";
+//   } else {
+//     return "zero";
+//   }
+// }
 
-const multiply = (a, b) => a * b;
+// // function to implement debouncing
+// function debounce(func, delay) {
+//   let timer;
+//   return function (...args) {
+//     clearTimeout(timer);
+//     timer = setTimeout(() => {
+//       func(...args);
+//     }, delay);
+//   };
+// }
 
-function applyOne(a, b, operation) {
-  return operation(a, b);
-}
+let expenses = [
+  { description: "Groceries", amount: 500, category: "Food" },
+  { description: "Electricity Bill", amount: 100, category: "Unitility" },
+  { description: "Dinner", amount: 30, category: "Food" },
+  { description: "Internet Bill", amount: 50, category: "Unitility" },
+];
 
-const res = applyOne(2, 3, (a, b) => a + b);
-
-function createCounter() {
-  let count = 0;
-
-  return function () {
-    count++;
-    return count;
-  };
-}
-
-function checkNumber(num) {
-  if (num > 0) {
-    return "positive";
-  } else if (num < 0) {
-    return "negative";
+let expenseReport = expenses.reduce((acc, curr) => {
+  if (acc[curr.category]) {
+    acc[curr.category] += curr.amount;
   } else {
-    return "zero";
+    acc[curr.category] = curr.amount;
   }
-}
+  return acc;
+}, {});
 
-// function to implement debouncing
-function debounce(func, delay) {
-  let timer;
-  return function (...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      func(...args);
-    }, delay);
-  };
-}
+let expecsesReport = expenses.reduce((acc, curr) => {
+  if (acc[curr.category]) {
+    acc[curr.category].push(curr);
+  } else {
+    acc[curr.category] = [curr];
+  }
+  return acc;
+}, {});
+
+console.log(expecsesReport);
