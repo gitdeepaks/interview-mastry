@@ -1,66 +1,59 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import CustomAutoComplete from "./CustomAutoComplete"; // Adjust the import path as needed
+import CustomAutoComplete from "./CustomAutoComplete";
 
-function ApplicationSelector() {
-  // State for selected application
-  const [newapplication, setNewApplication] = useState("");
-
-  // State for dropdown options
+function SystemIdSelector() {
+  const [systemId, setSystemId] = useState("");
   const [options, setOptions] = useState([]);
-
-  // Loading and error states
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState({});
 
-  // Fetch data on component mount
   useEffect(() => {
-    fetchApplicationData();
+    fetchSystemIdData();
   }, []);
 
-  const fetchApplicationData = async () => {
+  const fetchSystemIdData = async () => {
     try {
-      // Replace with your actual API endpoint
+      // Authentication credentials
+      const username = "your_username";
+      const password = "your_password";
+
+      // Use browser's built-in btoa for Base64 encoding
+      const token = btoa(`${username}:${password}`);
+
       const response = await axios.get(
-        "https://your-api-endpoint/applications"
+        "https://your-xml-api-endpoint/servers",
+        {
+          headers: {
+            Authorization: `Basic ${token}`,
+            Accept: "application/xml",
+            "Content-Type": "application/xml",
+          },
+          responseType: "text",
+        }
       );
 
-      // Extract unique application names from the API response
-      const applicationOptions = extractUniqueApplications(response.data);
-      setOptions(applicationOptions);
-      setLoading(false);
-    } catch (err) {
-      console.error("Error fetching application data:", err);
-      setLoading(false);
-      setError((prev) => ({
-        ...prev,
-        application:
-          "Failed to fetch application data. Please try again later.",
-      }));
-    }
-  };
+      // Use the browser's built-in XML parser
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(response.data, "text/xml");
 
-  // Extract unique Application values from the API response
-  const extractUniqueApplications = (responseData) => {
-    try {
-      // Check if the data property exists and is an array
-      if (responseData.data && Array.isArray(responseData.data)) {
-        // Extract all Application values
-        const applications = responseData.data.map((item) => item.Application);
+      // Extract sys_id values using the DOM API
+      const systemIds = [];
+      const resultNodes = xmlDoc.getElementsByTagName("result");
 
-        // Remove duplicates using Set
-        const uniqueApplications = [...new Set(applications)];
-
-        // Filter out any undefined or null values
-        return uniqueApplications.filter((app) => app);
+      for (let i = 0; i < resultNodes.length; i++) {
+        const sysIdNode = resultNodes[i].getElementsByTagName("sys_id")[0];
+        if (sysIdNode && sysIdNode.textContent) {
+          systemIds.push(sysIdNode.textContent);
+        }
       }
 
-      // Fallback
-      console.warn("Unexpected data format", responseData);
-      return [];
+      setOptions(systemIds);
+      setLoading(false);
     } catch (err) {
-      console.error("Error extracting application options:", err);
-      return [];
+      console.error("Error fetching system ID data:", err);
+      setLoading(false);
+      setError((prev) => ({ ...prev, api: "Failed to fetch system ID data" }));
     }
   };
 
@@ -69,32 +62,29 @@ function ApplicationSelector() {
       <label className="">
         <div className="">
           <span>
-            Application <span style={{ color: "red" }}>*</span>
+            System ID <span style={{ color: "red" }}>*</span>
           </span>
           <span></span>
         </div>
 
         <CustomAutoComplete
-          id="application"
+          id="systemId"
           limitTags={1}
           options={options}
-          value={newapplication}
+          value={systemId}
           onChange={(e, newValue) => {
-            setNewApplication(newValue);
-            if (e.application) {
-              setError((prevError) => ({ ...prevError, application: "" }));
+            setSystemId(newValue);
+            if (e.systemId) {
+              setError((prevError) => ({ ...prevError, systemId: "" }));
             }
           }}
-          placeholder={
-            loading ? "Loading applications..." : "Select Application"
-          }
-          error={!!error.application || !!error.api}
+          placeholder={loading ? "Loading system IDs..." : "Select System ID"}
+          error={!!error.systemId || !!error.api}
         />
 
-        {/* Display error message if any */}
-        {(error.api || error.application) && (
+        {(error.api || error.systemId) && (
           <div style={{ color: "red", fontSize: "0.75rem", marginTop: "4px" }}>
-            {error.api || error.application}
+            {error.api || error.systemId}
           </div>
         )}
       </label>
@@ -102,4 +92,4 @@ function ApplicationSelector() {
   );
 }
 
-export default ApplicationSelector;
+export default SystemIdSelector;

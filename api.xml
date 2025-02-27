@@ -1,0 +1,30 @@
+<response>
+    <result>
+        <sys_id>12345fddss2343</sys_id>
+        <name>server-1</name>
+    </result>
+    <result>
+        <sys_id>12345fddss2344</sys_id>
+        <name>server-2</name>
+    </result>
+    <result>
+        <sys_id>12345fddss2345</sys_id>
+        <name>server-3</name>
+    </result>
+    <result>
+        <sys_id>12345fddss2346</sys_id>
+        <name>server-4</name>
+    </result>
+    <result>
+        <sys_id>12345fddss2347</sys_id>
+        <name>server-5</name>
+    </result>
+    <result>
+        <sys_id>12345fddss2348</sys_id>
+        <name>server-6</name>
+    </result>
+    <result>
+        <sys_id>12345fddss2349</sys_id>
+        <name>server-7</name>
+    </result>
+</response>
