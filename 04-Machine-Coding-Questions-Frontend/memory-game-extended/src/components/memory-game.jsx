@@ -184,7 +184,11 @@ const MemoryGame = () => {
       {/* Result */}
       <div className="mt-4">
         {gameOver && (
-          <div className="text-2xl font-bold text-emerald-500">
+          <div
+            className={`text-2xl font-bold ${
+              won ? "animate-bounce text-emerald-500" : "text-rose-500"
+            }`}
+          >
             {won ? "You Win!" : "Game Over!"}
           </div>
         )}
