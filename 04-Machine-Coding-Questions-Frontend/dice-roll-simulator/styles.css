@@ -1,0 +1,322 @@
+:root {
+  --primary-color: #1e3c72;
+  --secondary-color: #2a5298;
+  --accent-color: #4caf50;
+  --accent-hover: #45a049;
+  --text-color: #ffffff;
+  --shadow-color: rgba(0, 0, 0, 0.2);
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --dice-color: #ffffff;
+  --dice-text: #1e3c72;
+  --border-radius-sm: 12px;
+  --border-radius-md: 20px;
+  --border-radius-lg: 24px;
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont,
+    sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--secondary-color) 100%
+  );
+  color: var(--text-color);
+  padding: 20px;
+  position: relative;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 50%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.container {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); /* Safari support */
+  padding: clamp(1.5rem, 5vw, 2.5rem);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 8px 32px var(--shadow-color);
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+  border: 1px solid var(--glass-border);
+  transform: translateY(0);
+  transition: transform var(--transition-normal),
+    box-shadow var(--transition-normal);
+  position: relative;
+  z-index: 2;
+}
+
+.container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  margin-bottom: 2rem;
+  color: var(--text-color);
+  text-shadow: 2px 2px 4px var(--shadow-color);
+  font-weight: 700;
+  letter-spacing: 1px;
+  position: relative;
+  display: inline-block;
+}
+
+h1::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: var(--accent-color);
+  border-radius: 2px;
+  transition: width var(--transition-normal);
+}
+
+.container:hover h1::after {
+  width: 80px;
+}
+
+.dice-container {
+  display: flex;
+  justify-content: center;
+  gap: clamp(1rem, 3vw, 1.5rem);
+  margin: 2.5rem 0;
+  flex-wrap: wrap;
+  perspective: 1000px;
+}
+
+.dice {
+  width: clamp(80px, 20vw, 100px);
+  height: clamp(80px, 20vw, 100px);
+  background: var(--dice-color);
+  border-radius: var(--border-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  color: var(--dice-text);
+  box-shadow: 0 4px 15px var(--shadow-color);
+  transition: all var(--transition-normal);
+  position: relative;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.dice:hover {
+  transform: translateY(-5px) rotate(5deg);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.dice.rolling {
+  animation: roll 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes roll {
+  0% {
+    transform: rotate(0deg) translateY(0);
+  }
+  50% {
+    transform: rotate(180deg) translateY(-20px);
+  }
+  100% {
+    transform: rotate(360deg) translateY(0);
+  }
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-top: 2.5rem;
+  align-items: center;
+}
+
+input[type="number"] {
+  padding: 1rem;
+  font-size: 1.2rem;
+  border: 2px solid transparent;
+  border-radius: var(--border-radius-sm);
+  width: 100%;
+  max-width: 200px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--primary-color);
+  transition: all var(--transition-normal);
+  font-family: inherit;
+}
+
+input[type="number"]:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+/* Hide number input arrows */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+button {
+  padding: 1.2rem 2.5rem;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  background: linear-gradient(
+    135deg,
+    var(--accent-color) 0%,
+    var(--accent-hover) 100%
+  );
+  color: white;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  position: relative;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: var(--transition-slow);
+}
+
+button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+}
+
+button:active {
+  transform: translateY(-1px);
+}
+
+button:hover::before {
+  left: 100%;
+}
+
+button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.4);
+}
+
+button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.total {
+  font-size: clamp(1.5rem, 4vw, 1.8rem);
+  margin-top: 2rem;
+  color: var(--text-color);
+  font-weight: 600;
+  text-shadow: 1px 1px 2px var(--shadow-color);
+  padding: 1rem 2rem;
+  background: var(--glass-bg);
+  border-radius: var(--border-radius-sm);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid var(--glass-border);
+  transition: transform var(--transition-normal),
+    box-shadow var(--transition-normal);
+}
+
+.total:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1.8rem;
+  }
+
+  .dice {
+    width: 85px;
+    height: 85px;
+    font-size: 2rem;
+  }
+
+  button {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .dice.rolling {
+    animation: none;
+  }
+
+  .container:hover,
+  .dice:hover,
+  button:hover,
+  .total:hover {
+    transform: none;
+  }
+}
