@@ -540,8 +540,8 @@ The Virtual DOM is an in-memory representation of the actual DOM. When state cha
 - By providing a dependency array, e.g. `useEffect(() => {...}, [someVar])`, the effect runs only when the values in that array change.
 - To run an effect only once (on mount), use an empty dependency array: `useEffect(() => {...}, [])`.
 
-**Q5: How can you perform data fetching inside a functional component?**  
-**A:**  
+**Q5: How can you perform data fetching inside a functional component?**
+
 You can use `useEffect` to handle data fetching:
 
 ```jsx
@@ -549,21 +549,40 @@ import React, { useState, useEffect } from "react";
 
 function DataFetcher({ url }) {
   const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
-    fetch(url)
-      .then((response) => response.json())
-      .then((fetchedData) => {
+
+    const fetchData = async () => {
+      try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error ${response.status}`);
+        }
+
+        const fetchedData = await response.json();
+
         if (isMounted) {
           setData(fetchedData);
         }
-      });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        if (isMounted) {
+          setError(error.message);
+        }
+      }
+    };
+
+    fetchData();
+
     return () => {
       isMounted = false; // Cleanup if component unmounts
     };
   }, [url]);
 
+  if (error) return <div>Error: {error}</div>;
   if (!data) return <div>Loading...</div>;
   return <div>{JSON.stringify(data)}</div>;
 }
