@@ -233,7 +233,7 @@
 // console.log(expecsesReport);
 
 let fName: string = "Deepak";
-let lName: string = "Sharma";
+let lName: string = "Sankhyan";
 
 function sayName() {
   console.log(`${fName} ${lName}`);
