@@ -2849,6 +2849,408 @@ const userSlice = createSlice({
 
 ---
 
+# React Native Interview Questions
+
+## Core Concepts
+
+### 1. What are the key differences between React Native and React?
+
+**Answer:**
+
+- React Native renders to native platform UI components instead of HTML/DOM
+- Uses different base components (`View`, `Text`, `Image` instead of `div`, `p`, `img`)
+- Styling is done through JavaScript objects using a subset of CSS properties
+- Navigation is handled differently (React Navigation/Native Navigation vs React Router)
+- Platform-specific code and APIs are available
+
+Example of platform-specific code:
+
+```jsx
+import { Platform } from "react-native";
+
+const styles = {
+  container: {
+    ...Platform.select({
+      ios: {
+        shadowColor: "black",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+  },
+};
+```
+
+### 2. Explain React Native's Bridge concept and the New Architecture
+
+**Answer:**
+
+**Traditional Bridge:**
+
+- JavaScript code communicates with native modules through a serialized, asynchronous bridge
+- Can cause performance bottlenecks with heavy data transfers
+
+**New Architecture (Fabric & TurboModules):**
+
+```jsx
+// Old Bridge way
+NativeModules.MyModule.doSomething(data, (error, result) => {
+  if (error) {
+    console.error(error);
+    return;
+  }
+  console.log(result);
+});
+
+// New Architecture with TurboModules
+const result = await TurboModules.MyModule.doSomething(data);
+```
+
+Key improvements:
+
+- Synchronous native module calls
+- Better type safety
+- Improved performance through reduced serialization
+
+### 3. How do you handle navigation in React Native?
+
+**Answer:**
+
+Most common approach is using React Navigation:
+
+```jsx
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+
+const Stack = createStackNavigator();
+
+function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{
+            headerStyle: {
+              backgroundColor: "#f4511e",
+            },
+            headerTintColor: "#fff",
+          }}
+        />
+        <Stack.Screen name="Details" component={DetailsScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+// In a screen component
+function HomeScreen({ navigation }) {
+  return (
+    <Button
+      title="Go to Details"
+      onPress={() => navigation.navigate("Details", { itemId: 86 })}
+    />
+  );
+}
+```
+
+### 4. How do you optimize performance in React Native?
+
+**Answer:**
+
+1. **Memory Management:**
+
+```jsx
+// Bad
+class MyComponent extends React.Component {
+  componentDidMount() {
+    this.listener = DeviceEventEmitter.addListener("MyEvent", this.handleEvent);
+  }
+
+  // Memory leak!
+  // componentWillUnmount() { ... }
+}
+
+// Good
+class MyComponent extends React.Component {
+  componentDidMount() {
+    this.listener = DeviceEventEmitter.addListener("MyEvent", this.handleEvent);
+  }
+
+  componentWillUnmount() {
+    this.listener.remove();
+  }
+}
+```
+
+2. **List Optimization:**
+
+```jsx
+import { FlatList } from "react-native";
+
+function OptimizedList({ data }) {
+  const renderItem = useCallback(
+    ({ item }) => <ItemComponent item={item} />,
+    []
+  );
+
+  const keyExtractor = useCallback((item) => item.id, []);
+
+  return (
+    <FlatList
+      data={data}
+      renderItem={renderItem}
+      keyExtractor={keyExtractor}
+      initialNumToRender={10}
+      maxToRenderPerBatch={10}
+      windowSize={5}
+    />
+  );
+}
+```
+
+3. **Image Optimization:**
+
+```jsx
+import FastImage from "react-native-fast-image";
+
+function OptimizedImage() {
+  return (
+    <FastImage
+      style={{ width: 200, height: 200 }}
+      source={{
+        uri: "https://example.com/image.jpg",
+        priority: FastImage.priority.normal,
+      }}
+      resizeMode={FastImage.resizeMode.contain}
+    />
+  );
+}
+```
+
+### 5. How do you handle offline capabilities in React Native?
+
+**Answer:**
+
+```jsx
+import NetInfo from "@react-native-community/netinfo";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+function OfflineCapableComponent() {
+  const [isOnline, setIsOnline] = useState(true);
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    // Subscribe to network state updates
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setIsOnline(state.isConnected);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      if (isOnline) {
+        const response = await fetch("https://api.example.com/data");
+        const result = await response.json();
+        await AsyncStorage.setItem("cached_data", JSON.stringify(result));
+        setData(result);
+      } else {
+        const cached = await AsyncStorage.getItem("cached_data");
+        if (cached) {
+          setData(JSON.parse(cached));
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <View>
+      {!isOnline && <Text>You are offline. Showing cached data.</Text>}
+      {/* Render data */}
+    </View>
+  );
+}
+```
+
+### 6. How do you handle platform-specific code?
+
+**Answer:**
+
+1. **Platform.select:**
+
+```jsx
+import { Platform, StyleSheet } from "react-native";
+
+const styles = StyleSheet.create({
+  container: {
+    ...Platform.select({
+      ios: {
+        backgroundColor: "red",
+      },
+      android: {
+        backgroundColor: "blue",
+      },
+      default: {
+        // other platforms
+        backgroundColor: "green",
+      },
+    }),
+  },
+});
+```
+
+2. **Platform-specific file extensions:**
+
+```jsx
+// MyComponent.ios.js
+export default function MyComponent() {
+  return <View>iOS specific code</View>;
+}
+
+// MyComponent.android.js
+export default function MyComponent() {
+  return <View>Android specific code</View>;
+}
+
+// Usage (React Native will pick the right file automatically)
+import MyComponent from './MyComponent';
+```
+
+### 7. How do you handle app state and background/foreground transitions?
+
+**Answer:**
+
+```jsx
+import { AppState } from "react-native";
+
+function AppStateExample() {
+  const [appState, setAppState] = useState(AppState.currentState);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (appState.match(/inactive|background/) && nextAppState === "active") {
+        console.log("App has come to the foreground!");
+        // Refresh data, reconnect websockets, etc.
+      }
+      setAppState(nextAppState);
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [appState]);
+
+  return (
+    <View>
+      <Text>Current state is: {appState}</Text>
+    </View>
+  );
+}
+```
+
+### 8. How do you handle deep linking in React Native?
+
+**Answer:**
+
+```jsx
+import { Linking } from "react-native";
+
+function DeepLinkHandler() {
+  useEffect(() => {
+    // Handle deep link when app is already open
+    const subscription = Linking.addEventListener("url", handleDeepLink);
+
+    // Handle deep link that opened the app
+    Linking.getInitialURL().then((url) => {
+      if (url) {
+        handleDeepLink({ url });
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  const handleDeepLink = ({ url }) => {
+    // Parse the URL and navigate accordingly
+    const route = url.replace(/.*?:\/\//g, "");
+    // Navigate using your navigation solution
+    navigation.navigate(route);
+  };
+
+  return null;
+}
+```
+
+### 9. How do you handle app security?
+
+**Answer:**
+
+```jsx
+import EncryptedStorage from "react-native-encrypted-storage";
+
+async function secureStorageExample() {
+  try {
+    // Storing sensitive data
+    await EncryptedStorage.setItem(
+      "user_session",
+      JSON.stringify({
+        token: "ACCESS_TOKEN",
+        userId: "USER_ID",
+      })
+    );
+
+    // Retrieving sensitive data
+    const session = await EncryptedStorage.getItem("user_session");
+    if (session) {
+      return JSON.parse(session);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Certificate pinning example with axios
+import axios from "axios";
+import { Platform } from "react-native";
+
+const api = axios.create({
+  baseURL: "https://api.example.com",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  ...(Platform.OS === "ios"
+    ? {
+        certificates: [
+          {
+            domain: "api.example.com",
+            certificates: ["sha256/PINNED_CERTIFICATE_HASH"],
+          },
+        ],
+      }
+    : {}),
+});
+```
+
+These questions and answers cover the most important aspects of React Native development that you might encounter in an interview. Remember to:
+
+1. Provide real-world examples from your experience
+2. Discuss performance implications of different approaches
+3. Show understanding of platform-specific considerations
+4. Demonstrate knowledge of best practices and security concerns
+5. Be prepared to discuss trade-offs in different architectural decisions
+
+Would you like me to expand on any particular topic or add more specific examples?
+
 # Quick Interview Tips
 
 1. **Know the differences** between “plain Redux” vs. Redux Toolkit—emphasize how RTK reduces boilerplate.
