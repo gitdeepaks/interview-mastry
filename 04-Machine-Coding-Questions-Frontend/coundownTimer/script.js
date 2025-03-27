@@ -10,10 +10,8 @@ function startTimer() {
     }
 
     if (valueInSeconds <= 0) {
-
-        countdownDisplay.innerText = ' Please enter the seconds > 0'
-        return
-
+        countdownDisplay.innerText = " Please enter the seconds > 0";
+        return;
     }
 
     const timer = setInterval(function () {
