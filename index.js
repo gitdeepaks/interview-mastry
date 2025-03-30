@@ -58,4 +58,12 @@ function OperationDisplay({ a, b, operation }) {
 const res = applyOne(2, 3, (a, b) => a + b);
 
 // Export for use in other components
-export { multiply, applyOne, OperationDisplay };
+export { applyOne, multiply, OperationDisplay };
+
+const a = 1;
+const b = 2;
+const c = 3;
+
+const result = a + b + c;
+
+console.log(result);
