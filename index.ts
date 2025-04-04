@@ -240,3 +240,10 @@ function sayName() {
 }
 
 sayName();
+
+function validatePassword(password: string) {
+  if (password.length < 8) {
+    return false;
+  }
+  return true;
+}
