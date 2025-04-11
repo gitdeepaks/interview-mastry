@@ -38,27 +38,27 @@ function applyOne(a, b, operation) {
 }
 
 // Component to display results
-function OperationDisplay({ a, b, operation }) {
-  const result = applyOne(a, b, operation);
+// function OperationDisplay({ a, b, operation }) {
+//   const result = applyOne(a, b, operation);
 
-  return (
-    <div style={styles.container}>
-      <div style={styles.resultDisplay}>Result: {result}</div>
-      <button
-        style={styles.button}
-        onClick={() => console.log(`Operation result: ${result}`)}
-      >
-        Log Result
-      </button>
-    </div>
-  );
-}
+//   return (
+//     <div style={styles.container}>
+//       <div style={styles.resultDisplay}>Result: {result}</div>
+//       <button
+//         style={styles.button}
+//         onClick={() => console.log(`Operation result: ${result}`)}
+//       >
+//         Log Result
+//       </button>
+//     </div>
+//   );
+// }
 
 // Example usage
 const res = applyOne(2, 3, (a, b) => a + b);
 
 // Export for use in other components
-export { applyOne, multiply, OperationDisplay };
+// export { applyOne, multiply, OperationDisplay };
 
 const a = 1;
 const b = 2;
@@ -67,3 +67,9 @@ const c = 3;
 const result = a + b + c;
 
 console.log(result);
+
+const taste = (a, b) => {
+  return a + b + 1 - 1
+}
+
+taste(2, 5)
