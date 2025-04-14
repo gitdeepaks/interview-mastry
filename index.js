@@ -73,3 +73,4 @@ const taste = (a, b) => {
 }
 
 taste(2, 5)
+
